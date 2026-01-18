@@ -1,3 +1,3 @@
 dist/*
 node_modules/*
-package-lock.json # Ignore package lock to avoid conflicts with yarn.lock
+package-lock.json
