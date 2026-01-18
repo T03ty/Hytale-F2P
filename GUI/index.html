@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-black text-white overflow-hidden font-sans select-none" tabindex="-1">
     <div class="absolute inset-0 z-0">
@@ -313,6 +313,18 @@
                                             </p>
                                         </div>
                                     </div>
+                                    
+                                    <div class="settings-option">
+                                        <div class="settings-button-group">
+                                            <button id="openGameLocationBtn" class="settings-action-btn" onclick="openGameLocation()">
+                                                <i class="fas fa-folder-open"></i>
+                                                <div class="btn-content">
+                                                    <div class="btn-title">Open Game Location</div>
+                                                    <div class="btn-description">Open the game installation folder</div>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -417,7 +429,19 @@
         </div>
     </footer>
 
-    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/script.js"></script>    <!-- Discord Notification -->
+    <div id="discordNotification" class="discord-notification">
+        <div class="notification-content">
+            <i class="fab fa-discord"></i>
+            <span class="notification-text">Join our Discord community!</span>
+            <button class="notification-action" onclick="window.electronAPI?.openExternal('https://discord.gg/n6HZ7NwSQd')">
+                Join Discord
+            </button>
+        </div>
+        <button class="notification-close" onclick="closeDiscordNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
     <script type="module" src="js/update.js"></script>
 </body>
 </html>
