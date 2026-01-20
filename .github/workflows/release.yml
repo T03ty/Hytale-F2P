@@ -78,15 +78,16 @@ jobs:
         run: ls -R artifacts
 
       - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('manual-{0}', github.sha) }}
-        name: ${{ github.ref_type == 'tag' && github.ref_name || format('Manual build {0}', github.sha) }}
-        files: |
-          artifacts/linux-builds/**/*
-          artifacts/windows-builds/**/*
-          artifacts/macos-builds/**/*
-        generate_release_notes: true
-        draft: false
-        prerelease: false
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('manual-{0}', github.sha) }}
+          name: ${{ github.ref_type == 'tag' && github.ref_name || format('Manual build {0}', github.sha) }}
+          files: |
+            artifacts/linux-builds/**/*
+            artifacts/windows-builds/**/*
+            artifacts/macos-builds/**/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
 
