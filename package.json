@@ -1,6 +1,6 @@
 {
   "name": "hytale-f2p-launcherv2",
-  "version": "2.0.1",
+  "version": "2.0.2a",
   "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support",
   "homepage": "https://github.com/amiayweb/Hytale-F2P",
   "main": "main.js",
@@ -118,6 +118,7 @@
     }
   }
 }
+
 
 
 
