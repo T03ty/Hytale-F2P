@@ -1,6 +1,6 @@
 {
   "name": "hytale-f2p-launcherv2",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support",
   "homepage": "https://github.com/amiayweb/Hytale-F2P",
   "main": "main.js",
@@ -58,35 +58,19 @@
     ],
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
+        { "target": "nsis", "arch": ["x64"]},
+        { "target": "portable", "arch": ["x64"]}
       ],
-      "icon": "icon.ico"
+      "icon": "icon.ico",
+      "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support"
     },
     "linux": {
       "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "deb",
-          "arch": [
-            "x64"
-          ]
-        }
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "deb", "arch": ["x64"] },
+        { "target": "rpm", "arch": ["x64"] }, 
+        { "target": "pacman", "arch": ["x64"] },
+        { "target": "snap", "arch": ["x64"] }
       ],
       "icon": "build/icon.png",
       "category": "Game",
@@ -94,21 +78,12 @@
     },
     "mac": {
       "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "universal"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "universal"
-          ]
-        }
+        { "target": "dmg", "arch": ["universal"] },
+        { "target": "zip", "arch": ["universal"]}
       ],
       "icon": "build/icon.icns",
-      "category": "public.app-category.games"
+      "category": "public.app-category.games",
+      "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support"
     },
     "nsis": {
       "oneClick": false,
