@@ -113,10 +113,15 @@ function displayInstalledMods(mods) {
     modsContainer.innerHTML = `
       <div class=\"empty-installed-mods\">
         <i class=\"fas fa-box-open\"></i>
-        <h4>No Mods Installed</h4>
-        <p>Add mods from CurseForge or import local files</p>
+        <h4 data-i18n="mods.noModsInstalled">No Mods Installed</h4>
+        <p data-i18n="mods.noModsInstalledDesc">Add mods from CurseForge or import local files</p>
       </div>
     `;
+    if (window.i18n) {
+      const container = modsContainer.querySelector('.empty-installed-mods');
+      container.querySelector('h4').textContent = window.i18n.t('mods.noModsInstalled');
+      container.querySelector('p').textContent = window.i18n.t('mods.noModsInstalledDesc');
+    }
     return;
   }
 
@@ -138,9 +143,9 @@ function displayInstalledMods(mods) {
 
 function createInstalledModCard(mod) {
   const statusClass = mod.enabled ? 'text-primary' : 'text-zinc-500';
-  const statusText = mod.enabled ? 'ACTIVE' : 'DISABLED';
+  const statusText = mod.enabled ? (window.i18n ? window.i18n.t('mods.active') : 'ACTIVE') : (window.i18n ? window.i18n.t('mods.disabled') : 'DISABLED');
   const toggleBtnClass = mod.enabled ? 'btn-disable' : 'btn-enable';
-  const toggleBtnText = mod.enabled ? 'DISABLE' : 'ENABLE';
+  const toggleBtnText = mod.enabled ? (window.i18n ? window.i18n.t('mods.disable') : 'DISABLE') : (window.i18n ? window.i18n.t('mods.enable') : 'ENABLE');
   const toggleIcon = mod.enabled ? 'fa-pause' : 'fa-play';
 
   return `
@@ -154,7 +159,7 @@ function createInstalledModCard(mod) {
           <h4 class="installed-mod-name">${mod.name}</h4>
           <span class="installed-mod-version">v${mod.version}</span>
         </div>
-        <p class="installed-mod-description">${mod.description || 'No description available'}</p>
+        <p class="installed-mod-description">${mod.description || (window.i18n ? window.i18n.t('mods.noDescription') : 'No description available')}</p>
       </div>
       
       <div class="installed-mod-actions">
@@ -163,7 +168,7 @@ function createInstalledModCard(mod) {
           ${statusText}
         </div>
         <div class="installed-mod-buttons">
-          <button id="delete-installed-${mod.id}" class="installed-mod-btn-icon" title="Delete mod">
+          <button id="delete-installed-${mod.id}" class="installed-mod-btn-icon" title="${window.i18n ? window.i18n.t('mods.delete') : 'Delete mod'}">
             <i class="fas fa-trash"></i>
           </button>
           <button id="toggle-installed-${mod.id}" class="installed-mod-btn-toggle ${toggleBtnClass}">
@@ -180,7 +185,7 @@ async function loadBrowseMods() {
   const browseContainer = document.getElementById('browseModsList');
   if (!browseContainer) return;
 
-  browseContainer.innerHTML = '<div class=\"loading-mods\"><div class=\"loading-spinner\"></div><span>Loading mods from CurseForge...</span></div>';
+  browseContainer.innerHTML = `<div class="loading-mods"><div class="loading-spinner"></div><span>${window.i18n ? window.i18n.t('mods.loadingMods') : 'Loading mods from CurseForge...'}</span></div>`;
 
   try {
     if (!API_KEY || API_KEY.length < 10) {
@@ -264,10 +269,15 @@ function displayBrowseMods(mods) {
     browseContainer.innerHTML = `
       <div class=\"empty-browse-mods\">
         <i class=\"fas fa-search\"></i>
-        <h4>No Mods Found</h4>
-        <p>Try adjusting your search</p>
+        <h4 data-i18n="mods.noModsFound">No Mods Found</h4>
+        <p data-i18n="mods.noModsFoundDesc">Try adjusting your search</p>
       </div>
     `;
+    if (window.i18n) {
+      const container = browseContainer.querySelector('.empty-browse-mods');
+      container.querySelector('h4').textContent = window.i18n.t('mods.noModsFound');
+      container.querySelector('p').textContent = window.i18n.t('mods.noModsFoundDesc');
+    }
     return;
   }
 
@@ -324,16 +334,16 @@ function createBrowseModCard(mod) {
       <div class=\"mod-actions\">
         <button id=\"view-${mod.id}\" class=\"mod-btn-toggle bg-blue-600 text-white hover:bg-blue-700\" onclick=\"window.modsManager.viewModPage(${mod.id})\">
           <i class=\"fas fa-external-link-alt\"></i>
-          VIEW
+          ${window.i18n ? window.i18n.t('mods.view') : 'VIEW'}
         </button>
         ${!isInstalled ?
-      `<button id=\"install-${mod.id}\" class=\"mod-btn-toggle bg-primary text-black hover:bg-primary/80\">
-            <i class=\"fas fa-download\"></i>
-            INSTALL
+      `<button id="install-${mod.id}" class="mod-btn-toggle bg-primary text-black hover:bg-primary/80">
+            <i class="fas fa-download"></i>
+            ${window.i18n ? window.i18n.t('mods.install') : 'INSTALL'}
           </button>` :
-      `<button class=\"mod-btn-toggle bg-white/10 text-white\" disabled>
-            <i class=\"fas fa-check\"></i>
-            INSTALLED
+      `<button class="mod-btn-toggle bg-white/10 text-white" disabled>
+            <i class="fas fa-check"></i>
+            ${window.i18n ? window.i18n.t('mods.installed') : 'INSTALLED'}
           </button>`
     }
       </div>
@@ -343,7 +353,8 @@ function createBrowseModCard(mod) {
 
 async function downloadAndInstallMod(modInfo) {
   try {
-    window.LauncherUI?.showProgress(`Downloading ${modInfo.name}...`);
+    const downloadMsg = window.i18n ? window.i18n.t('notifications.modsDownloading').replace('{name}', modInfo.name) : `Downloading ${modInfo.name}...`;
+    window.LauncherUI?.showProgress(downloadMsg);
 
     const result = await window.electronAPI?.downloadMod(modInfo);
 
@@ -367,20 +378,23 @@ async function downloadAndInstallMod(modInfo) {
       await loadInstalledMods();
       await loadBrowseMods();
       window.LauncherUI?.hideProgress();
-      showNotification(`${modInfo.name} installed successfully! 🎉`, 'success');
+      const successMsg = window.i18n ? window.i18n.t('notifications.modsInstalledSuccess').replace('{name}', modInfo.name) : `${modInfo.name} installed successfully! 🎉`;
+      showNotification(successMsg, 'success');
     } else {
       throw new Error(result?.error || 'Failed to download mod');
     }
   } catch (error) {
     console.error('Error downloading mod:', error);
     window.LauncherUI?.hideProgress();
-    showNotification('Failed to download mod: ' + error.message, 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.modsDownloadFailed').replace('{error}', error.message) : 'Failed to download mod: ' + error.message;
+    showNotification(errorMsg, 'error');
   }
 }
 
 async function toggleMod(modId) {
   try {
-    window.LauncherUI?.showProgress('Toggling mod...');
+    const toggleMsg = window.i18n ? window.i18n.t('notifications.modsTogglingMod') : 'Toggling mod...';
+    window.LauncherUI?.showProgress(toggleMsg);
 
     const modsPath = await window.electronAPI?.getModsPath();
     const result = await window.electronAPI?.toggleMod(modId, modsPath);
@@ -394,7 +408,8 @@ async function toggleMod(modId) {
   } catch (error) {
     console.error('Error toggling mod:', error);
     window.LauncherUI?.hideProgress();
-    showNotification('Failed to toggle mod: ' + error.message, 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.modsToggleFailed').replace('{error}', error.message) : 'Failed to toggle mod: ' + error.message;
+    showNotification(errorMsg, 'error');
   }
 }
 
@@ -402,11 +417,16 @@ async function deleteMod(modId) {
   const mod = installedMods.find(m => m.id === modId);
   if (!mod) return;
 
+  const confirmMsg = window.i18n ? 
+    window.i18n.t('mods.confirmDelete').replace('{name}', mod.name) + ' ' + window.i18n.t('mods.confirmDeleteDesc') :
+    `Are you sure you want to delete "${mod.name}"? This action cannot be undone.`;
+  
   showConfirmModal(
-    `Are you sure you want to delete "${mod.name}"? This action cannot be undone.`,
+    confirmMsg,
     async () => {
       try {
-        window.LauncherUI?.showProgress('Deleting mod...');
+        const deleteMsg = window.i18n ? window.i18n.t('notifications.modsDeletingMod') : 'Deleting mod...';
+        window.LauncherUI?.showProgress(deleteMsg);
 
         const modsPath = await window.electronAPI?.getModsPath();
         const result = await window.electronAPI?.uninstallMod(modId, modsPath);
@@ -415,14 +435,16 @@ async function deleteMod(modId) {
           await loadInstalledMods();
           await loadBrowseMods();
           window.LauncherUI?.hideProgress();
-          showNotification(`"${mod.name}" deleted successfully`, 'success');
+          const successMsg = window.i18n ? window.i18n.t('notifications.modsDeletedSuccess').replace('{name}', mod.name) : `"${mod.name}" deleted successfully`;
+          showNotification(successMsg, 'success');
         } else {
           throw new Error(result?.error || 'Failed to delete mod');
         }
       } catch (error) {
         console.error('Error deleting mod:', error);
         window.LauncherUI?.hideProgress();
-        showNotification('Failed to delete mod: ' + error.message, 'error');
+        const errorMsg = window.i18n ? window.i18n.t('notifications.modsDeleteFailed').replace('{error}', error.message) : 'Failed to delete mod: ' + error.message;
+        showNotification(errorMsg, 'error');
       }
     }
   );
@@ -571,7 +593,7 @@ function showConfirmModal(message, onConfirm, onCancel = null) {
     <div style="padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.1);">
       <div style="display: flex; align-items: center; gap: 12px; color: #ef4444;">
         <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
-        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">Confirm Deletion</h3>
+        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">${window.i18n ? window.i18n.t('mods.confirmDeletion') : 'Confirm Deletion'}</h3>
       </div>
     </div>
     <div style="padding: 24px; color: #e5e7eb;">
@@ -587,7 +609,7 @@ function showConfirmModal(message, onConfirm, onCancel = null) {
         cursor: pointer;
         font-weight: 500;
         transition: all 0.2s;
-      ">Cancel</button>
+      ">${window.i18n ? window.i18n.t('common.cancel') : 'Cancel'}</button>
       <button class="mod-confirm-delete" style="
         background: #ef4444;
         color: white;
@@ -597,7 +619,7 @@ function showConfirmModal(message, onConfirm, onCancel = null) {
         cursor: pointer;
         font-weight: 500;
         transition: all 0.2s;
-      ">Delete</button>
+      ">${window.i18n ? window.i18n.t('common.delete') : 'Delete'}</button>
     </div>
   `;
 
@@ -715,7 +737,8 @@ function viewModPage(modId) {
     }
   } else {
     console.error('Mod not found with ID:', modId);
-    showNotification('Mod information not found', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.modsModNotFound') : 'Mod information not found';
+    showNotification(errorMsg, 'error');
   }
 }
 

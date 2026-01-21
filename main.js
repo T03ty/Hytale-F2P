@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { launchGame, launchGameWithVersionCheck, installGame, saveUsername, loadUsername, saveChatUsername, loadChatUsername, saveChatColor, loadChatColor, saveJavaPath, loadJavaPath, saveInstallPath, loadInstallPath, saveDiscordRPC, loadDiscordRPC, isGameInstalled, uninstallGame, repairGame, getHytaleNews, handleFirstLaunchCheck, proposeGameUpdate, markAsLaunched } = require('./backend/launcher');
+const { launchGame, launchGameWithVersionCheck, installGame, saveUsername, loadUsername, saveChatUsername, loadChatUsername, saveChatColor, loadChatColor, saveJavaPath, loadJavaPath, saveInstallPath, loadInstallPath, saveDiscordRPC, loadDiscordRPC, saveLanguage, loadLanguage, isGameInstalled, uninstallGame, repairGame, getHytaleNews, handleFirstLaunchCheck, proposeGameUpdate, markAsLaunched } = require('./backend/launcher');
 const UpdateManager = require('./backend/updateManager');
 const logger = require('./backend/logger');
 const profileManager = require('./backend/managers/profileManager');
@@ -403,6 +403,15 @@ ipcMain.handle('save-discord-rpc', (event, enabled) => {
 
 ipcMain.handle('load-discord-rpc', () => {
   return loadDiscordRPC();
+});
+
+ipcMain.handle('save-language', (event, language) => {
+  saveLanguage(language);
+  return { success: true };
+});
+
+ipcMain.handle('load-language', () => {
+  return loadLanguage();
 });
 
 ipcMain.handle('select-install-path', async () => {

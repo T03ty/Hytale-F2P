@@ -15,6 +15,8 @@ const {
   loadInstallPath,
   saveDiscordRPC,
   loadDiscordRPC,
+  saveLanguage,
+  loadLanguage,
   saveModsToConfig,
   loadModsFromConfig,
   getUuidForUser,
@@ -117,6 +119,10 @@ module.exports = {
   // Discord RPC functions
   saveDiscordRPC,
   loadDiscordRPC,
+  
+  // Language functions
+  saveLanguage,
+  loadLanguage,
   
   // GPU Preference functions
   saveGpuPreference,

@@ -147,6 +147,15 @@ function loadDiscordRPC() {
   return config.discordRPC !== undefined ? config.discordRPC : true;
 }
 
+function saveLanguage(language) {
+  saveConfig({ language: language || 'en' });
+}
+
+function loadLanguage() {
+  const config = loadConfig();
+  return config.language || 'en';
+}
+
 function saveModsToConfig(mods) {
   try {
     const config = loadConfig();
@@ -302,6 +311,8 @@ module.exports = {
   loadInstallPath,
   saveDiscordRPC,
   loadDiscordRPC,
+  saveLanguage,
+  loadLanguage,
   saveModsToConfig,
   loadModsFromConfig,
   isFirstLaunch,

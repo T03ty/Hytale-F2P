@@ -160,7 +160,8 @@ window.deleteProfile = async (id) => {
 window.switchProfile = async (id) => {
   try {
     if (window.LauncherUI) window.LauncherUI.showProgress();
-    if (window.LauncherUI) window.LauncherUI.updateProgress({ message: 'Switching Profile...' });
+    const switchingMsg = window.i18n ? window.i18n.t('progress.switchingProfile') : 'Switching Profile...';
+    if (window.LauncherUI) window.LauncherUI.updateProgress({ message: switchingMsg });
 
     await window.electronAPI.profile.activate(id);
 
@@ -178,7 +179,8 @@ window.switchProfile = async (id) => {
     if (dropdown) dropdown.classList.remove('show');
 
     if (window.LauncherUI) {
-      window.LauncherUI.updateProgress({ message: 'Profile Switched!' });
+      const switchedMsg = window.i18n ? window.i18n.t('progress.profileSwitched') : 'Profile Switched!';
+      window.LauncherUI.updateProgress({ message: switchedMsg });
       setTimeout(() => window.LauncherUI.hideProgress(), 1000);
     }
 
@@ -221,7 +223,8 @@ export async function launch() {
   }
 
   try {
-    if (window.LauncherUI) window.LauncherUI.updateProgress({ message: 'Starting game...' });
+    const startingMsg = window.i18n ? window.i18n.t('progress.startingGame') : 'Starting game...';
+    if (window.LauncherUI) window.LauncherUI.updateProgress({ message: startingMsg });
 
     if (window.electronAPI && window.electronAPI.launchGame) {
       const result = await window.electronAPI.launchGame(playerName, javaPath, '', gpuPreference);
@@ -261,7 +264,12 @@ export async function launch() {
   }
 }
 
-function showCustomConfirm(message, title = 'Confirm Action', onConfirm, onCancel = null, confirmText = 'Confirm', cancelText = 'Cancel') {
+function showCustomConfirm(message, title, onConfirm, onCancel = null, confirmText, cancelText) {
+  // Apply defaults with i18n support
+  title = title || (window.i18n ? window.i18n.t('confirm.defaultTitle') : 'Confirm Action');
+  confirmText = confirmText || (window.i18n ? window.i18n.t('common.confirm') : 'Confirm');
+  cancelText = cancelText || (window.i18n ? window.i18n.t('common.cancel') : 'Cancel');
+  
   const existingModal = document.querySelector('.custom-confirm-modal');
   if (existingModal) {
     existingModal.remove();
@@ -383,22 +391,28 @@ function showCustomConfirm(message, title = 'Confirm Action', onConfirm, onCance
 }
 
 export async function uninstallGame() {
+  const message = window.i18n ? window.i18n.t('confirm.uninstallGameMessage') : 'Are you sure you want to uninstall Hytale? All game files will be deleted.';
+  const title = window.i18n ? window.i18n.t('confirm.uninstallGameTitle') : 'Uninstall Game';
+  const confirmBtn = window.i18n ? window.i18n.t('confirm.uninstallGameButton') : 'Uninstall';
+  const cancelBtn = window.i18n ? window.i18n.t('common.cancel') : 'Cancel';
+  
   showCustomConfirm(
-    'Are you sure you want to uninstall Hytale? All game files will be deleted.',
-    'Uninstall Game',
+    message,
+    title,
     async () => {
       await performUninstall();
     },
     null,
-    'Uninstall',
-    'Cancel'
+    confirmBtn,
+    cancelBtn
   );
 }
 
 async function performUninstall() {
 
   if (window.LauncherUI) window.LauncherUI.showProgress();
-  if (window.LauncherUI) window.LauncherUI.updateProgress({ message: 'Uninstalling game...' });
+  const uninstallingMsg = window.i18n ? window.i18n.t('progress.uninstallingGame') : 'Uninstalling game...';
+  if (window.LauncherUI) window.LauncherUI.updateProgress({ message: uninstallingMsg });
   if (uninstallBtn) uninstallBtn.disabled = true;
 
   try {
@@ -406,8 +420,9 @@ async function performUninstall() {
       const result = await window.electronAPI.uninstallGame();
 
       if (result.success) {
+        const successMsg = window.i18n ? window.i18n.t('progress.gameUninstalled') : 'Game uninstalled successfully!';
         if (window.LauncherUI) {
-          window.LauncherUI.updateProgress({ message: 'Game uninstalled successfully!' });
+          window.LauncherUI.updateProgress({ message: successMsg });
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(false);
@@ -417,9 +432,10 @@ async function performUninstall() {
         throw new Error(result.error || 'Uninstall failed');
       }
     } else {
+      const successMsg = window.i18n ? window.i18n.t('progress.gameUninstalled') : 'Game uninstalled successfully!';
       setTimeout(() => {
         if (window.LauncherUI) {
-          window.LauncherUI.updateProgress({ message: 'Game uninstalled successfully!' });
+          window.LauncherUI.updateProgress({ message: successMsg });
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(false);
@@ -428,8 +444,9 @@ async function performUninstall() {
       }, 2000);
     }
   } catch (error) {
+    const errorMsg = window.i18n ? window.i18n.t('progress.uninstallFailed').replace('{error}', error.message) : `Uninstall failed: ${error.message}`;
     if (window.LauncherUI) {
-      window.LauncherUI.updateProgress({ message: `Uninstall failed: ${error.message}` });
+      window.LauncherUI.updateProgress({ message: errorMsg });
       setTimeout(() => window.LauncherUI.hideProgress(), 3000);
     }
   } finally {
@@ -484,7 +501,7 @@ function resetPlayButton() {
   isDownloading = false;
   if (playBtn) {
     playBtn.disabled = false;
-    playText.textContent = 'PLAY';
+    playText.textContent = window.i18n ? window.i18n.t('play.play') : 'PLAY';
   }
 }
 

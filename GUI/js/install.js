@@ -51,7 +51,7 @@ export async function installGame() {
   isDownloading = true;
   if (installBtn) {
     installBtn.disabled = true;
-    installText.textContent = 'INSTALLING...';
+    installText.textContent = window.i18n ? window.i18n.t('install.installing') : 'INSTALLING...';
   }
   
   try {
@@ -59,8 +59,9 @@ export async function installGame() {
       const result = await window.electronAPI.installGame(playerName, '', installPath);
       
       if (result.success) {
+        const successMsg = window.i18n ? window.i18n.t('progress.installationComplete') : 'Installation completed successfully!';
         if (window.LauncherUI) {
-          window.LauncherUI.updateProgress({ message: 'Installation completed successfully!' });
+          window.LauncherUI.updateProgress({ message: successMsg });
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(true);
@@ -76,8 +77,9 @@ export async function installGame() {
       simulateInstallation(playerName);
     }
   } catch (error) {
+    const errorMsg = window.i18n ? window.i18n.t('progress.installationFailed').replace('{error}', error.message) : `Installation failed: ${error.message}`;
     if (window.LauncherUI) {
-      window.LauncherUI.updateProgress({ message: `Installation failed: ${error.message}` });
+      window.LauncherUI.updateProgress({ message: errorMsg });
       setTimeout(() => {
         window.LauncherUI.hideProgress();
         resetInstallButton();
@@ -92,10 +94,13 @@ function simulateInstallation(playerName) {
     progress += Math.random() * 3;
     if (progress > 100) progress = 100;
     
+    const installingMsg = window.i18n ? window.i18n.t('progress.installingGameFiles') : 'Installing game files...';
+    const completeMsg = window.i18n ? window.i18n.t('progress.installComplete') : 'Installation complete!';
+    
     if (window.LauncherUI) {
       window.LauncherUI.updateProgress({
         percent: progress,
-        message: progress < 100 ? 'Installing game files...' : 'Installation complete!',
+        message: progress < 100 ? installingMsg : completeMsg,
         speed: 1024 * 1024 * (5 + Math.random() * 10),
         downloaded: progress * 1024 * 1024 * 20,
         total: 1024 * 1024 * 2000
@@ -104,9 +109,10 @@ function simulateInstallation(playerName) {
     
     if (progress >= 100) {
       clearInterval(interval);
+      const successMsg = window.i18n ? window.i18n.t('progress.installationComplete') : 'Installation completed successfully!';
       setTimeout(() => {
         if (window.LauncherUI) {
-          window.LauncherUI.updateProgress({ message: 'Installation completed successfully!' });
+          window.LauncherUI.updateProgress({ message: successMsg });
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(true);

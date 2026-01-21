@@ -22,7 +22,12 @@ let uuidList;
 let customUuidInput;
 let setCustomUuidBtn;
 
-function showCustomConfirm(message, title = 'Confirm Action', onConfirm, onCancel = null, confirmText = 'Confirm', cancelText = 'Cancel') {
+function showCustomConfirm(message, title, onConfirm, onCancel = null, confirmText, cancelText) {
+  // Apply defaults with i18n support
+  title = title || (window.i18n ? window.i18n.t('confirm.defaultTitle') : 'Confirm Action');
+  confirmText = confirmText || (window.i18n ? window.i18n.t('common.confirm') : 'Confirm');
+  cancelText = cancelText || (window.i18n ? window.i18n.t('common.cancel') : 'Cancel');
+  
   const existingModal = document.querySelector('.custom-confirm-modal');
   if (existingModal) {
     existingModal.remove();
@@ -313,9 +318,11 @@ async function saveDiscordRPC() {
         
         // Feedback visuel pour l'utilisateur
         if (enabled) {
-          showNotification('Discord Rich Presence enabled', 'success');
+          const msg = window.i18n ? window.i18n.t('notifications.discordEnabled') : 'Discord Rich Presence enabled';
+          showNotification(msg, 'success');
         } else {
-          showNotification('Discord Rich Presence disabled', 'success');
+          const msg = window.i18n ? window.i18n.t('notifications.discordDisabled') : 'Discord Rich Presence disabled';
+          showNotification(msg, 'success');
         }
       } else {
         throw new Error('Failed to save Discord RPC setting');
@@ -323,7 +330,8 @@ async function saveDiscordRPC() {
     }
   } catch (error) {
     console.error('Error saving Discord RPC setting:', error);
-    showNotification('Failed to save Discord setting', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.discordSaveFailed') : 'Failed to save Discord setting';
+    showNotification(msg, 'error');
   }
 }
 
@@ -347,16 +355,19 @@ async function savePlayerName() {
     const playerName = settingsPlayerName.value.trim();
     
     if (!playerName) {
-      showNotification('Please enter a valid player name', 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.playerNameRequired') : 'Please enter a valid player name';
+      showNotification(msg, 'error');
       return;
     }
 
     await window.electronAPI.saveUsername(playerName);
-    showNotification('Player name saved successfully', 'success');
+    const successMsg = window.i18n ? window.i18n.t('notifications.playerNameSaved') : 'Player name saved successfully';
+    showNotification(successMsg, 'success');
     
   } catch (error) {
     console.error('Error saving player name:', error);
-    showNotification('Failed to save player name', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.playerNameSaveFailed') : 'Failed to save player name';
+    showNotification(errorMsg, 'error');
   }
 }
 
@@ -507,34 +518,43 @@ async function copyCurrentUuid() {
     const uuid = currentUuidDisplay ? currentUuidDisplay.value : modalCurrentUuid?.value;
     if (uuid && navigator.clipboard) {
       await navigator.clipboard.writeText(uuid);
-      showNotification('UUID copied to clipboard!', 'success');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidCopied') : 'UUID copied to clipboard!';
+      showNotification(msg, 'success');
     }
   } catch (error) {
     console.error('Error copying UUID:', error);
-    showNotification('Failed to copy UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidCopyFailed') : 'Failed to copy UUID';
+    showNotification(msg, 'error');
   }
 }
 
 async function regenerateCurrentUuid() {
   try {
     if (window.electronAPI && window.electronAPI.resetCurrentUserUuid) {
+      const message = window.i18n ? window.i18n.t('confirm.regenerateUuidMessage') : 'Are you sure you want to generate a new UUID? This will change your player identity.';
+      const title = window.i18n ? window.i18n.t('confirm.regenerateUuidTitle') : 'Generate New UUID';
+      const confirmBtn = window.i18n ? window.i18n.t('confirm.regenerateUuidButton') : 'Generate';
+      const cancelBtn = window.i18n ? window.i18n.t('common.cancel') : 'Cancel';
+      
       showCustomConfirm(
-        'Are you sure you want to generate a new UUID? This will change your player identity.',
-        'Generate New UUID',
+        message,
+        title,
         async () => {
           await performRegenerateUuid();
         },
         null,
-        'Generate',
-        'Cancel'
+        confirmBtn,
+        cancelBtn
       );
     } else {
       console.error('electronAPI.resetCurrentUserUuid not available');
-      showNotification('UUID regeneration not available', 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidRegenNotAvailable') : 'UUID regeneration not available';
+      showNotification(msg, 'error');
     }
   } catch (error) {
     console.error('Error in regenerateCurrentUuid:', error);
-    showNotification('Failed to regenerate UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidRegenFailed') : 'Failed to regenerate UUID';
+    showNotification(msg, 'error');
   }
 }
 
@@ -544,7 +564,8 @@ async function performRegenerateUuid() {
     if (result.success && result.uuid) {
       if (currentUuidDisplay) currentUuidDisplay.value = result.uuid;
       if (modalCurrentUuid) modalCurrentUuid.value = result.uuid;
-      showNotification('New UUID generated successfully!', 'success');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidGenerated') : 'New UUID generated successfully!';
+      showNotification(msg, 'success');
       
       if (uuidModal && uuidModal.style.display !== 'none') {
         await loadAllUuids();
@@ -554,7 +575,8 @@ async function performRegenerateUuid() {
     }
   } catch (error) {
     console.error('Error regenerating UUID:', error);
-    showNotification(`Failed to regenerate UUID: ${error.message}`, 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidRegenFailed').replace('{error}', error.message) : `Failed to regenerate UUID: ${error.message}`;
+    showNotification(msg, 'error');
   }
 }
 
@@ -647,19 +669,22 @@ async function generateNewUuid() {
       const newUuid = await window.electronAPI.generateNewUuid();
       if (newUuid) {
         if (customUuidInput) customUuidInput.value = newUuid;
-        showNotification('New UUID generated!', 'success');
+        const msg = window.i18n ? window.i18n.t('notifications.uuidGeneratedShort') : 'New UUID generated!';
+        showNotification(msg, 'success');
       }
     }
   } catch (error) {
     console.error('Error generating new UUID:', error);
-    showNotification('Failed to generate new UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidGenerateFailed') : 'Failed to generate new UUID';
+    showNotification(msg, 'error');
   }
 }
 
 async function setCustomUuid() {
   try {
     if (!customUuidInput || !customUuidInput.value.trim()) {
-      showNotification('Please enter a UUID', 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidRequired') : 'Please enter a UUID';
+      showNotification(msg, 'error');
       return;
     }
 
@@ -667,23 +692,30 @@ async function setCustomUuid() {
     
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(uuid)) {
-      showNotification('Invalid UUID format', 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidInvalidFormat') : 'Invalid UUID format';
+      showNotification(msg, 'error');
       return;
     }
 
+    const message = window.i18n ? window.i18n.t('confirm.setCustomUuidMessage') : 'Are you sure you want to set this custom UUID? This will change your player identity.';
+    const title = window.i18n ? window.i18n.t('confirm.setCustomUuidTitle') : 'Set Custom UUID';
+    const confirmBtn = window.i18n ? window.i18n.t('confirm.setCustomUuidButton') : 'Set UUID';
+    const cancelBtn = window.i18n ? window.i18n.t('common.cancel') : 'Cancel';
+
     showCustomConfirm(
-      'Are you sure you want to set this custom UUID? This will change your player identity.',
-      'Set Custom UUID',
+      message,
+      title,
       async () => {
         await performSetCustomUuid(uuid);
       },
       null,
-      'Set UUID',
-      'Cancel'
+      confirmBtn,
+      cancelBtn
     );
   } catch (error) {
     console.error('Error in setCustomUuid:', error);
-    showNotification('Failed to set custom UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidSetFailed') : 'Failed to set custom UUID';
+    showNotification(msg, 'error');
   }
 }
 
@@ -698,7 +730,8 @@ async function setCustomUuid() {
           if (modalCurrentUuid) modalCurrentUuid.value = uuid;
           if (customUuidInput) customUuidInput.value = '';
           
-          showNotification('Custom UUID set successfully!', 'success');
+          const msg = window.i18n ? window.i18n.t('notifications.uuidSetSuccess') : 'Custom UUID set successfully!';
+          showNotification(msg, 'success');
           
           await loadAllUuids();
         } else {
@@ -707,7 +740,8 @@ async function setCustomUuid() {
       }
     } catch (error) {
       console.error('Error setting custom UUID:', error);
-      showNotification(`Failed to set custom UUID: ${error.message}`, 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidSetFailed').replace('{error}', error.message) : `Failed to set custom UUID: ${error.message}`;
+      showNotification(msg, 'error');
     }
   }
 
@@ -715,29 +749,37 @@ window.copyUuid = async function(uuid) {
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(uuid);
-      showNotification('UUID copied to clipboard!', 'success');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidCopied') : 'UUID copied to clipboard!';
+      showNotification(msg, 'success');
     }
   } catch (error) {
     console.error('Error copying UUID:', error);
-    showNotification('Failed to copy UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidCopyFailed') : 'Failed to copy UUID';
+    showNotification(msg, 'error');
   }
 };
 
 window.deleteUuid = async function(username) {
   try {
+    const message = window.i18n ? window.i18n.t('confirm.deleteUuidMessage').replace('{username}', username) : `Are you sure you want to delete the UUID for "${username}"? This action cannot be undone.`;
+    const title = window.i18n ? window.i18n.t('confirm.deleteUuidTitle') : 'Delete UUID';
+    const confirmBtn = window.i18n ? window.i18n.t('confirm.deleteUuidButton') : 'Delete';
+    const cancelBtn = window.i18n ? window.i18n.t('common.cancel') : 'Cancel';
+    
     showCustomConfirm(
-      `Are you sure you want to delete the UUID for "${username}"? This action cannot be undone.`,
-      'Delete UUID',
+      message,
+      title,
       async () => {
         await performDeleteUuid(username);
       },
       null,
-      'Delete',
-      'Cancel'
+      confirmBtn,
+      cancelBtn
     );
   } catch (error) {
     console.error('Error in deleteUuid:', error);
-    showNotification('Failed to delete UUID', 'error');
+    const msg = window.i18n ? window.i18n.t('notifications.uuidDeleteFailed') : 'Failed to delete UUID';
+    showNotification(msg, 'error');
   }
 };
 
@@ -747,7 +789,8 @@ async function performDeleteUuid(username) {
         const result = await window.electronAPI.deleteUuidForUser(username);
         
         if (result.success) {
-          showNotification('UUID deleted successfully!', 'success');
+          const msg = window.i18n ? window.i18n.t('notifications.uuidDeleteSuccess') : 'UUID deleted successfully!';
+          showNotification(msg, 'success');
           await loadAllUuids();
         } else {
           throw new Error(result.error || 'Failed to delete UUID');
@@ -755,7 +798,8 @@ async function performDeleteUuid(username) {
       }
     } catch (error) {
       console.error('Error deleting UUID:', error);
-      showNotification(`Failed to delete UUID: ${error.message}`, 'error');
+      const msg = window.i18n ? window.i18n.t('notifications.uuidDeleteFailed').replace('{error}', error.message) : `Failed to delete UUID: ${error.message}`;
+      showNotification(msg, 'error');
     }
 }
 

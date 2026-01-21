@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadInstallPath: () => ipcRenderer.invoke('load-install-path'),
   saveDiscordRPC: (enabled) => ipcRenderer.invoke('save-discord-rpc', enabled),
   loadDiscordRPC: () => ipcRenderer.invoke('load-discord-rpc'),
+  saveLanguage: (language) => ipcRenderer.invoke('save-language', language),
+  loadLanguage: () => ipcRenderer.invoke('load-language'),
   selectInstallPath: () => ipcRenderer.invoke('select-install-path'),
   browseJavaPath: () => ipcRenderer.invoke('browse-java-path'),
   isGameInstalled: () => ipcRenderer.invoke('is-game-installed'),

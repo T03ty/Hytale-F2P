@@ -366,7 +366,7 @@ function lockPlayButton(locked) {
       if (!playButton.getAttribute('data-original-text')) {
         playButton.setAttribute('data-original-text', spanElement.textContent);
       }
-      spanElement.textContent = 'CHECKING...';
+      spanElement.textContent = window.i18n ? window.i18n.t('play.checking') : 'CHECKING...';
     }
 
     console.log('Play button locked');
@@ -377,9 +377,9 @@ function lockPlayButton(locked) {
     playButton.removeAttribute('data-locked');
 
     const spanElement = playButton.querySelector('span');
-    const originalText = playButton.getAttribute('data-original-text');
-    if (spanElement && originalText) {
-      spanElement.textContent = originalText;
+    if (spanElement) {
+      // Use i18n to get the current translation instead of restoring saved text
+      spanElement.textContent = window.i18n ? window.i18n.t('play.playButton') : 'PLAY HYTALE';
       playButton.removeAttribute('data-original-text');
     }
 
@@ -393,7 +393,8 @@ async function acceptFirstLaunchUpdate() {
   const existingGame = window.firstLaunchExistingGame;
 
   if (!existingGame) {
-    showNotification('Error: Game data not found', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.gameDataNotFound') : 'Error: Game data not found';
+    showNotification(errorMsg, 'error');
     return;
   }
 
@@ -410,7 +411,8 @@ async function acceptFirstLaunchUpdate() {
 
   try {
     showProgress();
-    updateProgress({ message: 'Starting mandatory game update...', percent: 0 });
+    const updateMsg = window.i18n ? window.i18n.t('progress.startingUpdate') : 'Starting mandatory game update...';
+    updateProgress({ message: updateMsg, percent: 0 });
 
     const result = await window.electronAPI.acceptFirstLaunchUpdate(existingGame);
 
@@ -424,10 +426,12 @@ async function acceptFirstLaunchUpdate() {
 
     if (result.success) {
       hideProgress();
-      showNotification('Game updated successfully! 🎉', 'success');
+      const successMsg = window.i18n ? window.i18n.t('notifications.gameUpdatedSuccess') : 'Game updated successfully! 🎉';
+      showNotification(successMsg, 'success');
     } else {
       hideProgress();
-      showNotification(`Update failed: ${result.error}`, 'error');
+      const errorMsg = window.i18n ? window.i18n.t('notifications.updateFailed').replace('{error}', result.error) : `Update failed: ${result.error}`;
+      showNotification(errorMsg, 'error');
     }
   } catch (error) {
     if (modal) {
@@ -435,7 +439,8 @@ async function acceptFirstLaunchUpdate() {
     }
     lockPlayButton(false);
     hideProgress();
-    showNotification(`Update error: ${error.message}`, 'error');
+    const errorMsg = window.i18n ? window.i18n.t('notifications.updateError').replace('{error}', error.message) : `Update error: ${error.message}`;
+    showNotification(errorMsg, 'error');
   }
 }
 

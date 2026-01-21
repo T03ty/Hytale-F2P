@@ -78,6 +78,9 @@ See [BUILD.md](BUILD.md) for comprehensive build instructions.
 
 ## 📋 Changelog
 
+### 🆕 v2.0.ba *(Minor Update: Performance & Utilities)*  
+[TODO] add features list here
+
 ### 🆕 v2.0.2a *(Minor Update)*  
 - 🧑‍🚀 **Profiles System** — Added proper profile management: create, switch, and delete profiles. Each profile now has its own **isolated mod list**.  
 - 🔒 **Mod Isolation** — Fixed ModManager so mods are **strictly scoped to the active profile**. Browsing and installing now only affects the selected profile.  

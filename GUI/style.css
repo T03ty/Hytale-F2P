@@ -4033,6 +4033,17 @@ body {
     cursor: not-allowed;
 }
 
+/* Language selector styling */
+select.settings-input {
+    cursor: pointer;
+}
+
+select.settings-input option {
+    background: #1a1a1a;
+    color: white;
+    padding: 0.5rem;
+}
+
 .settings-button-group {
     margin-bottom: 1rem;
 }

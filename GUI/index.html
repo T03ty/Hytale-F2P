@@ -33,27 +33,27 @@
             <div class="sidebar-nav">
                 <div class="nav-item active" data-page="play">
                     <i class="fas fa-play"></i>
-                    <span class="nav-tooltip">Play</span>
+                    <span class="nav-tooltip" data-i18n="nav.play">Play</span>
                 </div>
                 <div class="nav-item" data-page="mods">
                     <i class="fas fa-box"></i>
-                    <span class="nav-tooltip">Mods</span>
+                    <span class="nav-tooltip" data-i18n="nav.mods">Mods</span>
                 </div>
                 <div class="nav-item" data-page="news">
                     <i class="fas fa-newspaper"></i>
-                    <span class="nav-tooltip">News</span>
+                    <span class="nav-tooltip" data-i18n="nav.news">News</span>
                 </div>
                 <div class="nav-item" data-page="chat">
                     <i class="fas fa-comments"></i>
-                    <span class="nav-tooltip">Players Chat</span>
+                    <span class="nav-tooltip" data-i18n="nav.chat">Players Chat</span>
                 </div>
                 <div class="nav-item" data-page="settings">
                     <i class="fas fa-cog"></i>
-                    <span class="nav-tooltip">Settings</span>
+                    <span class="nav-tooltip" data-i18n="nav.settings">Settings</span>
                 </div>
                 <div class="nav-item" data-page="skins">
                     <i class="fas fa-user"></i>
-                    <span class="nav-tooltip">Skins</span>
+                    <span class="nav-tooltip" data-i18n="nav.skins">Skins</span>
                 </div>
                 <div class="nav-item" data-page="logs" id="openLogsBtn" onclick="openLogs()">
                     <i class="fas fa-terminal"></i>
@@ -68,7 +68,7 @@
             <header class="header">
                 <div id="playersOnlineCounter" class="players-counter">
                     <i class="fas fa-users"></i>
-                    <span class="counter-label">Players:</span>
+                    <span class="counter-label" data-i18n="header.playersLabel">Players:</span>
                     <span id="onlineCount" class="counter-value">0</span>
                 </div>
 
@@ -85,7 +85,7 @@
                         <div class="profile-divider"></div>
                         <div class="profile-action" onclick="openProfileManager()">
                             <i class="fas fa-cog"></i>
-                            <span>Manage Profiles</span>
+                            <span data-i18n="header.manageProfiles">Manage Profiles</span>
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                     HY<span class="title-accent">TALE</span>
                 </h1>
                 <div class="game-tags">
-                    <span class="tag">FREE TO PLAY</span>
+                    <span class="tag" data-i18n="header.f2p">FREE TO PLAY</span>
                 </div>
             </div>
 
@@ -116,27 +116,27 @@
                             <h1 class="install-title">
                                 HYTA<span class="title-accent">LE</span>
                             </h1>
-                            <p class="install-subtitle">FREE TO PLAY LAUNCHER</p>
+                            <p class="install-subtitle" data-i18n="install.title">FREE TO PLAY LAUNCHER</p>
                         </div>
 
                         <div class="install-form">
                             <div class="form-group">
-                                <label class="form-label">Player Name</label>
-                                <input type="text" id="installPlayerName" placeholder="Enter your name"
+                                <label class="form-label" data-i18n="install.playerName">Player Name</label>
+                                <input type="text" id="installPlayerName" data-i18n-placeholder="install.playerNamePlaceholder"
                                     class="form-input" value="Player" />
                             </div>
 
                             <div class="form-group">
                                 <label class="checkbox-group">
                                     <input type="checkbox" id="installCustomCheck" class="custom-checkbox">
-                                    <span class="checkbox-label">Custom Installation</span>
+                                    <span class="checkbox-label" data-i18n="install.customInstallation">Custom Installation</span>
                                 </label>
 
                                 <div id="installCustomOptions" class="custom-options">
                                     <div class="form-subgroup">
-                                        <label class="form-label">Installation Folder</label>
+                                        <label class="form-label" data-i18n="install.installationFolder">Installation Folder</label>
                                         <div class="input-with-button">
-                                            <input type="text" id="installPath" placeholder="Default location"
+                                            <input type="text" id="installPath" data-i18n-placeholder="install.pathPlaceholder"
                                                 class="form-input" readonly />
                                             <button onclick="browseInstallPath()" class="browse-btn">
                                                 <i class="fas fa-folder-open"></i>
@@ -148,7 +148,7 @@
 
                             <button id="installBtn" class="install-button" onclick="installGame()">
                                 <i class="fas fa-download mr-2"></i>
-                                <span id="installText">INSTALL HYTALE</span>
+                                <span id="installText" data-i18n="install.installButton">INSTALL HYTALE</span>
                             </button>
                         </div>
                     </div>
@@ -161,14 +161,14 @@
                                 <div class="play-header">
                                     <h2 class="play-title">
                                         <i class="fas fa-play-circle mr-2"></i>
-                                        READY TO PLAY
+                                        <span data-i18n="play.ready">READY TO PLAY</span>
                                     </h2>
-                                    <p class="play-subtitle">Launch Hytale and enter the adventure</p>
+                                    <p class="play-subtitle" data-i18n="play.subtitle">Launch Hytale and enter the adventure</p>
                                 </div>
 
                                 <button id="homePlayBtn" class="home-play-button" onclick="launch()">
                                     <i class="fas fa-play"></i>
-                                    <span>PLAY HYTALE</span>
+                                    <span data-i18n="play.playButton">PLAY HYTALE</span>
                                 </button>
                             </div>
                         </div>
@@ -177,10 +177,10 @@
                             <div class="news-header">
                                 <h2 class="news-title">
                                     <i class="fas fa-star mr-2"></i>
-                                    LATEST NEWS
+                                    <span data-i18n="play.latestNews">LATEST NEWS</span>
                                 </h2>
                                 <button class="view-all-btn" onclick="navigateToPage('news')">
-                                    VIEW ALL <i class="fas fa-arrow-right ml-1"></i>
+                                    <span data-i18n="play.viewAll">VIEW ALL</span> <i class="fas fa-arrow-right ml-1"></i>
                                 </button>
                             </div>
                             <div id="newsGrid" class="news-grid-horizontal"></div>
@@ -191,12 +191,12 @@
                         <div class="mods-header">
                             <div class="mods-search-container">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="modsSearch" placeholder="Search mods..." class="mods-search" />
+                                <input type="text" id="modsSearch" data-i18n-placeholder="mods.searchPlaceholder" class="mods-search" />
                             </div>
                             <div class="mods-actions">
                                 <button id="myModsBtn" class="mods-btn-primary">
                                     <i class="fas fa-box"></i>
-                                    MY MODS
+                                    <span data-i18n="mods.myMods">MY MODS</span>
                                 </button>
                             </div>
                         </div>
@@ -207,13 +207,13 @@
                         <div class="mods-pagination">
                             <button id="prevPage" class="pagination-btn">
                                 <i class="fas fa-chevron-left"></i>
-                                PREVIOUS
+                                <span data-i18n="mods.previous">PREVIOUS</span>
                             </button>
                             <span class="pagination-info">
-                                Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                                <span data-i18n="mods.page">Page</span> <span id="currentPage">1</span> <span data-i18n="mods.of">of</span> <span id="totalPages">1</span>
                             </span>
                             <button id="nextPage" class="pagination-btn">
-                                NEXT
+                                <span data-i18n="mods.next">NEXT</span>
                                 <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
@@ -223,7 +223,7 @@
                         <div class="news-header">
                             <h2 class="news-title">
                                 <i class="fas fa-newspaper mr-2"></i>
-                                ALL NEWS
+                                <span data-i18n="news.title">ALL NEWS</span>
                             </h2>
                         </div>
                         <div id="allNewsGrid" class="news-grid-full"></div>
@@ -234,16 +234,16 @@
                             <div class="chat-header">
                                 <h2 class="chat-title">
                                     <i class="fas fa-comments mr-2"></i>
-                                    PLAYERS CHAT
+                                    <span data-i18n="chat.title">PLAYERS CHAT</span>
                                 </h2>
                                 <div class="chat-header-actions">
                                     <button id="chatColorBtn" class="chat-color-btn">
                                         <i class="fas fa-palette"></i>
-                                        <span>Color</span>
+                                        <span data-i18n="chat.pickColor">Color</span>
                                     </button>
                                     <div class="chat-online-badge">
                                         <i class="fas fa-circle"></i>
-                                        <span id="chatOnlineCount">0</span> online
+                                        <span id="chatOnlineCount">0</span> <span data-i18n="chat.online">online</span>
                                     </div>
                                 </div>
                             </div>
@@ -256,7 +256,7 @@
                             <div class="chat-footer">
                                 <div class="chat-input-container">
                                     <textarea id="chatInput" class="chat-input"
-                                        placeholder="Type your message... (Links are automatically censored)" rows="1"
+                                        data-i18n-placeholder="chat.inputPlaceholder" rows="1"
                                         maxlength="500"></textarea>
                                     <button id="chatSendBtn" class="chat-send-btn">
                                         <i class="fas fa-paper-plane"></i>
@@ -266,7 +266,7 @@
                                     <span class="chat-char-counter" id="chatCharCounter">0/500</span>
                                     <span class="chat-warning-text">
                                         <i class="fas fa-shield-alt"></i>
-                                        Secure chat - Links are censored
+                                        <span data-i18n="chat.secureChat">Secure chat - Links are censored</span>
                                     </span>
                                 </div>
                             </div>
@@ -278,26 +278,25 @@
                             <div class="settings-header">
                                 <h2 class="settings-title">
                                     <i class="fas fa-cog mr-2"></i>
-                                    SETTINGS
+                                    <span data-i18n="settings.title">SETTINGS</span>
                                 </h2>
                             </div>
 
                             <div class="settings-content">
-
                                 <div class="settings-section">
                                     <h3 class="settings-section-title">
                                         <i class="fas fa-gamepad"></i>
-                                        Game Options
+                                        <span data-i18n="settings.game">Game Options</span>
                                     </h3>
 
                                     <div class="settings-option">
                                         <div class="settings-input-group">
-                                            <label class="settings-input-label">Player Name</label>
+                                            <label class="settings-input-label" data-i18n="settings.playerName">Player Name</label>
                                             <input type="text" id="settingsPlayerName" class="settings-input"
-                                                placeholder="Enter your player name" maxlength="16" />
+                                                data-i18n-placeholder="settings.playerNamePlaceholder" maxlength="16" />
                                             <p class="settings-hint">
                                                 <i class="fas fa-user"></i>
-                                                This name will be used in-game (1-16 characters)
+                                                <span data-i18n="settings.playerNameHint">This name will be used in-game (1-16 characters)</span>
                                             </p>
                                         </div>
                                     </div>
@@ -308,8 +307,8 @@
                                                 onclick="openGameLocation()">
                                                 <i class="fas fa-folder-open"></i>
                                                 <div class="btn-content">
-                                                    <div class="btn-title">Open Game Location</div>
-                                                    <div class="btn-description">Open the game installation folder</div>
+                                                    <div class="btn-title" data-i18n="settings.openGameLocation">Open Game Location</div>
+                                                    <div class="btn-description" data-i18n="settings.openGameLocationDesc">Open the game installation folder</div>
                                                 </div>
                                             </button>
                                         </div>
@@ -321,8 +320,8 @@
                                                 onclick="repairGame()">
                                                 <i class="fas fa-tools"></i>
                                                 <div class="btn-content">
-                                                    <div class="btn-title">Repair Game</div>
-                                                    <div class="btn-description">Reinstall game files (preserves data)
+                                                    <div class="btn-title" data-i18n="settings.repairGame">Repair Game</div>
+                                                    <div class="btn-description" data-i18n="settings.reinstallGame">Reinstall game files (preserves data)
                                                     </div>
                                                 </div>
                                             </button>
@@ -330,21 +329,18 @@
 
 
                                         <div class="settings-input-group">
-                                            <label class="settings-input-label">GPU Preference</label>
+                                            <label class="settings-input-label" data-i18n="settings.gpuPreference">GPU Preference</label>
                                             <div class="segmented-control">
-                                                <input type="radio" id="gpu-auto" name="gpuPreference" value="auto"
-                                                    checked>
-                                                <label for="gpu-auto">Auto</label>
-                                                <input type="radio" id="gpu-integrated" name="gpuPreference"
-                                                    value="integrated">
-                                                <label for="gpu-integrated">Integrated</label>
-                                                <input type="radio" id="gpu-dedicated" name="gpuPreference"
-                                                    value="dedicated">
-                                                <label for="gpu-dedicated">Dedicated</label>
+                                                <input type="radio" id="gpu-auto" name="gpuPreference" value="auto" checked>
+                                                <label for="gpu-auto" data-i18n="settings.gpuAuto">Auto</label>
+                                                <input type="radio" id="gpu-integrated" name="gpuPreference" value="integrated">
+                                                <label for="gpu-integrated" data-i18n="settings.gpuIntegrated">Integrated</label>
+                                                <input type="radio" id="gpu-dedicated" name="gpuPreference" value="dedicated">
+                                                <label for="gpu-dedicated" data-i18n="settings.gpuDedicated">Dedicated</label>
                                             </div>
                                             <p class="settings-hint">
                                                 <i class="fas fa-info-circle"></i>
-                                                Select your preferred GPU (Linux: affects DRI_PRIME)
+                                                <span data-i18n="settings.gpuHint">Select your preferred GPU (Linux: affects DRI_PRIME)</span>
                                             </p>
                                             <div id="gpu-detection-info" class="gpu-detection-info"></div>
                                         </div>
@@ -354,15 +350,15 @@
                                 <div class="settings-section">
                                     <h3 class="settings-section-title">
                                         <i class="fas fa-fingerprint"></i>
-                                        Player UUID Management
+                                        <span data-i18n="settings.account">Player UUID Management</span>
                                     </h3>
 
                                     <div class="settings-option">
                                         <div class="settings-input-group">
-                                            <label class="settings-input-label">Current UUID</label>
+                                            <label class="settings-input-label" data-i18n="settings.currentUUID">Current UUID</label>
                                             <div class="uuid-display-container">
                                                 <input type="text" id="currentUuid" class="settings-input uuid-input"
-                                                    readonly placeholder="Loading UUID..." />
+                                                    readonly data-i18n-placeholder="settings.uuidPlaceholder" />
                                                 <button id="copyUuidBtn" class="uuid-btn copy-btn" title="Copy UUID">
                                                     <i class="fas fa-copy"></i>
                                                 </button>
@@ -373,7 +369,7 @@
                                             </div>
                                             <p class="settings-hint">
                                                 <i class="fas fa-info-circle"></i>
-                                                Your unique player identifier for this username
+                                                <span data-i18n="settings.uuidHint">Your unique player identifier for this username</span>
                                             </p>
                                         </div>
                                     </div>
@@ -383,9 +379,8 @@
                                             <button id="manageUuidsBtn" class="settings-action-btn">
                                                 <i class="fas fa-list"></i>
                                                 <div class="btn-content">
-                                                    <div class="btn-title">Manage All UUIDs</div>
-                                                    <div class="btn-description">View and manage all player UUIDs
-                                                    </div>
+                                                    <div class="btn-title" data-i18n="settings.manageUUIDs">Manage All UUIDs</div>
+                                                    <div class="btn-description" data-i18n="settings.manageUUIDsDesc">View and manage all player UUIDs</div>
                                                 </div>
                                             </button>
                                         </div>
@@ -395,7 +390,7 @@
                                 <div class="settings-section">
                                     <h3 class="settings-section-title">
                                         <i class="fab fa-discord"></i>
-                                        Discord Integration
+                                        <span data-i18n="settings.discord">Discord Integration</span>
                                     </h3>
 
                                     <div class="settings-option">
@@ -403,8 +398,8 @@
                                             <input type="checkbox" id="discordRPCCheck" checked />
                                             <span class="checkmark"></span>
                                             <div class="checkbox-content">
-                                                <div class="checkbox-title">Enable Discord Rich Presence</div>
-                                                <div class="checkbox-description">Show your launcher activity on Discord
+                                                <div class="checkbox-title" data-i18n="settings.enableRPC">Enable Discord Rich Presence</div>
+                                                <div class="checkbox-description" data-i18n="settings.discordDescription">Show your launcher activity on Discord
                                                 </div>
                                             </div>
                                         </label>
@@ -414,7 +409,7 @@
                                 <div class="settings-section">
                                     <h3 class="settings-section-title">
                                         <i class="fas fa-coffee"></i>
-                                        Java Runtime
+                                        <span data-i18n="settings.java">Java Runtime</span>
                                     </h3>
 
                                     <div class="settings-option">
@@ -422,8 +417,8 @@
                                             <input type="checkbox" id="customJavaCheck" />
                                             <span class="checkmark"></span>
                                             <div class="checkbox-content">
-                                                <div class="checkbox-title">Use Custom Java Path</div>
-                                                <div class="checkbox-description">Override the bundled Java runtime with
+                                                <div class="checkbox-title" data-i18n="settings.useCustomJava">Use Custom Java Path</div>
+                                                <div class="checkbox-description" data-i18n="settings.javaDescription">Override the bundled Java runtime with
                                                     your own installation</div>
                                             </div>
                                         </label>
@@ -431,23 +426,38 @@
 
                                     <div id="customJavaOptions" class="custom-java-options" style="display: none;">
                                         <div class="settings-input-group">
-                                            <label class="settings-input-label">Java Executable Path</label>
+                                            <label class="settings-input-label" data-i18n="settings.javaPath">Java Executable Path</label>
                                             <div class="settings-input-with-button">
                                                 <input type="text" id="customJavaPath" class="settings-input"
-                                                    placeholder="Select Java path..." readonly />
+                                                    data-i18n-placeholder="settings.javaPathPlaceholder" readonly />
                                                 <button id="browseJavaBtn" class="settings-browse-btn">
                                                     <i class="fas fa-folder-open"></i>
-                                                    Browse
+                                                    <span data-i18n="settings.javaBrowse">Browse</span>
                                                 </button>
                                             </div>
                                             <p class="settings-hint">
                                                 <i class="fas fa-info-circle"></i>
-                                                Select the Java installation folder (supports Windows, Mac, Linux)
+                                                <span data-i18n="settings.javaHint">Select the Java installation folder (supports Windows, Mac, Linux)</span>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 
+                                <div class="settings-section">
+                                    <h3 class="settings-section-title">
+                                        <i class="fas fa-language"></i>
+                                        <span data-i18n="settings.language">Language</span>
+                                    </h3>
+
+                                    <div class="settings-option">
+                                        <div class="settings-input-group">
+                                            <label class="settings-input-label" data-i18n="settings.selectLanguage">Select Language</label>
+                                            <select id="languageSelect" class="settings-input">
+                                                <!-- Options populated by i18n.js -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -455,8 +465,8 @@
                     <div id="skins-page" class="page">
                         <div class="placeholder-content">
                             <i class="fas fa-user text-6xl mb-4 text-purple-500"></i>
-                            <h2>Skins</h2>
-                            <p>Skin customization coming soon...</p>
+                            <h2 data-i18n="skins.title">Skins</h2>
+                            <p data-i18n="skins.comingSoon">Skin customization coming soon...</p>
                         </div>
                     </div>
 
@@ -465,22 +475,22 @@
                             <div class="logs-header">
                                 <h2 class="logs-title">
                                     <i class="fas fa-terminal"></i>
-                                    SYSTEM LOGS
+                                    <span data-i18n="settings.logs">SYSTEM LOGS</span>
                                 </h2>
                                 <div class="logs-actions">
                                     <button class="logs-action-btn" onclick="copyLogs()">
-                                        <i class="fas fa-copy"></i> Copy
+                                        <i class="fas fa-copy"></i> <span data-i18n="settings.logsCopy">Copy</span>
                                     </button>
                                     <button class="logs-action-btn" onclick="refreshLogs()">
-                                        <i class="fas fa-sync-alt"></i> Refresh
+                                        <i class="fas fa-sync-alt"></i> <span data-i18n="settings.logsRefresh">Refresh</span>
                                     </button>
                                     <button class="logs-action-btn" onclick="openLogsFolder()">
-                                        <i class="fas fa-folder-open"></i> Open Folder
+                                        <i class="fas fa-folder-open"></i> <span data-i18n="settings.logsFolder">Open Folder</span>
                                     </button>
                                 </div>
                             </div>
                             <div id="logsTerminal" class="logs-terminal">
-                                <div class="text-gray-500 text-center mt-10">Loading logs...</div>
+                                <div class="text-gray-500 text-center mt-10" data-i18n="settings.logsLoading">Loading logs...</div>
                             </div>
                         </div>
                     </div>
@@ -493,7 +503,7 @@
             <div class="mods-modal-header">
                 <h2 class="mods-modal-title">
                     <i class="fas fa-box mr-2"></i>
-                    MY MODS
+                    <span data-i18n="mods.modalTitle">MY MODS</span>
                 </h2>
                 <button id="closeMyModsModal" class="mods-modal-close">
                     <i class="fas fa-times"></i>
@@ -509,7 +519,7 @@
     <div id="progressOverlay" class="progress-overlay" style="display: none;">
         <div class="progress-content">
             <div class="progress-info">
-                <span id="progressText">Initializing...</span>
+                <span id="progressText" data-i18n="progress.initializing">Initializing...</span>
                 <span id="progressPercent">0%</span>
             </div>
             <div class="progress-bar-container">
@@ -527,29 +537,29 @@
             <div class="chat-username-modal-header">
                 <h2 class="chat-username-modal-title">
                     <i class="fas fa-comments mr-2"></i>
-                    Join Chat
+                    <span data-i18n="chat.joinChat">Join Chat</span>
                 </h2>
             </div>
             <div class="chat-username-modal-body">
-                <p class="chat-username-modal-description">
+                <p class="chat-username-modal-description" data-i18n="chat.chooseUsername">
                     Choose a username to join the Players Chat
                 </p>
                 <div class="chat-username-input-group">
-                    <label for="chatUsernameInput" class="chat-username-label">Username</label>
+                    <label for="chatUsernameInput" class="chat-username-label" data-i18n="chat.username">Username</label>
                     <input type="text" id="chatUsernameInput" class="chat-username-input"
-                        placeholder="Enter your username..." maxlength="20" autocomplete="off" />
-                    <span class="chat-username-hint">3-20 characters, letters, numbers, - and _ only</span>
+                        data-i18n-placeholder="chat.usernamePlaceholder" maxlength="20" autocomplete="off" />
+                    <span class="chat-username-hint" data-i18n="chat.usernameHint">3-20 characters, letters, numbers, - and _ only</span>
                     <span id="chatUsernameError" class="chat-username-error"></span>
                 </div>
             </div>
             <div class="chat-username-modal-footer">
                 <button id="chatUsernameCancel" class="chat-username-btn-cancel">
                     <i class="fas fa-times"></i>
-                    Cancel
+                    <span data-i18n="common.cancel">Cancel</span>
                 </button>
                 <button id="chatUsernameSubmit" class="chat-username-btn-submit">
                     <i class="fas fa-check"></i>
-                    Join Chat
+                    <span data-i18n="chat.joinButton">Join Chat</span>
                 </button>
             </div>
         </div>
@@ -561,7 +571,7 @@
             <div class="uuid-modal-header">
                 <h2 class="uuid-modal-title">
                     <i class="fas fa-fingerprint mr-2"></i>
-                    UUID Management
+                    <span data-i18n="uuid.modalTitle">UUID Management</span>
                 </h2>
                 <button id="uuidModalClose" class="modal-close-btn">
                     <i class="fas fa-times"></i>
@@ -570,7 +580,7 @@
 
             <div class="uuid-modal-body">
                 <div class="uuid-current-section">
-                    <h3 class="uuid-section-title">Current User UUID</h3>
+                    <h3 class="uuid-section-title" data-i18n="uuid.currentUserUUID">Current User UUID</h3>
                     <div class="uuid-current-display">
                         <input type="text" id="modalCurrentUuid" class="uuid-display-input" readonly />
                         <button id="modalCopyUuidBtn" class="uuid-action-btn copy-btn" title="Copy UUID">
@@ -585,34 +595,34 @@
 
                 <div class="uuid-list-section">
                     <div class="uuid-list-header">
-                        <h3 class="uuid-section-title">All Player UUIDs</h3>
+                        <h3 class="uuid-section-title" data-i18n="uuid.allPlayerUUIDs">All Player UUIDs</h3>
                         <button id="generateNewUuidBtn" class="uuid-generate-btn">
                             <i class="fas fa-plus"></i>
-                            Generate New UUID
+                            <span data-i18n="uuid.generateNew">Generate New UUID</span>
                         </button>
                     </div>
                     <div id="uuidList" class="uuid-list">
                         <div class="uuid-loading">
                             <i class="fas fa-spinner fa-spin"></i>
-                            Loading UUIDs...
+                            <span data-i18n="uuid.loadingUUIDs">Loading UUIDs...</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="uuid-custom-section">
-                    <h3 class="uuid-section-title">Set Custom UUID</h3>
+                    <h3 class="uuid-section-title" data-i18n="uuid.setCustomUUID">Set Custom UUID</h3>
                     <div class="uuid-custom-form">
                         <input type="text" id="customUuidInput" class="uuid-input"
-                            placeholder="Enter custom UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"
+                            data-i18n-placeholder="uuid.customPlaceholder"
                             maxlength="36" />
                         <button id="setCustomUuidBtn" class="uuid-set-btn">
                             <i class="fas fa-check"></i>
-                            Set UUID
+                            <span data-i18n="uuid.setUUID">Set UUID</span>
                         </button>
                     </div>
                     <p class="uuid-custom-hint">
                         <i class="fas fa-exclamation-triangle"></i>
-                        Warning: Setting a custom UUID will change your current player identity
+                        <span data-i18n="uuid.warning">Warning: Setting a custom UUID will change your current player identity</span>
                     </p>
                 </div>
             </div>
@@ -625,7 +635,7 @@
             <div class="profile-modal-header">
                 <h2 class="profile-modal-title">
                     <i class="fas fa-users-cog mr-2"></i>
-                    Manage Profiles
+                    <span data-i18n="profiles.modalTitle">Manage Profiles</span>
                 </h2>
                 <button class="modal-close-btn" onclick="closeProfileManager()">
                     <i class="fas fa-times"></i>
@@ -636,10 +646,10 @@
                     <!-- Populated by JS -->
                 </div>
                 <div class="profile-create-section">
-                    <input type="text" id="newProfileName" placeholder="New Profile Name" class="profile-input"
+                    <input type="text" id="newProfileName" data-i18n-placeholder="profiles.newProfilePlaceholder" class="profile-input"
                         maxlength="20">
                     <button class="profile-create-btn" onclick="createNewProfile()">
-                        <i class="fas fa-plus"></i> Create Profile
+                        <i class="fas fa-plus"></i> <span data-i18n="profiles.createProfile">Create Profile</span>
                     </button>
                 </div>
             </div>
@@ -674,10 +684,10 @@
     <div id="discordNotification" class="discord-notification">
         <div class="notification-content">
             <i class="fab fa-discord"></i>
-            <span class="notification-text">Join our Discord community!</span>
+            <span class="notification-text" data-i18n="discord.notificationText">Join our Discord community!</span>
             <button class="notification-action"
                 onclick="window.electronAPI?.openExternal('https://discord.gg/n6HZ7NwSQd')">
-                Join Discord
+                <span data-i18n="discord.joinButton">Join Discord</span>
             </button>
         </div>
         <button class="notification-close" onclick="closeDiscordNotification()">
@@ -691,7 +701,7 @@
             <div class="chat-color-modal-header">
                 <h3 class="chat-color-modal-title">
                     <i class="fas fa-palette"></i>
-                    Customize Username Color
+                    <span data-i18n="chat.colorModal.title">Customize Username Color</span>
                 </h3>
                 <button class="modal-close-btn" onclick="closeChatColorModal()">
                     <i class="fas fa-times"></i>
@@ -699,7 +709,7 @@
             </div>
             <div class="chat-color-modal-body">
                 <div id="solidColorSection" class="color-section">
-                    <h4>Choose a solid color:</h4>
+                    <h4 data-i18n="chat.colorModal.chooseSolid">Choose a solid color:</h4>
                     <div class="predefined-colors">
                         <div class="color-option" data-color="#3498db" style="background: #3498db;"></div>
                         <div class="color-option" data-color="#e74c3c" style="background: #e74c3c;"></div>
@@ -711,23 +721,24 @@
                         <div class="color-option" data-color="#ff5722" style="background: #ff5722;"></div>
                     </div>
                     <div class="custom-color-input">
-                        <label for="customColor">Custom color:</label>
+                        <label for="customColor" data-i18n="chat.colorModal.customColor">Custom color:</label>
                         <input type="color" id="customColor" value="#3498db">
                     </div>
                 </div>
 
                 <div class="color-preview">
-                    <h4>Preview:</h4>
-                    <div id="colorPreview" class="preview-username">YourUsername</div>
+                    <h4 data-i18n="chat.colorModal.preview">Preview:</h4>
+                    <div id="colorPreview" class="preview-username" data-i18n="chat.colorModal.previewUsername">YourUsername</div>
                 </div>
             </div>
             <div class="chat-color-modal-footer">
-                <button class="btn-secondary" onclick="closeChatColorModal()">Cancel</button>
-                <button class="btn-primary" onclick="applyChatColor()">Apply Color</button>
+                <button class="btn-secondary" onclick="closeChatColorModal()"><span data-i18n="common.cancel">Cancel</span></button>
+                <button class="btn-primary" onclick="applyChatColor()"><span data-i18n="chat.colorModal.apply">Apply Color</span></button>
             </div>
         </div>
     </div>
 
+    <script src="js/i18n.js"></script>
     <script type="module" src="js/update.js"></script>
 </body>
 
