@@ -57,7 +57,7 @@
   "build": {
     "appId": "com.hytalef2p.launcher",
     "productName": "Hytale F2P Launcher",
-    "executableName": "hytale-f2p-launcherv2",
+    "executableName": "hytale-f2p-launcher",
     "directories": {
       "output": "dist"
     },
