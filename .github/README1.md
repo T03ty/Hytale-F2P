@@ -22,13 +22,25 @@ All builds run in parallel:
 
 ### Creating a Release
 
-1. Update version in `package.json`
+**⚠️ IMPORTANT: Semantic Versioning Required**
+
+This project uses **strict semantic versioning with numerical versions only**:
+- ✅ **Valid**: `2.0.1`, `2.0.11`, `2.1.0`, `3.0.0`
+- ❌ **Invalid**: `2.0.2b`, `2.0.2a`, `2.0.1-beta`
+
+**Format**: `MAJOR.MINOR.PATCH` (e.g., `2.0.11`)
+
+The auto-update system requires semantic versioning for proper version comparison. Letter suffixes are not supported.
+
+**Steps:**
+
+1. Update version in `package.json` (use numerical format only, e.g., `2.0.11`)
 2. Commit and push to `main`
 3. Create and push a version tag:
 
 ```bash
-git tag v2.0.1
-git push origin v2.0.1
+git tag v2.0.11
+git push origin v2.0.11
 ```
 
 The workflow will:

@@ -4571,6 +4571,27 @@ select.settings-input option {
         0 0 0 1px rgba(255, 255, 255, 0.05) !important;
 }
 
+.update-download-btn-secondary {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.update-download-btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-1px) !important;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.update-download-btn-secondary:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
 
 .update-popup-footer {
     text-align: center !important;

@@ -76,6 +76,25 @@ See [BUILD.md](BUILD.md) for comprehensive build instructions.
 
 ---
 
+## 📌 Versioning Policy
+
+**⚠️ Important: Semantic Versioning Required**
+
+This project follows **strict semantic versioning** with **numerical versions only**:
+
+- ✅ **Valid**: `2.0.1`, `2.0.11`, `2.1.0`, `3.0.0`
+- ❌ **Invalid**: `2.0.2b`, `2.0.2a`, `2.0.1-beta`, `v2.0.2b`
+
+**Format**: `MAJOR.MINOR.PATCH` (e.g., `2.0.11`)
+
+- **MAJOR**: Breaking changes
+- **MINOR**: New features (backward compatible)
+- **PATCH**: Bug fixes (backward compatible)
+
+**Why?** The auto-update system requires semantic versioning for proper version comparison. Letter suffixes (like `2.0.2b`) are not supported and will cause update detection issues.
+
+---
+
 ## 📋 Changelog
 
 ### 🆕 v2.0.2b *(Minor Update: Performance & Utilities)*  

@@ -1,6 +1,6 @@
 {
   "name": "hytale-f2p-launcher",
-  "version": "2.0.2b",
+  "version": "2.0.11",
   "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support",
   "homepage": "https://github.com/amiayweb/Hytale-F2P",
   "main": "main.js",
@@ -49,6 +49,7 @@
     "axios": "^1.6.0",
     "discord-rpc": "^4.0.1",
     "dotenv": "^17.2.3",
+    "electron-updater": "^6.7.3",
     "tar": "^6.2.1",
     "uuid": "^9.0.1"
   },
@@ -77,12 +78,6 @@
           "arch": [
             "x64",
             "arm64"
-          ]
-        },
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
           ]
         }
       ],
@@ -145,6 +140,11 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "amiayweb",
+      "repo": "Hytale-F2P"
     }
   }
 }
