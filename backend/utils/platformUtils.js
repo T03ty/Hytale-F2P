@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+const fs = require('fs');
 
 function getOS() {
   if (process.platform === 'win32') return 'windows';
@@ -217,12 +218,17 @@ function setupGpuEnvironment(gpuPreference) {
   const envVars = {};
 
   if (finalPreference === 'dedicated') {
-    envVars.DRI_PRIME = '1';
     if (detected.vendor === 'nvidia') {
       envVars.__NV_PRIME_RENDER_OFFLOAD = '1';
       envVars.__GLX_VENDOR_LIBRARY_NAME = 'nvidia';
-      envVars.__GL_SHADER_DISK_CACHE = '1';
-      envVars.__GL_SHADER_DISK_CACHE_PATH = '/tmp';
+      const nvidiaEglFile = '/usr/share/glvnd/egl_vendor.d/10_nvidia.json';
+      if (fs.existsSync(nvidiaEglFile)) {
+        envVars.__EGL_VENDOR_LIBRARY_FILENAMES = nvidiaEglFile;
+      } else {
+        console.warn('NVIDIA EGL vendor library file not found, not setting __EGL_VENDOR_LIBRARY_FILENAMES');
+      }
+    } else {
+      envVars.DRI_PRIME = '1';
     }
     console.log('GPU environment variables:', envVars);
   } else {
