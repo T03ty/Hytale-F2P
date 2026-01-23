@@ -33,10 +33,11 @@ jobs:
           name: linux-builds
           path: |
             dist/*.AppImage
+            dist/*.AppImage.blockmap
             dist/*.deb
             dist/*.rpm
             dist/*.pacman
-            dist/latest.yml
+            dist/latest-linux.yml
 
   build-windows:
     runs-on: windows-latest
@@ -53,6 +54,7 @@ jobs:
           name: windows-builds
           path: |
             dist/*.exe
+            dist/*.exe.blockmap
             dist/latest.yml
 
   build-macos:
