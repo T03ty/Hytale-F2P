@@ -4,7 +4,6 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const fs = require('fs');
 const { launchGame, launchGameWithVersionCheck, installGame, saveUsername, loadUsername, saveChatUsername, loadChatUsername, saveChatColor, loadChatColor, saveJavaPath, loadJavaPath, saveInstallPath, loadInstallPath, saveDiscordRPC, loadDiscordRPC, saveLanguage, loadLanguage, saveCloseLauncherOnStart, loadCloseLauncherOnStart, isGameInstalled, uninstallGame, repairGame, getHytaleNews, handleFirstLaunchCheck, proposeGameUpdate, markAsLaunched } = require('./backend/launcher');
 
-const UpdateManager = require('./backend/updateManager');
 const logger = require('./backend/logger');
 const profileManager = require('./backend/managers/profileManager');
 
@@ -26,7 +25,6 @@ if (!gotTheLock) {
 }
 
 let mainWindow;
-let updateManager;
 let discordRPC = null;
 
 // Discord Rich Presence setup
@@ -162,13 +160,7 @@ function createWindow() {
   // Initialize Discord Rich Presence
   initDiscordRPC();
 
-  updateManager = new UpdateManager();
-  setTimeout(async () => {
-    const updateInfo = await updateManager.checkForUpdates();
-    if (updateInfo.updateAvailable) {
-      mainWindow.webContents.send('show-update-popup', updateInfo);
-    }
-  }, 3000);
+  // Auto-updates handled by electron-updater
 
   mainWindow.webContents.on('devtools-opened', () => {
     mainWindow.webContents.closeDevTools();
@@ -825,34 +817,14 @@ ipcMain.handle('copy-mod-file', async (event, sourcePath, modsPath) => {
   }
 });
 
-ipcMain.handle('check-for-updates', async () => {
-  try {
-    return await updateManager.checkForUpdates();
-  } catch (error) {
-    console.error('Error checking for updates:', error);
-    return { updateAvailable: false, error: error.message };
-  }
-});
+// Auto-updates handled by electron-updater
+// ipcMain.handle('check-for-updates', ...) - removed
 
-ipcMain.handle('open-download-page', async () => {
-  try {
-    await shell.openExternal(updateManager.getDownloadUrl());
+// Auto-updates handled by electron-updater
+// ipcMain.handle('open-download-page', ...) - removed
 
-    setTimeout(() => {
-      app.quit();
-    }, 1000);
-
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error opening download page:', error);
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('get-update-info', async () => {
-  return updateManager.getUpdateInfo();
-});
+// Auto-updates handled by electron-updater
+// ipcMain.handle('get-update-info', ...) - removed
 
 ipcMain.handle('get-gpu-info', () => {
   try {
