@@ -19,36 +19,36 @@ class UserDataBackup {
     // c'est une ancienne installation, on cherche dans installPath/HytaleF2P/release
     if (!hasVersionConfig) {
       const oldPath = path.join(installPath, 'HytaleF2P', 'release', 'package', 'game', 'latest', 'Client', 'UserData');
-      console.log(`[UserDataBackup] Pas de version_client/version_branch détecté, recherche ancienne installation dans: ${oldPath}`);
+      console.log(`[UserDataBackup] No version_client/version_branch detected, searching old installation in: ${oldPath}`);
       
       if (fs.existsSync(oldPath)) {
         userDataPath = oldPath;
-        console.log(`[UserDataBackup] ✓ Ancienne installation trouvée ! UserData existe dans l'ancien emplacement`);
+        console.log(`[UserDataBackup] ✓ Old installation found! UserData exists in old location`);
       } else {
-        console.log(`[UserDataBackup] ✗ Aucune ancienne installation trouvée dans ${oldPath}`);
+        console.log(`[UserDataBackup] ✗ No old installation found in ${oldPath}`);
         userDataPath = path.join(installPath, branch, 'package', 'game', 'latest', 'Client', 'UserData');
       }
     } else {
       // Si on a version_client/version_branch, on cherche dans installPath/HytaleF2P/<branch>
       userDataPath = path.join(installPath, branch, 'package', 'game', 'latest', 'Client', 'UserData');
-      console.log(`[UserDataBackup] Version configurée, recherche dans: ${userDataPath}`);
+      console.log(`[UserDataBackup] Version configured, searching in: ${userDataPath}`);
     }
     
     if (!fs.existsSync(userDataPath)) {
-      console.log(`[UserDataBackup] ✗ Aucun UserData trouvé à ${userDataPath}, backup ignoré`);
+      console.log(`[UserDataBackup] ✗ No UserData found at ${userDataPath}, backup skipped`);
       return null;
     }
 
-    console.log(`[UserDataBackup] ✓ UserData trouvé à ${userDataPath}`);
+    console.log(`[UserDataBackup] ✓ UserData found at ${userDataPath}`);
     const backupPath = path.join(installPath, `UserData_backup_${branch}_${Date.now()}`);
     
     try {
-      console.log(`[UserDataBackup] Copie de ${userDataPath} vers ${backupPath}...`);
+      console.log(`[UserDataBackup] Copying from ${userDataPath} to ${backupPath}...`);
       await fs.copy(userDataPath, backupPath, {
         overwrite: true,
         errorOnExist: false
       });
-      console.log('[UserDataBackup] ✓ Backup complété avec succès');
+      console.log('[UserDataBackup] ✓ Backup completed successfully');
       return backupPath;
     } catch (error) {
       console.error('[UserDataBackup] ✗ Erreur lors du backup:', error);

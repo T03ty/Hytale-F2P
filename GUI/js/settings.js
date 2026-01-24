@@ -152,9 +152,9 @@ function showCustomConfirm(message, title, onConfirm, onCancel = null, confirmTe
 }
 
 
-export function initSettings() {
+export async function initSettings() {
   setupSettingsElements();
-  loadAllSettings();
+  await loadAllSettings();
 }
 
 function setupSettingsElements() {
@@ -953,14 +953,7 @@ async function switchBranch(newBranch) {
       playButton.classList.add('disabled');
     }
 
-    // Save new branch
-    await window.electronAPI.saveVersionBranch(newBranch);
-
-    const switchedMsg = window.i18n ?
-      window.i18n.t('settings.branchSwitched').replace('{branch}', newBranch) :
-      `Switched to ${newBranch} successfully!`;
-    
-    showNotification(switchedMsg, 'success');
+    // DON'T save branch yet - wait for installation confirmation
 
     // Suggest reinstalling
     setTimeout(() => {
@@ -986,11 +979,23 @@ async function switchBranch(newBranch) {
             const result = await window.electronAPI.installGame(playerName || 'Player', '', '', newBranch);
             
             if (result.success) {
+              // Save branch ONLY after successful installation
+              await window.electronAPI.saveVersionBranch(newBranch);
+              
+              const switchedMsg = window.i18n ?
+                window.i18n.t('settings.branchSwitched').replace('{branch}', newBranch) :
+                `Switched to ${newBranch} successfully!`;
+              
               const successMsg = window.i18n ? 
                 window.i18n.t('progress.installationComplete') : 
                 'Installation completed successfully!';
               
+              showNotification(switchedMsg, 'success');
               showNotification(successMsg, 'success');
+              
+              // Refresh radio buttons to reflect the new branch
+              await loadVersionBranch();
+              console.log('[Settings] Radio buttons updated after branch switch');
               
               setTimeout(() => {
                 if (window.LauncherUI) {
@@ -1018,6 +1023,14 @@ async function switchBranch(newBranch) {
             if (window.LauncherUI) {
               window.LauncherUI.hideProgress();
             }
+            
+            // Revert radio selection to old branch
+            loadVersionBranch().then(oldBranch => {
+              const radioToCheck = document.querySelector(`input[name="gameBranch"][value="${oldBranch}"]`);
+              if (radioToCheck) {
+                radioToCheck.checked = true;
+              }
+            });
             
             // Unlock play button
             const playButton = document.getElementById('playButton');
@@ -1058,15 +1071,21 @@ async function loadVersionBranch() {
   try {
     if (window.electronAPI && window.electronAPI.loadVersionBranch) {
       const branch = await window.electronAPI.loadVersionBranch();
+      console.log('[Settings] Loaded version_branch from config:', branch);
+      
+      // Use default if branch is null/undefined
+      const selectedBranch = branch || 'release';
+      console.log('[Settings] Selected branch:', selectedBranch);
       
       // Update radio buttons
       if (gameBranchRadios) {
         gameBranchRadios.forEach(radio => {
-          radio.checked = radio.value === branch;
+          radio.checked = radio.value === selectedBranch;
+          console.log(`[Settings] Radio ${radio.value}: ${radio.checked ? 'checked' : 'unchecked'}`);
         });
       }
 
-      return branch;
+      return selectedBranch;
     }
     return 'release'; // Default
   } catch (error) {

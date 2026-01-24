@@ -85,7 +85,7 @@ class Logger {
       
       fs.appendFileSync(this.logFile, message, 'utf8');
     } catch (error) {
-      this.originalConsole.error('Impossible d\'écrire dans le fichier de log:', error.message);
+      this.originalConsole.error('Unable to write to log file:', error.message);
     }
   }
 

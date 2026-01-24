@@ -23,13 +23,32 @@ async function downloadPWR(branch = 'release', fileName = '4.pwr', progressCallb
 
   const dest = path.join(cacheDir, `${branch}_${fileName}`);
 
+  // Check if file exists and validate it
   if (fs.existsSync(dest)) {
     console.log('PWR file found in cache:', dest);
-    return dest;
+    
+    // Validate file size (PWR files should be > 1MB)
+    const stats = fs.statSync(dest);
+    if (stats.size < 1024 * 1024) {
+      console.log('Cached PWR file seems corrupted (too small), re-downloading...');
+      fs.unlinkSync(dest);
+    } else {
+      return dest;
+    }
   }
 
   console.log('Fetching PWR patch file:', url);
   await downloadFile(url, dest, progressCallback);
+  
+  // Validate downloaded file
+  const stats = fs.statSync(dest);
+  console.log(`PWR file downloaded, size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+  
+  if (stats.size < 1024 * 1024) {
+    fs.unlinkSync(dest);
+    throw new Error('Downloaded PWR file is corrupted (file too small)');
+  }
+  
   console.log('PWR saved to:', dest);
 
   return dest;
@@ -85,7 +104,13 @@ async function applyPWR(pwrFile, progressCallback, gameDir = GAME_DIR, toolsDir 
         if (error) {
           console.error('Butler stderr:', stderr);
           console.error('Butler stdout:', stdout);
-          reject(new Error(`Patch installation failed: ${error.message}${stderr ? '\n' + stderr : ''}`));
+          
+          // Check for EOF error (corrupted PWR file)
+          if (stderr && stderr.includes('unexpected EOF')) {
+            reject(new Error(`Corrupted PWR file detected. Please delete the cache and reinstall: ${pwrFile}`));
+          } else {
+            reject(new Error(`Patch installation failed: ${error.message}${stderr ? '\n' + stderr : ''}`));
+          }
         } else {
           resolve();
         }
@@ -114,7 +139,9 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
   // Vérifier si on a version_client et version_branch dans config.json
   const config = loadConfig();
   const hasVersionConfig = !!(config.version_client && config.version_branch);
+  const oldBranch = config.version_branch || 'release'; // L'ancienne branche pour le backup
   console.log(`[UpdateGameFiles] hasVersionConfig: ${hasVersionConfig}`);
+  console.log(`[UpdateGameFiles] Switching from ${oldBranch} to ${branch}`);
   
   try {
     if (progressCallback) {
@@ -145,11 +172,15 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
       progressCallback('Backing up user data...', 70, null, null, null);
     }
 
-    // Backup UserData using new system
+    // Backup UserData from OLD branch (before switching)
     try {
-      backupPath = await userDataBackup.backupUserData(installPath, branch, hasVersionConfig);
+      console.log(`[UpdateGameFiles] Attempting to backup UserData from old branch: ${oldBranch}`);
+      backupPath = await userDataBackup.backupUserData(installPath, oldBranch, hasVersionConfig);
+      if (backupPath) {
+        console.log(`[UpdateGameFiles] ✓ UserData backed up from ${oldBranch}: ${backupPath}`);
+      }
     } catch (backupError) {
-      console.warn('UserData backup failed:', backupError.message);
+      console.warn('[UpdateGameFiles] ✗ UserData backup failed:', backupError.message);
     }
 
     if (progressCallback) {
@@ -169,6 +200,13 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
     const logoResult = await downloadAndReplaceLogo(gameDir, progressCallback);
     console.log('Logo@2x.png update result after update:', logoResult);
 
+    // Ensure UserData directory exists
+    const userDataDir = path.join(gameDir, 'Client', 'UserData');
+    if (!fs.existsSync(userDataDir)) {
+      console.log(`[UpdateGameFiles] Creating UserData directory at: ${userDataDir}`);
+      fs.mkdirSync(userDataDir, { recursive: true });
+    }
+
     if (progressCallback) {
       progressCallback('Restoring user data...', 90, null, null, null);
     }
@@ -176,11 +214,16 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
     // Restore UserData using new system
     if (backupPath) {
       try {
+        console.log(`[UpdateGameFiles] Restoring UserData from ${oldBranch} to ${branch}`);
+        console.log(`[UpdateGameFiles] Source backup: ${backupPath}`);
         await userDataBackup.restoreUserData(backupPath, installPath, branch);
         await userDataBackup.cleanupBackup(backupPath);
+        console.log(`[UpdateGameFiles] ✓ UserData migrated successfully from ${oldBranch} to ${branch}`);
       } catch (restoreError) {
-        console.warn('UserData restore failed:', restoreError.message);
+        console.warn('[UpdateGameFiles] ✗ UserData restore failed:', restoreError.message);
       }
+    } else {
+      console.log('[UpdateGameFiles] No backup to restore, empty UserData folder created');
     }
 
     console.log(`Game files updated successfully to version: ${newVersion}`);
@@ -238,7 +281,7 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
   // Vérifier si on a version_client et version_branch dans config.json
   const config = loadConfig();
   const hasVersionConfig = !!(config.version_client && config.version_branch);
-  console.log(`[InstallGame] Configuration détectée - version_client: ${config.version_client}, version_branch: ${config.version_branch}`);
+  console.log(`[InstallGame] Configuration detected - version_client: ${config.version_client}, version_branch: ${config.version_branch}`);
   console.log(`[InstallGame] hasVersionConfig: ${hasVersionConfig}`);
 
   // Backup UserData AVANT l'installation si nécessaire
@@ -248,13 +291,13 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
   }
 
   try {
-    console.log(`[InstallGame] Tentative de backup UserData (hasVersionConfig: ${hasVersionConfig})...`);
+    console.log(`[InstallGame] Attempting UserData backup (hasVersionConfig: ${hasVersionConfig})...`);
     backupPath = await userDataBackup.backupUserData(customAppDir, branch, hasVersionConfig);
     if (backupPath) {
-      console.log(`[InstallGame] ✓ UserData sauvegardé dans: ${backupPath}`);
+      console.log(`[InstallGame] ✓ UserData backed up to: ${backupPath}`);
     }
   } catch (backupError) {
-    console.warn('[InstallGame] ✗ Backup UserData échoué:', backupError.message);
+    console.warn('[InstallGame] ✗ UserData backup failed:', backupError.message);
   }
 
   [customAppDir, customCacheDir, customToolsDir].forEach(dir => {
@@ -332,7 +375,7 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
 
   // Ensure UserData directory exists
   if (!fs.existsSync(userDataDir)) {
-    console.log(`[InstallGame] Création du dossier UserData dans: ${userDataDir}`);
+    console.log(`[InstallGame] Creating UserData directory at: ${userDataDir}`);
     fs.mkdirSync(userDataDir, { recursive: true });
   }
 
@@ -343,15 +386,15 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
     }
 
     try {
-      console.log(`[InstallGame] Restauration du UserData depuis: ${backupPath}`);
+      console.log(`[InstallGame] Restoring UserData from: ${backupPath}`);
       await userDataBackup.restoreUserData(backupPath, customAppDir, branch);
       await userDataBackup.cleanupBackup(backupPath);
-      console.log('[InstallGame] ✓ UserData restauré avec succès');
+      console.log('[InstallGame] ✓ UserData restored successfully');
     } catch (restoreError) {
-      console.warn('[InstallGame] ✗ Erreur lors de la restauration UserData:', restoreError.message);
+      console.warn('[InstallGame] ✗ UserData restore failed:', restoreError.message);
     }
   } else {
-    console.log('[InstallGame] Aucun backup à restaurer, dossier UserData vide créé');
+    console.log('[InstallGame] No backup to restore, empty UserData folder created');
   }
 
   if (progressCallback) {
