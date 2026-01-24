@@ -40,18 +40,6 @@ export function setupInstallation() {
     });
   }
 
-  // Setup installation effects listeners
-  if (window.electronAPI && window.electronAPI.onInstallationStart) {
-    window.electronAPI.onInstallationStart(() => {
-      showInstallationEffects();
-    });
-  }
-
-  if (window.electronAPI && window.electronAPI.onInstallationEnd) {
-    window.electronAPI.onInstallationEnd(() => {
-      hideInstallationEffects();
-    });
-  }
 }
 
 export async function installGame() {
@@ -67,6 +55,7 @@ export async function installGame() {
   
   if (window.LauncherUI) window.LauncherUI.showProgress();
   isDownloading = true;
+  lockInstallForm();
   if (installBtn) {
     installBtn.disabled = true;
     installText.textContent = window.i18n ? window.i18n.t('install.installing') : 'INSTALLING...';
@@ -97,12 +86,7 @@ export async function installGame() {
   } catch (error) {
     const errorMsg = window.i18n ? window.i18n.t('progress.installationFailed').replace('{error}', error.message) : `Installation failed: ${error.message}`;
     
-    // Hide installation effects on error
-    if (window.hideInstallationEffects) {
-      window.hideInstallationEffects();
-    }
-    
-    // Reset button state on error
+    // Reset button state and unlock form on error
     resetInstallButton();
     
     if (window.LauncherUI) {
@@ -157,6 +141,35 @@ function resetInstallButton() {
     installBtn.disabled = false;
     installText.textContent = 'INSTALL HYTALE';
   }
+  unlockInstallForm();
+}
+
+function lockInstallForm() {
+  const playerNameInput = document.getElementById('installPlayerName');
+  const installPathInput = document.getElementById('installPath');
+  const customCheckbox = document.getElementById('installCustomCheck');
+  const branchRadios = document.querySelectorAll('input[name="installBranch"]');
+  const browseBtn = document.querySelector('.browse-btn');
+  
+  if (playerNameInput) playerNameInput.disabled = true;
+  if (installPathInput) installPathInput.disabled = true;
+  if (customCheckbox) customCheckbox.disabled = true;
+  if (browseBtn) browseBtn.disabled = true;
+  branchRadios.forEach(radio => radio.disabled = true);
+}
+
+function unlockInstallForm() {
+  const playerNameInput = document.getElementById('installPlayerName');
+  const installPathInput = document.getElementById('installPath');
+  const customCheckbox = document.getElementById('installCustomCheck');
+  const branchRadios = document.querySelectorAll('input[name="installBranch"]');
+  const browseBtn = document.querySelector('.browse-btn');
+  
+  if (playerNameInput) playerNameInput.disabled = false;
+  if (installPathInput) installPathInput.disabled = false;
+  if (customCheckbox) customCheckbox.disabled = false;
+  if (browseBtn) browseBtn.disabled = false;
+  branchRadios.forEach(radio => radio.disabled = false);
 }
 
 export async function browseInstallPath() {
