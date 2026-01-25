@@ -162,7 +162,7 @@ async function launchGame(playerName = 'Player', progressCallback, javaPathOverr
       console.log(`Force patching game binaries for ${authDomain}...`);
 
       const patchResult = await clientPatcher.ensureClientPatched(gameLatest, (msg, percent) => {
-        console.log(`[Patcher] ${msg}`);
+        // console.log(`[Patcher] ${msg}`);
         if (progressCallback && msg) {
           progressCallback(msg, percent, null, null, null);
         }
