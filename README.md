@@ -1,7 +1,7 @@
 <div align="center">
 
 <header>
-  <h1>🎮 Hytale F2P Launcher | Cross-Platform Multiplayer Support 🖥</h1>
+  <h1>🎮 Hytale F2P Launcher | Cross-Platform Multiplayer 🖥️</h1>
   <h2>Available for Windows 🪟, macOS 🍎, and Linux 🐧</h2>
   <p><small>An unofficial cross-platform launcher for Hytale with automatic updates and multiplayer support (all OS supported)</small></p>
 </header>
