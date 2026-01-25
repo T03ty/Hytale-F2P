@@ -29,5 +29,5 @@ package() {
   mkdir -p "$pkgdir/opt/$_pkgname"
   cp -r "$_pkgname/dist/linux-unpacked/"* "$pkgdir/opt/$_pkgname"
   install -Dm644 "$_pkgname.desktop" "$pkgdir/usr/share/applications/$_pkgname.desktop"
-  install -Dm644 "$_pkgname/GUI/icon.png" "$pkgdir/usr/share/icons/hicolor/512x512/apps/$_pkgname.png"
+  install -Dm644 "$_pkgname/GUI/icon.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
 }
