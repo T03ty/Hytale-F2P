@@ -10,25 +10,25 @@ url="https://github.com/amiayweb/Hytale-F2P"
 license=('custom')
 depends=('gtk3' 'nss' 'libxcrypt-compat')
 makedepends=('git' 'npm')
+provides=('Hytale-F2P' 'hytale-f2p-git')
+conflicts=('Hytale-F2P' 'hytale-f2p-git')
 source=("git+$url.git" "$_pkgname.desktop")
 sha256sums=('SKIP' '46488fada4775d9976d7b7b62f8d1f1f8d9a9a9d8f8aa9af4f2e2153019f6a30')
 
 pkgver() {
-  cd "$srcdir/$_pkgname"
+  cd "$_pkgname"
   git describe --tags --long | sed 's/^v//;s/-/.r/;s/-/./'
 }
 
 build() {
-   cd "$srcdir/$_pkgname"
+   cd "$_pkgname"
    npm ci
    npm run build:arch
 }
 
 package() {
-  cd "$srcdir/$_pkgname"
-  install -d "$pkgdir/opt/$_pkgname"
+  mkdir -p "$pkgdir/opt/$_pkgname"
   cp -r "$_pkgname/dist/linux-unpacked/"* "$pkgdir/opt/$_pkgname"
-
-  install -Dm644 "$srcdir/$_pkgname.desktop" "$pkgdir/usr/share/applications/$_pkgname.desktop"
-  install -Dm644 GUI/icon.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
+  install -Dm644 "$_pkgname.desktop" "$pkgdir/usr/share/applications/$_pkgname.desktop"
+  install -Dm644 "$_pkgname/GUI/icon.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
 }

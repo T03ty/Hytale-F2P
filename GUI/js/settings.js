@@ -439,6 +439,13 @@ async function savePlayerName() {
       return;
     }
 
+    if (playerName.length > 16) {
+      const msg = window.i18n ? window.i18n.t('notifications.playerNameTooLong') : 'Player name must be 16 characters or less';
+      showNotification(msg, 'error');
+      settingsPlayerName.value = playerName.substring(0, 16);
+      return;
+    }
+
     await window.electronAPI.saveUsername(playerName);
     const successMsg = window.i18n ? window.i18n.t('notifications.playerNameSaved') : 'Player name saved successfully';
     showNotification(successMsg, 'success');

@@ -4,19 +4,20 @@
   <h1>🎮 Hytale F2P Launcher 🚀</h1>
   <h2>💻 Cross-Platform Multiplayer 🖥️</h2>
   <h3>Available for Windows 🪟, macOS 🍎, and Linux 🐧</h3>
-  <p><small>An unofficial cross-platform launcher for Hytale with automatic updates and multiplayer support (all OS supported)</small></p>
+  <p><small>An unofficial cross-platform launcher for Hytale with automatic updates and multiplayer support!</small></p>
 </header>
 
-![Version](https://img.shields.io/badge/Version-2.1.1-green?style=for-the-badge)
+![GitHub Downloads](https://img.shields.io/github/downloads/amiayweb/Hytale-F2P/total?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-orange?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Educational-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.2.0-green?style=for-the-badge)
 
 [![GitHub stars](https://img.shields.io/github/stars/amiayweb/Hytale-F2P?style=social)](https://github.com/amiayweb/Hytale-F2P/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/amiayweb/Hytale-F2P?style=social)](https://github.com/amiayweb/Hytale-F2P/network/members)
 
 ⭐ **If you find this project useful, please give it a STAR!** ⭐
 
-### ⚠️ **READ [QUICK START](https://github.com/amiayweb/Hytale-F2P/tree/main?tab=readme-ov-file#-quick-start) before Downloading & Installing the Launcher!** ⚠️
+### ⚠️ **READ [QUICK START](README.md#-quick-start) before Downloading & Installing the Launcher!** ⚠️
 
 #### 🛑 **Found a problem? Join the Discord and Select #Open-A-Ticket!: https://discord.gg/gME8rUy3MB** 🛑
 
@@ -35,37 +36,37 @@
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="https://i.imgur.com/xW9do3d.png" alt="Hytale F2P Launcher" width="1000">
+  <img src="https://i.imgur.com/wwuuMUf.png" alt="Hytale F2P Launcher" width="1000">
   <details>
     <summary><b>View Gallery</b></summary>
     <table style="width: 100%; border-spacing: 15px; border-collapse: separate;">
       <tr>
         <td align="center" style="vertical-align: top; width: 50%;">
-          <b>Mods Preview</b><br>
-          <img src="https://i.imgur.com/f8qyIJy.png" alt="Hytale F2P Mods" width="100%">
+          <b>Featured Servers 🆕</b><br>
+          <img src="https://i.imgur.com/fEu9y3Z.png" alt="Hytale F2P Featured Servers" width="100%">
         </td>
         <td align="center" style="vertical-align: top; width: 50%;">
-          <b>Latest News</b><br>
-          <img src="https://i.imgur.com/qu0HltD.png" alt="Hytale F2P News" width="100%">
-        </td>
-      </tr>
-      <tr>
-        <td align="center" style="vertical-align: top; width: 50%;">
-          <b>Social & Chat</b><br>
-          <img src="https://i.imgur.com/t3GmbfF.png" alt="Hytale F2P Chat" width="100%">
-        </td>
-        <td align="center" style="vertical-align: top; width: 50%;">
-          <b>Settings</b><br>
-          <img src="https://i.imgur.com/uUD7lDB.png" alt="Hytale F2P Settings" width="100%">
+          <b>Settings Page ⚙️</b><br>
+          <img src="https://i.imgur.com/l5iBzxc.png" alt="Hytale F2P Settings Page" width="100%">
         </td>
       </tr>
       <tr>
         <td align="center" style="vertical-align: top; width: 50%;">
-          <b>In-Game Screenshot - Spawn Point</b><br>
+          <b>Downloadable Mods from CurseForge 🛠️</b><br>
+          <img src="https://i.imgur.com/QIDbqYn.png" alt="Hytale F2P Mods Download" width="100%">
+        </td>
+        <td align="center" style="vertical-align: top; width: 50%;">
+          <b>My Mods Menu 🔧</b><br>
+          <img src="https://i.imgur.com/rjvwUfq.png" alt="Hytale F2P My Mods Menu" width="100%">
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="vertical-align: top; width: 50%;">
+          <b>In-Game Screenshot - Spawn Point 🎮</b><br>
           <img src="https://i.imgur.com/X8lNFQ7.png" alt="Hytale F2P In-Game Screenshot-1" width="100%">
         </td>
         <td align="center" style="vertical-align: top; width: 50%;">
-          <b>In-Game Screenshot - Gameplay Terrain</b><br>
+          <b>In-Game Screenshot - Gameplay Terrain 🌳</b><br>
           <img src="https://i.imgur.com/3iRScPa.png" alt="Hytale F2P In-Game Screenshot-2" width="100%">
         </td>
       </tr>
@@ -79,7 +80,7 @@
 🎯 **Core Features**
 - 🔄 **Automatic Updates** - Smart version checking and seamless game updates
 - 💾 **Data Preservation** - Intelligent UserData backup and restoration during updates
-- 🌐 **Cross-Platform** - Full support for Windows, Linux (X11/Wayland), and macOS
+- 🌐 **Cross-Platform** - Full support for Windows x64, Linux x64 (X11/Wayland, SteamDeck), and macOS Silicon
 - ☕ **Java Management** - Automatic Java runtime detection and installation
 - 🎮 **Multiplayer Support** - Automatic multiplayer client installation (Windows, macOS & Linux !)
 
@@ -87,7 +88,6 @@
 - 📁 **Custom Installation** - Choose your own installation directory
 - 🔍 **Smart Detection** - Automatic game and dependency detection
 - 🗂️ **Mod Support** - Built-in mod management system
-- 💬 **Player Chat** - Integrated chat system for community interaction
 - 📰 **News Feed** - Stay updated with the latest Hytale news
 - 🎨 **Modern UI** - Clean, responsive interface with dark theme
 
@@ -118,9 +118,9 @@
     <tr>
       <td><b>🖥️ OS</b></td>
       <td colspan="3" align="center">
-        Windows 10/11 (64-bit; X64/ARM64) | Linux (x64/ARM64) | macOS (Apple Silicon only)
+        Windows 10/11 (64-bit X64) | Linux (x64) | macOS (ARM64/Apple Silicon)
         <br />
-        <small><i>⚠️ Note: macOS Intel (x86) is not yet supported <sup><a href="#fn1" id="ref1">1</a></sup></i></small>
+        <small><i>⚠️ Note: ARM64 (Windows & Linux), macOS (x86/Intel) <b>are not supported!</b> ⚠️</i></small>
       </td>
     </tr>
     <tr>
@@ -131,7 +131,7 @@
     </tr>
     <tr>
       <td><b>🧠 RAM</b></td>
-      <td>8GB (dGPU)<sup><a href="#fn1" id="ref2">2</a></sup> /<br>12GB (iGPU)<sup><a href="#fn1" id="ref3">3</a></sup></td>
+      <td>8GB (dGPU) / 12GB (iGPU)<sup><a href="#fn1" id="ref1">1</a></sup></td>
       <td>16 GB</td>
       <td>32 GB</td>
     </tr>
@@ -156,31 +156,28 @@
   </tbody>
 </table>
 </div>
-<p id="fn1"><sup>Note 1</sup> Hytale did not provide game files for macOS Intel, yet.</p>
-<p id="fn2"><sup>Note 2</sup> Using Discrete/Dedicated GPU (dGPU) must have 8 GB RAM minimum.</p>
-<p id="fn3"><sup>Note 3</sup> Using Integrated GPU (dGPU) must have 12 GB RAM minimum.</p>
+<p id="fn1"><sup>Note 1</sup> Using Discrete/Dedicated GPU (dGPU) must have 8 GB RAM minimum, while using Integrated GPU (iGPU) must have 12 GB RAM.</p>
 
+> [!WARNING]
+> Our launcher has **not yet** supported Offline Mode (playing Hytale without internet).
+> We will surely add the feature as soon as possible. Kindly wait for the update.
 
+---
 
 ### 🪟 Windows Prequisites
-* **
 * **Java JDK 25:**
-  * [Oracle](https://www.oracle.com/java/technologies/downloads/#jdk25-windows), **no** support for Windows ARM64 in both version 25 and 21.
-  * [Adoptium](https://adoptium.net/temurin/releases/?version=25), has Windows ARM64 support in version 21 only.
+  * [Oracle](https://www.oracle.com/java/technologies/downloads/#jdk25-windows)
+  * [Adoptium](https://adoptium.net/temurin/releases/?version=25)
   * [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download), has Windows ARM64 support in version 25.
-  * Download from any vendor if your OS is not Windows with ARM64 architecture.
 * **Latest Visual Studio Redist:** 
   * Download via [Microsoft Visual C++ Redistributable](https://aka.ms/vc14/vc_redist.x64.exe)
   * Or [All-in-One by Techpowerup](https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one/)
 
 ### 🐧 Linux Prequisites
 
-> [!WARNING]
-> Ubuntu-based Distro like ZorinOS or Pop!_OS or Linux Mint would encounter issues due to UbuntuLTS environment, [check this Discord post](https://discord.com/channels/1462260103951421493/1463662398501027973).
-
-* Make sure you have already installed newest **GPU driver**, consult your distro docs or wiki.
-
-* Install `libpng` package to avoid SDL3_Image error:
+* Make sure you have already installed newest **GPU driver** especially proprietary NVIDIA, consult your distro docs or wiki.
+  * Also make sure that your GPU can be connected to EGL, try checking it first (again, consult your distro docs or wiki) before installing Hytale game via our launcher.
+* Install `libpng` package to avoid `SDL3_Image` error:
   * `libpng16-16 libpng-dev` for Ubuntu/Debian-based Distro
   * `libpng libpng-devel` for Fedora/RHEL-based Distro
   * `libpng` for Arch-based Distro
@@ -194,11 +191,12 @@
 1. **Prerequisites:** Ensure you have installed all [**Windows Prerequisites**](https://github.com/amiayweb/Hytale-F2P/tree/main?tab=readme-ov-file#-windows-prequisites) listed above.
 2. **Download:** Get the latest `Hytale-F2P-Launcher.exe` from the [**Releases**](https://github.com/amiayweb/Hytale-F2P/releases/latest/) page.
 3. **SmartScreen Note:** Since the executable is currently unsigned, Windows may show a "Windows protected your PC" popup.
-    * Click **More info**.
-    * Click **Run anyway**.
+    * Click **More info**, then click **Run anyway**.
 4. **Launch:** Once installed, you can launch the app directly from your Desktop or the Start menu.
-
----
+5. **Whitelist in Windows Firewall** [#192](https://github.com/amiayweb/Hytale-F2P/issues/192#issuecomment-3803042908)
+    * Open the Windows Start Menu and search for `Allow an app through Windows Firewall`
+    * Click "Change settings" (you may need Admin privileges) and Locate `HytaleClient.exe` in the list.
+    * Ensure both the Private and Public checkboxes are checked. Click OK to save.
 
 ### 🐧 Linux Installation
 
@@ -219,7 +217,7 @@
      # Fedora/RHEL-based
      sudo dnf install hytale-f2p-launcher.rpm
      # Debian/Ubuntu
-     sudo apt install -y libasound2 libpng16-16 libpng-dev libicu76
+     sudo apt install -y libasound2 libpng16-16 libpng-dev libicu76 # Not needed in v2.2.0+
      sudo dpkg -i hytale-f2p-launcher.deb
      ```
    * **Arch Linux (pacman):** Install the package using:
@@ -238,13 +236,6 @@
 > [!NOTE]
 > Make sure to adjust the filename correctly with the version and the architecture type. TIP: Use `cd` command to the package location.
 
-4. **Troubleshooting:**
-   * **FUSE:** If the AppImage fails to launch on newer distributions, ensure `libfuse2` (or `fuse2` on Arch/Fedora) is installed.
-   * **Desktop Entry:** After installing via `.rpm`, `.deb`, or `.pkg.tar.zst`, the launcher should automatically appear in your App Library/Grid.
-   * Missing libxcrypt.so.1: Install `libxcrypt-compat` using your package manager
-
----
-
 ### 🍎 macOS Installation  
 
 > [!NOTE]
@@ -259,7 +250,7 @@
     * Look for the message regarding "Hytale F2P Launcher" and click **Open Anyway**.
     * Authenticate with your password and click **Open**.
 
-#### **Advanced: Manual Installation (.zip)**
+#### **Advanced macOS: Manual Installation (.zip)**
 The `.zip` version is useful for users who prefer a portable installation or need to bypass specific permission issues.
 
 1. **Extract:** Download and unzip the file to your desired location (e.g., `~/Applications`).
@@ -272,34 +263,41 @@ The `.zip` version is useful for users who prefer a portable installation or nee
 
 --- 
 
-# How to Host a Server
+# 📢 How to Host a Server
 
-## Host your Singleplayer Server (Online-Play Feature)
+## 🌐 Host your Singleplayer Server (Online-Play Feature)
 
 > [!NOTE]
 > You have to play the game to host the server. See Dedicated Server section below if you want to host it without you playing as the host.
 
 1. Open your Singleplayer World
 2. Pause the game (Esc) > select Online Play > Turn on `Allow Other Players to Join` > Set password if needed > Press `Save`.
-3. Check the status `Connected via STUN` or `Connected via UPnP`.
+3. Check the status `Connected via UPnP`.
+4. If your friends can't connect to your hosted Online-Play feature, please follow **Local Dedicated Server** tutorial.
 
-## Dedicated Server
+## 🖧 Host a Dedicated Server
 
 > [!NOTE]
-> If you have already  `HytaleServer.jar` in `HytaleF2P/{release/pre-release}/package/game/latest/Server`, you can use it to host local dedicated server. 
+> If you already have the patched `HytaleServer.jar` in `HytaleF2P/{release/pre-release}/package/game/latest/Server`, you can use it to host local dedicated server. Put the `.bat`/`.sh` script from our Discord server inside your `.../latest/Server` folder.
 
 > [!TIP]
 > Use services like Playit.gg, Tailscale, Radmin VPN to share UDP connection if setting up router as an admin is not possible.
 
 > [!WARNING]
-> `Hytale-F2P-Server.rar` file is needed to set up a server on non-playing hardware (such as VPS/server hosting).
+> `Hytale-F2P-Server.rar` file is needed to set up a server on non-playing hardware (such as VPS/server hosting). Additional: **Linux ARM64** is supported for server only, not client.
 
 > [!IMPORTANT]
-> See detailed information of setting up a server here: [SERVER.md](SERVER.md)
+> See detailed information of setting up a server here: [SERVER.md](SERVER.md). Download the latest patched JAR, the patched RAR, or the SH/BAT scripts from channel `#open-public-server` in our Discord Server. 
 
 ---
 
-## 🛠️ Building from Source
+## 🔧 Troubleshooting
+
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed Troubleshooting guide.
+
+---
+
+## 🔨 Building from Source
 
 See [BUILD.md](docs/BUILD.md) for comprehensive build instructions.
 
@@ -307,14 +305,27 @@ See [BUILD.md](docs/BUILD.md) for comprehensive build instructions.
 
 ## 📋 Changelog
 
-### 🆕 v2.1.1
+### 🆕 v2.2.0
+- 🔃 **Game Patches Auto-Update Improvement:** No need to install 1.5GB for every updates! Game updates now reduced to almost **~90%** (Hytale Game Update 3 to 4 only take ~150MB).
+- 🩹 **Improved Patch System Pre-Release JAR:** In previous version, only Release JAR could be patched. Now it also can be used for Pre-Release JAR!
+- 🔗 **Fix Mods Manager Issue:** Mods now can be downloaded seamlessly from the launcher, use Profiles to install your preferred mod. It will also automatically copy from selected `Profile/<profilename>` to the `Mods` folder.
+- 💾 **New User Data Location:** UserData Migration to Centralized Location. User data now preserves in `HytaleSaves` located beside `HytaleF2P` folder.
+- 🎮 **SteamDeck and Ubuntu/Debian-based Library Fix:** Replace bundled `libzstd.so` with system version to fix `glibc 2.41+` crash.
+- 🍎 **Launcher auto-update Improvement for macOS:** Fix auto-install fails on unsigned app. Added option to download the new launcher version on Github website.
+- 🌎 **New Translations**: Added France 🇲🇫, German 🇩🇪, Indonesian 🇮🇩, Russia 🇷🇺, and Swedish 🇸🇪 translations to the launcher.
+- 🔐 **Fixes Tar Vulnerability:** Updates `tar` from version `6.2.1` to `7.5.7` for vulnerability issue.
+- ⚙️ **Improved Settings Pane UI:** Settings are now shown in two columns instead of one. No more doom scrolling just to change your language.
+- ⭐ **Added Features Servers:** Don't know which one to play? Join our Featured Servers!
+- 💬 **Removed Chat Pane and Add Discord Feature:** Useless chat feature, we got Discord. Join it, NOW. Also added Discord RPC features to Github and our Discord Server. SHOW OFF TO YOUR FRIENDS.
+- 🔍 **Investigation on Avatar Not Saving Bug:** We are currently investigating this issue.
+
+<details><summary>Click here to see older Changelogs</summary>
+
+### 🔄 v2.1.1
 - 🛠️ **Fix Bug EPERM**: EPERM or Error Permission in creating/removing process in reinstalling is now fixed.
 - 🅰️ **Adds .pkg.tar.zst Build for Arch Users**: This Arch-package has been needed since the first release.  
 - ❎ **Removes .pacman Build for Arch**: Based on the established conventions within the Arch Linux community, the file extension .pacman should not be used for package files.
 - 🌎 **New Translation**: New Polish 🇵🇱 Translation added to the Launcher. 
-
-<details>
-<summary>Click here to see older Changelogs</summary>
 
 ### 🔄 v2.1.0
 - 🚨 **Auto-Retry Downloads and Auto-Patch Files** — 
@@ -383,6 +394,7 @@ See [BUILD.md](docs/BUILD.md) for comprehensive build instructions.
 - 🎨 **Modern Interface** - Clean, intuitive design
 - 🌟 **First Release** - Core launcher functionality
 </details>
+
 ---
 
 ## 👥 Contributors
@@ -396,19 +408,30 @@ See [BUILD.md](docs/BUILD.md) for comprehensive build instructions.
 </div>
 
 ### 🏆 Project Creator
-- [**@amiayweb**](https://github.com/amiayweb) - *Lead Developer & Project Creator | Windows*
+- [**@amiayweb**](https://github.com/amiayweb) - *Lead Developer & Project Creator*
 - [**@Relyz1993**](https://github.com/Relyz1993) - *Server Helper & Second Developer & Project Creator*
 
-### 🌟 Contributors  
+### 🌟 Main Contributors  
 - [**@sanasol**](https://github.com/sanasol) - *Main Issues fixer | Multiplayer Patcher*
 - [**@Terromur**](https://github.com/Terromur) - *Main Issues fixer | Beta tester*
-- [**@fazrigading**](https://github.com/fazrigading) - *Main Issues fixer | Beta tester*
+- [**@fazrigading**](https://github.com/fazrigading) - *Main Issues fixer | Beta tester | Github Release Maintainer*
 - [**@ericiskoolbeans**](https://github.com/ericiskoolbeans) - *Beta Tester*
 - [**@chasem-dev**](https://github.com/chasem-dev) - *Issues fixer*
-- [**@crimera**](https://github.com/crimera) - *Issues fixer*  
-- [**@Citeli-py**](https://github.com/Citeli-py) - *Issues fixer*
 - [**@Rahul-Sahani04**](https://github.com/Rahul-Sahani04) - *Issues fixer*
-- [**@xSamiVS**](https://github.com/xSamiVS) - *Language Translator*
+- [**@xSamiVS**](https://github.com/xSamiVS) - *Issues fixer | Language Translator*
+
+#### 🎟️ Fresh Contributors
+- [**@GreenKod**](https://github.com/GreenKod) - *Code refractor*
+- [**@Citeli-py**](https://github.com/Citeli-py) - *Linux fix & packages version in early release*
+- [**@crimera**](https://github.com/crimera) - *Generate new UUID for new username string feature*
+- [**@letha11**](https://github.com/letha11) - *CSS filename typo fix*
+- [**@colbster937**](https://github.com/colbster937) - *Icon upscaler*
+- [**@ArnavSingh77**](https://github.com/ArnavSingh77) - *Close game launcher on start feature, improve app termination behavior*
+- [**@TalesAmaral**](https://github.com/TalesAmaral) - *BUILD.md link fix in README.md*
+
+#### 🌐 Language Translators
+- [**@BlackSystemCoder**](https://github.com/BlackSystemCoder) - *Russian Language Translator*
+- [**@walti0**](https://github.com/walti0) - *Polish Language Translator*
 
 ---
 

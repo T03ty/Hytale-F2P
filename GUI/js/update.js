@@ -6,12 +6,12 @@ class ClientUpdateManager {
     }
 
     init() {
-        window.electronAPI.onUpdatePopup((updateInfo) => {
-            this.showUpdatePopup(updateInfo);
-        });
+        console.log('🔧 ClientUpdateManager initializing...');
 
-        // Listen for electron-updater events
+        // Listen for electron-updater events from main.js
+        // This is the primary update trigger - main.js checks for updates on startup
         window.electronAPI.onUpdateAvailable((updateInfo) => {
+            console.log('📥 update-available event received:', updateInfo);
             this.showUpdatePopup(updateInfo);
         });
 
@@ -20,18 +20,30 @@ class ClientUpdateManager {
         });
 
         window.electronAPI.onUpdateDownloaded((updateInfo) => {
+            console.log('📦 update-downloaded event received:', updateInfo);
             this.showUpdateDownloaded(updateInfo);
         });
 
         window.electronAPI.onUpdateError((errorInfo) => {
+            console.log('❌ update-error event received:', errorInfo);
             this.handleUpdateError(errorInfo);
         });
 
-        this.checkForUpdatesOnDemand();
+        console.log('✅ ClientUpdateManager initialized');
+
+        // Note: Don't call checkForUpdatesOnDemand() here - main.js already checks
+        // for updates after 3 seconds and sends 'update-available' event.
+        // Calling it here would cause duplicate popups.
     }
 
     showUpdatePopup(updateInfo) {
-        if (this.updatePopupVisible) return;
+        console.log('🔔 showUpdatePopup called, updatePopupVisible:', this.updatePopupVisible);
+
+        // Check if popup already exists in DOM (extra safety)
+        if (this.updatePopupVisible || document.getElementById('update-popup-overlay')) {
+            console.log('⚠️ Update popup already visible, skipping');
+            return;
+        }
 
         this.updatePopupVisible = true;
         
@@ -92,7 +104,10 @@ class ClientUpdateManager {
                     </div>
 
                     <div class="update-popup-footer">
-                        This popup cannot be closed until you update the launcher
+                        <span id="update-footer-text">Downloading update...</span>
+                        <button id="update-skip-btn" class="update-skip-btn" style="display: none; margin-top: 0.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                            Skip for now (not recommended)
+                        </button>
                     </div>
                 </div>
             </div>
@@ -113,16 +128,43 @@ class ClientUpdateManager {
             installBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 installBtn.disabled = true;
                 installBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Installing...';
-                
+
                 try {
                     await window.electronAPI.quitAndInstallUpdate();
+
+                    // If we're still here after 5 seconds, the install probably failed
+                    setTimeout(() => {
+                        console.log('⚠️ Install may have failed - showing skip option');
+                        installBtn.disabled = false;
+                        installBtn.innerHTML = '<i class="fas fa-check" style="margin-right: 0.5rem;"></i>Try Again';
+
+                        // Show skip button
+                        const skipBtn = document.getElementById('update-skip-btn');
+                        const footerText = document.getElementById('update-footer-text');
+                        if (skipBtn) {
+                            skipBtn.style.display = 'inline-block';
+                            if (footerText) {
+                                footerText.textContent = 'Install not working? Skip for now:';
+                            }
+                        }
+                    }, 5000);
                 } catch (error) {
                     console.error('❌ Error installing update:', error);
                     installBtn.disabled = false;
                     installBtn.innerHTML = '<i class="fas fa-check" style="margin-right: 0.5rem;"></i>Install & Restart';
+
+                    // Show skip button on error
+                    const skipBtn = document.getElementById('update-skip-btn');
+                    const footerText = document.getElementById('update-footer-text');
+                    if (skipBtn) {
+                        skipBtn.style.display = 'inline-block';
+                        if (footerText) {
+                            footerText.textContent = 'Install failed. Skip for now:';
+                        }
+                    }
                 }
             });
         }
@@ -138,10 +180,15 @@ class ClientUpdateManager {
                 
                 try {
                     await window.electronAPI.openDownloadPage();
-                    console.log('✅ Download page opened, launcher will close...');
-                    
-                    downloadBtn.innerHTML = '<i class="fas fa-check" style="margin-right: 0.5rem;"></i>Launcher closing...';
-                    
+                    console.log('✅ Download page opened');
+
+                    downloadBtn.innerHTML = '<i class="fas fa-check" style="margin-right: 0.5rem;"></i>Opened in browser';
+
+                    // Close the popup after opening download page
+                    setTimeout(() => {
+                        this.closeUpdatePopup();
+                    }, 1500);
+
                 } catch (error) {
                     console.error('❌ Error opening download page:', error);
                     downloadBtn.disabled = false;
@@ -161,7 +208,37 @@ class ClientUpdateManager {
             });
         }
 
+        // Show skip button after 30 seconds as fallback (in case update is stuck)
+        setTimeout(() => {
+            const skipBtn = document.getElementById('update-skip-btn');
+            const footerText = document.getElementById('update-footer-text');
+            if (skipBtn) {
+                skipBtn.style.display = 'inline-block';
+                if (footerText) {
+                    footerText.textContent = 'Update taking too long?';
+                }
+            }
+        }, 30000);
+
+        const skipBtn = document.getElementById('update-skip-btn');
+        if (skipBtn) {
+            skipBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.closeUpdatePopup();
+            });
+        }
+
         console.log('🔔 Update popup displayed with new style');
+    }
+
+    closeUpdatePopup() {
+        const overlay = document.getElementById('update-popup-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+        this.updatePopupVisible = false;
+        this.unblockInterface();
     }
 
     updateDownloadProgress(progress) {
@@ -197,35 +274,96 @@ class ClientUpdateManager {
         const statusText = document.getElementById('update-status-text');
         const progressContainer = document.getElementById('update-progress-container');
         const buttonsContainer = document.getElementById('update-buttons-container');
+        const installBtn = document.getElementById('update-install-btn');
+        const downloadBtn = document.getElementById('update-download-btn');
+        const skipBtn = document.getElementById('update-skip-btn');
+        const footerText = document.getElementById('update-footer-text');
+        const popupContainer = document.querySelector('.update-popup-container');
 
-        if (statusText) {
-            statusText.textContent = 'Update downloaded! Ready to install.';
+        // Remove breathing/pulse animation when download is complete
+        if (popupContainer) {
+            popupContainer.classList.remove('update-popup-pulse');
         }
 
         if (progressContainer) {
             progressContainer.style.display = 'none';
         }
 
+        // Use platform info from main process if available, fallback to browser detection
+        const autoInstallSupported = updateInfo.autoInstallSupported !== undefined
+            ? updateInfo.autoInstallSupported
+            : navigator.platform.toUpperCase().indexOf('MAC') < 0;
+
+        if (!autoInstallSupported) {
+            // macOS: Show manual download as primary since auto-update doesn't work
+            if (statusText) {
+                statusText.textContent = 'Update downloaded but auto-install may not work on macOS.';
+            }
+
+            if (installBtn) {
+                // Still show install button but as secondary option
+                installBtn.classList.add('update-download-btn-secondary');
+                installBtn.innerHTML = '<i class="fas fa-check" style="margin-right: 0.5rem;"></i>Try Install & Restart';
+            }
+
+            if (downloadBtn) {
+                // Make manual download primary
+                downloadBtn.classList.remove('update-download-btn-secondary');
+                downloadBtn.innerHTML = '<i class="fas fa-external-link-alt" style="margin-right: 0.5rem;"></i>Download Manually (Recommended)';
+            }
+
+            if (footerText) {
+                footerText.textContent = 'Auto-install often fails on macOS:';
+            }
+        } else {
+            // Windows/Linux: Auto-install should work
+            if (statusText) {
+                statusText.textContent = 'Update downloaded! Ready to install.';
+            }
+
+            if (footerText) {
+                footerText.textContent = 'Click to install the update:';
+            }
+        }
+
         if (buttonsContainer) {
             buttonsContainer.style.display = 'block';
         }
 
-        console.log('✅ Update downloaded, ready to install');
+        // Always show skip button in downloaded state
+        if (skipBtn) {
+            skipBtn.style.display = 'inline-block';
+            console.log('✅ Skip button made visible');
+        } else {
+            console.error('❌ Skip button not found in DOM!');
+        }
+
+        console.log('✅ Update downloaded, ready to install. autoInstallSupported:', autoInstallSupported);
     }
 
     handleUpdateError(errorInfo) {
         console.error('Update error:', errorInfo);
-        
+
+        // Show skip button immediately on any error
+        const skipBtn = document.getElementById('update-skip-btn');
+        const footerText = document.getElementById('update-footer-text');
+        if (skipBtn) {
+            skipBtn.style.display = 'inline-block';
+            if (footerText) {
+                footerText.textContent = 'Update failed. You can skip for now.';
+            }
+        }
+
         // If manual download is required, update the UI (this will handle status text)
         if (errorInfo.requiresManualDownload) {
             this.showManualDownloadRequired(errorInfo);
             return; // Don't do anything else, showManualDownloadRequired handles everything
         }
-        
+
         // For non-critical errors, just show error message without changing status
         const errorMessage = document.getElementById('update-error-message');
         const errorText = document.getElementById('update-error-text');
-        
+
         if (errorMessage && errorText) {
             let message = errorInfo.message || 'An error occurred during the update process.';
             if (errorInfo.isMacSigningError) {
@@ -289,6 +427,16 @@ class ClientUpdateManager {
             buttonsContainer.style.display = 'block';
         }
 
+        // Show skip button for manual download errors
+        const skipBtn = document.getElementById('update-skip-btn');
+        const footerText = document.getElementById('update-footer-text');
+        if (skipBtn) {
+            skipBtn.style.display = 'inline-block';
+            if (footerText) {
+                footerText.textContent = 'Or continue without updating:';
+            }
+        }
+
         console.log('⚠️ Manual download required due to update error');
     }
 
@@ -300,11 +448,33 @@ class ClientUpdateManager {
 
         document.body.classList.add('no-select');
 
-        document.addEventListener('keydown', this.blockKeyEvents.bind(this), true);
-        
-        document.addEventListener('contextmenu', this.blockContextMenu.bind(this), true);
-        
+        // Store bound functions so we can remove them later
+        this._boundBlockKeyEvents = this.blockKeyEvents.bind(this);
+        this._boundBlockContextMenu = this.blockContextMenu.bind(this);
+
+        document.addEventListener('keydown', this._boundBlockKeyEvents, true);
+        document.addEventListener('contextmenu', this._boundBlockContextMenu, true);
+
         console.log('🚫 Interface blocked for update');
+    }
+
+    unblockInterface() {
+        const mainContent = document.querySelector('.flex.w-full.h-screen');
+        if (mainContent) {
+            mainContent.classList.remove('interface-blocked');
+        }
+
+        document.body.classList.remove('no-select');
+
+        // Remove event listeners
+        if (this._boundBlockKeyEvents) {
+            document.removeEventListener('keydown', this._boundBlockKeyEvents, true);
+        }
+        if (this._boundBlockContextMenu) {
+            document.removeEventListener('contextmenu', this._boundBlockContextMenu, true);
+        }
+
+        console.log('✅ Interface unblocked');
     }
 
     blockKeyEvents(event) {

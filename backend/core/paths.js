@@ -14,6 +14,21 @@ function getAppDir() {
   }
 }
 
+/**
+ * Get centralized UserData saves directory (NEW in 2.2.0)
+ * UserData is now stored separately from game installation
+ */
+function getHytaleSavesDir() {
+  const home = os.homedir();
+  if (process.platform === 'win32') {
+    return path.join(home, 'AppData', 'Local', 'HytaleSaves');
+  } else if (process.platform === 'darwin') {
+    return path.join(home, 'Library', 'Application Support', 'HytaleSaves');
+  } else {
+    return path.join(home, '.hytalesaves');
+  }
+}
+
 const DEFAULT_APP_DIR = getAppDir();
 
 function getResolvedAppDir(customPath) {
@@ -218,20 +233,8 @@ async function getModsPath(customInstallPath = null) {
 
 function getProfilesDir(customInstallPath = null) {
   try {
-    // get UserData path
-    let installPath = customInstallPath;
-    if (!installPath) {
-        const configFile = path.join(DEFAULT_APP_DIR, 'config.json');
-        if (fs.existsSync(configFile)) {
-            const config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-            installPath = config.installPath || '';
-        }
-    }
-    if (!installPath) installPath = getAppDir();
-    
-    const branch = loadVersionBranch();
-    const gameLatest = path.join(installPath, branch, 'package', 'game', 'latest');
-    const userDataPath = findUserDataPath(gameLatest);
+    // NEW 2.2.0: Use centralized UserData location
+    const userDataPath = getHytaleSavesDir();
     const profilesDir = path.join(userDataPath, 'Profiles');
     
     if (!fs.existsSync(profilesDir)) {
@@ -247,6 +250,7 @@ function getProfilesDir(customInstallPath = null) {
 
 module.exports = {
   getAppDir,
+  getHytaleSavesDir,
   getResolvedAppDir,
   expandHome,
   APP_DIR,

@@ -84,15 +84,6 @@ function loadUsername() {
   return config.username || 'Player';
 }
 
-function saveChatUsername(chatUsername) {
-  saveConfig({ chatUsername: chatUsername || '' });
-}
-
-function loadChatUsername() {
-  const config = loadConfig();
-  return config.chatUsername || '';
-}
-
 function getUuidForUser(username) {
   const { v4: uuidv4 } = require('uuid');
   const config = loadConfig();
@@ -294,17 +285,6 @@ function resetCurrentUserUuid() {
   return setUuidForUser(username, newUuid);
 }
 
-function saveChatColor(color) {
-  const config = loadConfig();
-  config.chatColor = color;
-  saveConfig(config);
-}
-
-function loadChatColor() {
-  const config = loadConfig();
-  return config.chatColor || '#3498db';
-}
-
 function saveGpuPreference(gpuPreference) {
   saveConfig({ gpuPreference: gpuPreference || 'auto' });
 }
@@ -343,10 +323,6 @@ module.exports = {
   saveConfig,
   saveUsername,
   loadUsername,
-  saveChatUsername,
-  loadChatUsername,
-  saveChatColor,
-  loadChatColor,
   getUuidForUser,
   saveJavaPath,
   loadJavaPath,

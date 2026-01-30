@@ -10,8 +10,11 @@ const { setupWaylandEnvironment, setupGpuEnvironment } = require('../utils/platf
 const { saveUsername, saveInstallPath, loadJavaPath, getUuidForUser, getAuthServerUrl, getAuthDomain, loadVersionBranch, loadVersionClient, saveVersionClient } = require('../core/config');
 const { resolveJavaPath, getJavaExec, getBundledJavaPath, detectSystemJava, JAVA_EXECUTABLE } = require('./javaManager');
 const { getLatestClientVersion } = require('../services/versionManager');
-const { updateGameFiles } = require('./gameManager');
+const { FORCE_CLEAN_INSTALL_VERSION, CLEAN_INSTALL_TEST_VERSION } = require('../core/testConfig');
+const { ensureGameInstalled } = require('./differentialUpdateManager');
 const { syncModsForCurrentProfile } = require('./modManager');
+const { getUserDataPath } = require('../utils/userDataMigration');
+const { syncServerList } = require('../utils/serverListSync');
 
 // Client patcher for custom auth server (sanasol.ws)
 let clientPatcher = null;
@@ -102,11 +105,21 @@ function generateLocalTokens(uuid, name) {
 }
 
 async function launchGame(playerName = 'Player', progressCallback, javaPathOverride, installPathOverride, gpuPreference = 'auto', branchOverride = null) {
+  // Synchronize server list on every game launch
+  try {
+    console.log('[Launcher] Synchronizing server list...');
+    await syncServerList();
+  } catch (syncError) {
+    console.warn('[Launcher] Server list sync failed, continuing launch:', syncError.message);
+  }
+
   const branch = branchOverride || loadVersionBranch();
   const customAppDir = getResolvedAppDir(installPathOverride);
   const customGameDir = path.join(customAppDir, branch, 'package', 'game', 'latest');
   const customJreDir = path.join(customAppDir, branch, 'package', 'jre', 'latest');
-  const userDataDir = path.join(customGameDir, 'Client', 'UserData');
+  
+  // NEW 2.2.0: Use centralized UserData location
+  const userDataDir = getUserDataPath();
 
   const gameLatest = customGameDir;
   let clientPath = findClientPath(gameLatest);
@@ -166,7 +179,7 @@ async function launchGame(playerName = 'Player', progressCallback, javaPathOverr
         if (progressCallback && msg) {
           progressCallback(msg, percent, null, null, null);
         }
-      });
+       }, null, branch);
 
       if (patchResult.success) {
         console.log(`Game patched successfully (${patchResult.patchCount} total occurrences)`);
@@ -282,6 +295,55 @@ exec "$REAL_JAVA" "\${ARGS[@]}"
    const gpuEnv = setupGpuEnvironment(gpuPreference);
    Object.assign(env, gpuEnv);
 
+  // Linux: Replace bundled libzstd.so with system version to fix glibc 2.41+ crash
+  // The bundled libzstd causes "free(): invalid pointer" on Steam Deck / Ubuntu LTS
+  if (process.platform === 'linux' && process.env.HYTALE_NO_LIBZSTD_FIX !== '1') {
+    const clientDir = path.dirname(clientPath);
+    const bundledLibzstd = path.join(clientDir, 'libzstd.so');
+    const backupLibzstd = path.join(clientDir, 'libzstd.so.bundled');
+
+    // Common system libzstd paths
+    const systemLibzstdPaths = [
+      '/usr/lib/libzstd.so.1',                    // Arch Linux, Steam Deck
+      '/usr/lib/x86_64-linux-gnu/libzstd.so.1',   // Debian/Ubuntu
+      '/usr/lib64/libzstd.so.1'                   // Fedora/RHEL
+    ];
+
+    let systemLibzstd = null;
+    for (const p of systemLibzstdPaths) {
+      if (fs.existsSync(p)) {
+        systemLibzstd = p;
+        break;
+      }
+    }
+
+    if (systemLibzstd && fs.existsSync(bundledLibzstd)) {
+      try {
+        const stats = fs.lstatSync(bundledLibzstd);
+
+        // Only replace if it's not already a symlink to system version
+        if (!stats.isSymbolicLink()) {
+          // Backup bundled version
+          if (!fs.existsSync(backupLibzstd)) {
+            fs.renameSync(bundledLibzstd, backupLibzstd);
+            console.log(`Linux: Backed up bundled libzstd.so`);
+          } else {
+            fs.unlinkSync(bundledLibzstd);
+          }
+
+          // Create symlink to system version
+          fs.symlinkSync(systemLibzstd, bundledLibzstd);
+          console.log(`Linux: Linked libzstd.so to system version (${systemLibzstd}) for glibc 2.41+ compatibility`);
+        } else {
+          const linkTarget = fs.readlinkSync(bundledLibzstd);
+          console.log(`Linux: libzstd.so already linked to ${linkTarget}`);
+        }
+      } catch (libzstdError) {
+        console.warn(`Linux: Could not replace libzstd.so: ${libzstdError.message}`);
+      }
+    }
+  }
+
   try {
     let spawnOptions = {
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -385,7 +447,13 @@ async function launchGameWithVersionCheck(playerName = 'Player', progressCallbac
       const customCacheDir = path.join(customAppDir, 'cache');
 
       try {
-        await updateGameFiles(latestVersion, progressCallback, customGameDir, customToolsDir, customCacheDir, branch);
+        let versionToInstall = latestVersion;
+        if (FORCE_CLEAN_INSTALL_VERSION && !installedVersion) {
+          versionToInstall = CLEAN_INSTALL_TEST_VERSION;
+          console.log(`TESTING MODE: Clean install detected, forcing version ${versionToInstall} instead of ${latestVersion}`);
+        }
+        
+        await ensureGameInstalled(versionToInstall, branch, progressCallback, customGameDir, customCacheDir, customToolsDir);
         console.log('Game updated successfully, patching will be forced on launch...');
 
         if (progressCallback) {

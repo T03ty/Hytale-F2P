@@ -18,11 +18,16 @@ function isWaylandSession() {
   }
   
   const sessionType = process.env.XDG_SESSION_TYPE;
+  const waylandDisplay = process.env.WAYLAND_DISPLAY;
+
+  // Debug logging
+  console.log(`[PlatformUtils] Checking Wayland: XDG_SESSION_TYPE=${sessionType}, WAYLAND_DISPLAY=${waylandDisplay}`);
+
   if (sessionType && sessionType.toLowerCase() === 'wayland') {
     return true;
   }
   
-  if (process.env.WAYLAND_DISPLAY) {
+  if (waylandDisplay) {
     return true;
   }
   
@@ -44,19 +49,48 @@ function setupWaylandEnvironment() {
   if (process.platform !== 'linux') {
     return {};
   }
+
+  // If the user has manually set SDL_VIDEODRIVER (e.g. to 'x11'), strictly respect it.
+  if (process.env.SDL_VIDEODRIVER) {
+    console.log(`User manually set SDL_VIDEODRIVER=${process.env.SDL_VIDEODRIVER}, ignoring internal Wayland configuration.`);
+    return {};
+  }
   
   if (!isWaylandSession()) {
     console.log('Detected X11 session, using default environment');
     return {};
   }
   
-  console.log('Detected Wayland session, configuring environment...');
+  console.log('Detected Wayland session, checking for Gamescope/Steam Deck...');
   
-  const envVars = {
-    SDL_VIDEODRIVER: 'wayland'
-  };
+  const envVars = {};
+
+  // Only set Ozone hint if not already set by user
+  if (!process.env.ELECTRON_OZONE_PLATFORM_HINT) {
+    envVars.ELECTRON_OZONE_PLATFORM_HINT = 'wayland';
+  }
+
+  // 2. DETECT GAMESCOPE / STEAM DECK
+  // Native Wayland often fails for SDL games in Gaming Mode (gamescope), so we force X11 (XWayland).
+  // Checks:
+  // - XDG_CURRENT_DESKTOP == 'gamescope'
+  // - SteamDeck=1 (often set in SteamOS)
+  const currentDesktop = process.env.XDG_CURRENT_DESKTOP || '';
+  const isGamescope = currentDesktop.toLowerCase() === 'gamescope' || process.env.SteamDeck === '1';
   
-  envVars.ELECTRON_OZONE_PLATFORM_HINT = 'wayland';
+  if (isGamescope) {
+    console.log('Gamescope / Steam Deck detected, forcing SDL_VIDEODRIVER=x11 for compatibility');
+    envVars.SDL_VIDEODRIVER = 'x11';
+  } else {
+    // For standard desktop Wayland (GNOME, KDE), we leave SDL_VIDEODRIVER unset.
+    // This allows SDL3/SDL2 to use its internal preference (Wayland > X11).
+    // EXCEPT if it was somehow force-set to 'wayland' by the parent process (rare but possible),
+    // we strictly want to allow fallback, so we might unset it if it was 'wayland'.
+    // But since we checked process.env.SDL_VIDEODRIVER at the start, we know it's NOT set manually.
+    
+    // So we effectively do nothing for standard Wayland, letting SDL decide.
+    console.log('Standard Wayland session detected, letting SDL decide backend (auto-fallback enabled).');
+  }
   
   console.log('Wayland environment variables:', envVars);
   return envVars;

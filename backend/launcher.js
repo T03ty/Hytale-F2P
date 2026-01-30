@@ -5,10 +5,6 @@
 const {
   saveUsername,
   loadUsername,
-  saveChatUsername,
-  loadChatUsername,
-  saveChatColor,
-  loadChatColor,
   saveJavaPath,
   loadJavaPath,
   saveInstallPath,
@@ -20,10 +16,11 @@ const {
   saveCloseLauncherOnStart,
   loadCloseLauncherOnStart,
 
-  // Hardware Acceleration
   saveLauncherHardwareAcceleration,
   loadLauncherHardwareAcceleration,
 
+  loadConfig,
+  saveConfig,
 
   saveModsToConfig,
   loadModsFromConfig,
@@ -113,10 +110,6 @@ module.exports = {
   // User configuration functions
   saveUsername,
   loadUsername,
-  saveChatUsername,
-  loadChatUsername,
-  saveChatColor,
-  loadChatColor,
   getUuidForUser,
 
   // Java configuration functions
@@ -143,6 +136,10 @@ module.exports = {
   // Hardware Acceleration functions
   saveLauncherHardwareAcceleration,
   loadLauncherHardwareAcceleration,
+
+  // Config functions
+  loadConfig,
+  saveConfig,
 
   // GPU Preference functions
   saveGpuPreference,

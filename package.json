@@ -1,6 +1,6 @@
 {
   "name": "hytale-f2p-launcher",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support",
   "homepage": "https://github.com/amiayweb/Hytale-F2P",
   "main": "main.js",
@@ -34,7 +34,7 @@
       "url": "https://github.com/Terromur"
     },
     {
-      "name": "Fari Gading",
+      "name": "Fazri Gading",
       "email": "fazrigading@gmail.com",
       "url": "https://github.com/fazrigading"
     }
@@ -55,16 +55,13 @@
     "dotenv": "^17.2.3",
     "electron-updater": "^6.7.3",
     "fs-extra": "^11.3.3",
-    "tar": "^6.2.1",
+    "tar": "^7.5.7",
     "uuid": "^9.0.1"
-  },
-  "overrides": {
-    "tar": "$tar"
   },
   "build": {
     "appId": "com.hytalef2p.launcher",
     "productName": "Hytale F2P Launcher",
-    "artifactName": "${name}_${version}_${arch}.${ext}",
+    "artifactName": "${name}_${version}.${ext}",
     "directories": {
       "output": "dist"
     },
@@ -77,40 +74,14 @@
       ".env"
     ],
     "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
+      "target": "nsis",
       "icon": "build/icon.ico"
     },
     "linux": {
       "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "deb",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "rpm",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
+        "AppImage",
+        "deb",
+        "rpm"
       ],
       "icon": "build/icon.png",
       "category": "Game"
@@ -131,6 +102,7 @@
         }
       ],
       "icon": "build/icon.icns",
+      "artifactName": "${name}_${version}_${arch}.${ext}",
       "category": "public.app-category.games"
     },
     "nsis": {

@@ -4,22 +4,65 @@ import './launcher.js';
 import './news.js';
 import './mods.js';
 import './players.js';
-import './chat.js';
 import './settings.js';
 import './logs.js';
 
-// Initialize i18n immediately (before DOMContentLoaded)
 let i18nInitialized = false;
 (async () => {
   const savedLang = await window.electronAPI?.loadLanguage();
   await i18n.init(savedLang);
   i18nInitialized = true;
   
-  // Update language selector if DOM is already loaded
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     updateLanguageSelector();
   }
 })();
+
+async function checkDiscordPopup() {
+  try {
+    const config = await window.electronAPI?.loadConfig();
+    if (!config || config.discordPopup === undefined || config.discordPopup === false) {
+      const modal = document.getElementById('discordPopupModal');
+      if (modal) {
+        const buttons = modal.querySelectorAll('.discord-popup-btn');
+        buttons.forEach(btn => btn.disabled = true);
+        
+        setTimeout(() => {
+          modal.style.display = 'flex';
+          modal.classList.add('active');
+          
+          setTimeout(() => {
+            buttons.forEach(btn => btn.disabled = false);
+          }, 2000);
+        }, 1000);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to check Discord popup:', error);
+  }
+}
+
+window.closeDiscordPopup = function() {
+  const modal = document.getElementById('discordPopupModal');
+  if (modal) {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+};
+
+window.joinDiscord = async function() {
+  await window.electronAPI?.openExternal('https://discord.gg/hf2pdc');
+  
+  try {
+    await window.electronAPI?.saveConfig({ discordPopup: true });
+  } catch (error) {
+    console.error('Failed to save Discord popup state:', error);
+  }
+  
+  closeDiscordPopup();
+};
 
 function updateLanguageSelector() {
   const langSelect = document.getElementById('languageSelect');
@@ -51,32 +94,9 @@ function updateLanguageSelector() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Populate language selector (wait for i18n if needed)
   if (i18nInitialized) {
     updateLanguageSelector();
   }
   
-  // Discord notification
-  const notification = document.getElementById('discordNotification');
-  if (notification) {
-    const dismissed = localStorage.getItem('discordNotificationDismissed');
-    if (!dismissed) {
-      setTimeout(() => {
-        notification.style.display = 'flex';
-      }, 3000);
-    } else {
-      notification.style.display = 'none';
-    }
-  }
+  checkDiscordPopup();
 });
-
-window.closeDiscordNotification = function() {
-  const notification = document.getElementById('discordNotification');
-  if (notification) {
-    notification.classList.add('hidden');
-    setTimeout(() => {
-      notification.style.display = 'none';
-    }, 300);
-  }
-  localStorage.setItem('discordNotificationDismissed', 'true');
-};

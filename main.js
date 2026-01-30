@@ -3,8 +3,9 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const fs = require('fs');
-const { launchGame, launchGameWithVersionCheck, installGame, saveUsername, loadUsername, saveChatUsername, loadChatUsername, saveChatColor, loadChatColor, saveJavaPath, loadJavaPath, saveInstallPath, loadInstallPath, saveDiscordRPC, loadDiscordRPC, saveLanguage, loadLanguage, saveCloseLauncherOnStart, loadCloseLauncherOnStart, saveLauncherHardwareAcceleration, loadLauncherHardwareAcceleration, isGameInstalled, uninstallGame, repairGame, getHytaleNews, handleFirstLaunchCheck, proposeGameUpdate, markAsLaunched } = require('./backend/launcher');
+const { launchGame, launchGameWithVersionCheck, installGame, saveUsername, loadUsername, saveJavaPath, loadJavaPath, saveInstallPath, loadInstallPath, saveDiscordRPC, loadDiscordRPC, saveLanguage, loadLanguage, saveCloseLauncherOnStart, loadCloseLauncherOnStart, saveLauncherHardwareAcceleration, loadLauncherHardwareAcceleration, isGameInstalled, uninstallGame, repairGame, getHytaleNews, handleFirstLaunchCheck, proposeGameUpdate, markAsLaunched, loadConfig, saveConfig } = require('./backend/launcher');
 const { retryPWRDownload } = require('./backend/managers/gameManager');
+const { migrateUserDataToCentralized } = require('./backend/utils/userDataMigration');
 
 // Handle Hardware Acceleration
 try {
@@ -85,6 +86,10 @@ function setDiscordActivity() {
         {
           label: 'GitHub',
           url: 'https://github.com/amiayweb/Hytale-F2P'
+        },
+        {
+          label: 'Discord',
+          url: 'https://discord.gg/hf2pdc'
         }
       ]
     });
@@ -175,7 +180,8 @@ function createWindow() {
   initDiscordRPC();
 
   // Configure and initialize electron-updater
-  autoUpdater.autoDownload = false;
+  // Enable auto-download so updates start immediately when available
+  autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
 
   autoUpdater.on('checking-for-update', () => {
@@ -200,6 +206,20 @@ function createWindow() {
 
   autoUpdater.on('error', (err) => {
     console.error('Error in auto-updater:', err);
+
+    // Handle macOS code signing errors - requires manual download
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      const isMacSigningError = process.platform === 'darwin' &&
+        (err.code === 'ERR_UPDATER_INVALID_SIGNATURE' ||
+         err.message.includes('signature') ||
+         err.message.includes('code sign'));
+
+      mainWindow.webContents.send('update-error', {
+        message: err.message,
+        isMacSigningError: isMacSigningError,
+        requiresManualDownload: isMacSigningError || process.platform === 'darwin'
+      });
+    }
   });
 
   autoUpdater.on('download-progress', (progressObj) => {
@@ -217,7 +237,10 @@ function createWindow() {
     console.log('Update downloaded:', info.version);
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update-downloaded', {
-        version: info.version
+        version: info.version,
+        platform: process.platform,
+        // macOS auto-install often fails on unsigned apps
+        autoInstallSupported: process.platform !== 'darwin'
       });
     }
   });
@@ -297,6 +320,14 @@ app.whenReady().then(async () => {
 
   // Initialize Profile Manager (runs migration if needed)
   profileManager.init();
+
+  // Migrate UserData to centralized location (v2.1.2+)
+  console.log('[Startup] Checking UserData migration...');
+  try {
+    await migrateUserDataToCentralized();
+  } catch (error) {
+    console.error('[Startup] UserData migration failed:', error);
+  }
 
   createSplashScreen();
 
@@ -520,7 +551,7 @@ ipcMain.handle('install-game', async (event, playerName, javaPath, installPath, 
       console.log('[Main] Processing Butler error with retry context');
       errorData.retryData = {
         branch: error.branch || 'release',
-        fileName: error.fileName || '4.pwr',
+        fileName: error.fileName || '7.pwr',
         cacheDir: error.cacheDir
       };
       errorData.canRetry = error.canRetry !== false;
@@ -540,7 +571,7 @@ ipcMain.handle('install-game', async (event, playerName, javaPath, installPath, 
       console.log('[Main] Processing generic error, creating default retry data');
       errorData.retryData = {
         branch: 'release',
-        fileName: '4.pwr'
+        fileName: '7.pwr'
       };
       // For generic errors, assume it's retryable unless specified
       errorData.canRetry = error.canRetry !== false;
@@ -571,22 +602,6 @@ ipcMain.handle('save-username', (event, username) => {
 
 ipcMain.handle('load-username', () => {
   return loadUsername();
-});
-ipcMain.handle('save-chat-username', async (event, chatUsername) => {
-  saveChatUsername(chatUsername);
-});
-
-ipcMain.handle('load-chat-username', async () => {
-  return loadChatUsername();
-});
-
-ipcMain.handle('save-chat-color', (event, color) => {
-  saveChatColor(color);
-  return { success: true };
-});
-
-ipcMain.handle('load-chat-color', () => {
-  return loadChatColor();
 });
 
 ipcMain.handle('save-java-path', (event, javaPath) => {
@@ -643,6 +658,15 @@ ipcMain.handle('save-launcher-hw-accel', (event, enabled) => {
 
 ipcMain.handle('load-launcher-hw-accel', () => {
   return loadLauncherHardwareAcceleration();
+});
+
+ipcMain.handle('load-config', () => {
+  return loadConfig();
+});
+
+ipcMain.handle('save-config', (event, configUpdate) => {
+  saveConfig(configUpdate);
+  return { success: true };
 });
 
 ipcMain.handle('select-install-path', async () => {
@@ -775,7 +799,7 @@ ipcMain.handle('retry-download', async (event, retryData) => {
       console.log('[IPC] Invalid retry data, using PWR defaults');
       retryData = {
         branch: 'release',
-        fileName: '4.pwr'
+        fileName: '7.pwr'
       };
     }
 
@@ -809,7 +833,7 @@ ipcMain.handle('retry-download', async (event, retryData) => {
         } :
         {
           branch: retryData?.branch || 'release',
-          fileName: retryData?.fileName || '4.pwr',
+          fileName: retryData?.fileName || '7.pwr',
           cacheDir: retryData?.cacheDir
         };
 
@@ -846,6 +870,17 @@ ipcMain.handle('open-external', async (event, url) => {
     return { success: true };
   } catch (error) {
     console.error('Failed to open external URL:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('open-download-page', async () => {
+  try {
+    // Open GitHub releases page for manual download
+    await shell.openExternal('https://github.com/amiayweb/Hytale-F2P/releases/latest');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to open download page:', error);
     return { success: false, error: error.message };
   }
 });
@@ -1077,8 +1112,37 @@ ipcMain.handle('download-update', async () => {
   }
 });
 
-ipcMain.handle('install-update', () => {
-  autoUpdater.quitAndInstall(false, true);
+ipcMain.handle('install-update', async () => {
+  console.log('[AutoUpdater] Installing update...');
+
+  // On macOS, quitAndInstall often fails silently
+  // Use a more aggressive approach
+  if (process.platform === 'darwin') {
+    console.log('[AutoUpdater] macOS detected, using force quit approach');
+    // Give user feedback that something is happening
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('update-installing');
+    }
+
+    // Small delay to show the "Installing..." state
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    try {
+      autoUpdater.quitAndInstall(false, true);
+    } catch (err) {
+      console.error('[AutoUpdater] quitAndInstall failed:', err);
+      // Force quit the app - the update should install on next launch
+      app.exit(0);
+    }
+
+    // If quitAndInstall didn't work, force exit after a delay
+    setTimeout(() => {
+      console.log('[AutoUpdater] Force exiting app...');
+      app.exit(0);
+    }, 2000);
+  } else {
+    autoUpdater.quitAndInstall(false, true);
+  }
 });
 
 ipcMain.handle('get-launcher-version', () => {
@@ -1312,3 +1376,4 @@ ipcMain.handle('profile-update', async (event, id, updates) => {
     return { error: error.message };
   }
 });
+

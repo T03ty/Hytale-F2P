@@ -46,7 +46,8 @@ class UserDataBackup {
       console.log(`[UserDataBackup] Copying from ${userDataPath} to ${backupPath}...`);
       await fs.copy(userDataPath, backupPath, {
         overwrite: true,
-        errorOnExist: false
+        errorOnExist: false,
+        dereference: true  // Follow symlinks to avoid EPERM errors on Windows
       });
       console.log('[UserDataBackup] ✓ Backup completed successfully');
       return backupPath;
@@ -82,7 +83,8 @@ class UserDataBackup {
 
       await fs.copy(backupPath, userDataPath, {
         overwrite: true,
-        errorOnExist: false
+        errorOnExist: false,
+        dereference: true  // Follow symlinks to avoid EPERM errors on Windows
       });
       
       console.log('UserData restore completed successfully');

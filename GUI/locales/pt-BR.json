@@ -14,9 +14,11 @@
   "install": {
     "title": "LANÇADOR JOGO GRATUITO",
     "playerName": "Nome do Jogador",
-    "playerNamePlaceholder": "Digite seu nome",    "gameBranch": "Versão do Jogo",
+    "playerNamePlaceholder": "Digite seu nome",
+    "gameBranch": "Versão do Jogo",
     "releaseVersion": "Lançamento (Estável)",
-    "preReleaseVersion": "Pré-Lançamento (Experimental)",    "customInstallation": "Instalação Personalizada",
+    "preReleaseVersion": "Pré-Lançamento (Experimental)",
+    "customInstallation": "Instalação Personalizada",
     "installationFolder": "Pasta de Instalação",
     "pathPlaceholder": "Local padrão",
     "browse": "Procurar",
@@ -117,7 +119,7 @@
     "repairGame": "Reparar jogo",
     "reinstallGame": "Reinstalar arquivos do jogo (mantém os dados)",
     "gpuPreference": "Preferência de GPU",
-    "gpuHint": "Selecione sua GPU preferida (Linux: afeta o DRI_PRIME)",
+    "gpuHint": "Recurso exclusivo para laptops; defina como Integrado se estiver em um PC.",
     "gpuAuto": "Automático",
     "gpuIntegrated": "Integrada",
     "gpuDedicated": "Dedicada",
@@ -129,6 +131,8 @@
     "closeLauncher": "Comportamento do Lançador",
     "closeOnStart": "Fechar Lançador ao iniciar o jogo",
     "closeOnStartDescription": "Fechar automaticamente o lançador após o Hytale ter sido iniciado",
+    "hwAccel": "Aceleração de Hardware",
+    "hwAccelDescription": "Ativar aceleração de hardware para o lançador",
     "gameBranch": "Versão do Jogo",
     "branchRelease": "Lançamento",
     "branchPreRelease": "Pré-Lançamento",
@@ -161,7 +165,6 @@
     "notificationText": "Junte-se à nossa comunidade do Discord!",
     "joinButton": "Entrar no Discord"
   },
-
   "common": {
     "confirm": "Confirmar",
     "cancel": "Cancelar",
@@ -206,7 +209,9 @@
     "modsDownloadFailed": "Falha ao baixar mod: {error}",
     "modsToggleFailed": "Falha ao alternar mod: {error}",
     "modsDeleteFailed": "Falha ao excluir mod: {error}",
-    "modsModNotFound": "Informações do mod não encontradas"
+    "modsModNotFound": "Informações do mod não encontradas",
+    "hwAccelSaved": "Configuração de aceleração de hardware salva",
+    "hwAccelSaveFailed": "Falha ao salvar configuração de aceleração de hardware"
   },
   "confirm": {
     "defaultTitle": "Confirmar ação",

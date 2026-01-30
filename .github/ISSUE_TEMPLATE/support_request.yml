@@ -1,8 +1,22 @@
 name: Support Request
 description: Request help or support
-title: "[SUPPORT] "
+title: "[SUPPORT] <ADD YOUR TITLE HERE>"
 labels: ["support"]
 body:
+  - type: dropdown
+    id: acknowledge
+    attributes: 
+      label: Checklist
+      options:
+        - label: I have read the README.md before asking Support Request.
+          required: true
+        - label: I have read the TROUBLESHOOTING.md before asking Support Request.
+          required: true
+        - label: I have added title before submitting this Support Request.
+          required: true
+        - label: I acknowledge that my Support Request will not be responded as quick as in Discord Open-A-Ticket, I prefer this way.
+          required: true
+
   - type: markdown
     attributes:
       value: |
@@ -24,9 +38,15 @@ body:
     attributes:
       label: Context
       description: Provide any relevant context or background information.
-      placeholder: "I've tried..., but got..."
+      placeholder: "I've tried these steps, but got..."
     validations:
       required: true
+
+  - type: textarea
+    id: proof
+    attributes:
+      label: Screenshots/Recordings
+      description: If applicable, add Screenshots/Recordings to help explain your problem.
 
   - type: textarea
     id: hardwarespec
@@ -37,12 +57,17 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: dropdown
     id: version
     attributes:
       label: Version
-      description: What version are you using?
-      placeholder: "e.g. v2.0.11 stable/pre-release"
+      description: What launcher version are you using?
+      options:
+        - v2.2.0
+        - v2.1.1
+        - v2.1.0
+        - v2.0.11
+        - v2.0.2
     validations:
       required: true
 
@@ -52,13 +77,11 @@ body:
       label: Platform
       description: What platform are you using?
       options:
-        - Windows 10
-        - Windows 11
-        - macOS (Apple Silicon)
-        - macOS (Intel)
-        - Linux Ubuntu/Debian-based
-        - Linux Fedora/RHEL-based
-        - Linux Arch-based
+        - Windows 11/10
+        - macOS (Apple Silicon, M1/M2/M3)
+        - Linux Ubuntu/Debian-based (Linux Mint, Pop!_OS, etc.)
+        - Linux Fedora/RHEL-based (Fedora, CentOS, etc.)
+        - Linux Arch-based (Steamdeck, CachyOS, etc.)
     validations:
       required: true
 

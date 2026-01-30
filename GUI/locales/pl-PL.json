@@ -4,19 +4,20 @@
     "mods": "Mody",
     "news": "Wiadomości",
     "chat": "Chat z graczami",
-    "settings": "Ustawienia",
-    "skins": "Skiny"
+    "settings": "Ustawienia"
   },
   "header": {
     "playersLabel": "Graczy:",
     "manageProfiles": "Zarządzaj Profilami",
-    "defaultProfile": "Domyślny",
-    "f2p": "FREE TO PLAY"
+    "defaultProfile": "Domyślny"
   },
   "install": {
-    "title": "FREE TO PLAY LAUNCHER",
+    "title": "DARMOWY LAUNCHER",
     "playerName": "Nazwa Gracza",
     "playerNamePlaceholder": "Wprowadź Nazwę",
+    "gameBranch": "Wersja Gry",
+    "releaseVersion": "Wydanie (Stabilna)",
+    "preReleaseVersion": "Przed-Wydaniem (Eksperymentalna)",
     "customInstallation": "Dostosuj Instalacje",
     "installationFolder": "Folder docelowy",
     "pathPlaceholder": "Domyślna lokalizacja",
@@ -56,7 +57,9 @@
     "noDescription": "Brak opisu",
     "confirmDelete": "Czy na pewno chcesz usunąć \"{name}\"?",
     "confirmDeleteDesc": "Tej czynności nie można cofnąć.",
-    "confirmDeletion": "Potwierdź"
+    "confirmDeletion": "Potwierdź",
+    "apiKeyRequired": "Wymagany Klucz API",
+    "apiKeyRequiredDesc": "Klucz API CurseForge jest potrzebny do przeglądania modów"
   },
   "news": {
     "title": "WSZYSTKIE WIADOMOŚCI",
@@ -116,15 +119,29 @@
     "repairGame": "Napraw Grę",
     "reinstallGame": "Zainstaluj ponownie pliki gry (zachowuje dane)",
     "gpuPreference": "Preferencje GPU",
-    "gpuHint": "Wybierz preferowany procesor graficzny (Linux: wpływa na DRI_PRIME)",
+    "gpuHint": "Funkcja dostępna tylko na laptopie; ustaw na Zintegrowaną, jeśli na komputerze PC",
     "gpuAuto": "Auto",
     "gpuIntegrated": "Zintegrowana",
     "gpuDedicated": "Dedykowana",
-    "logs": "SYSTEM LOGS",
+    "logs": "DZIENNIKI SYSTEMOWE",
     "logsCopy": "Kopiuj",
     "logsRefresh": "Odśwież",
     "logsFolder": "Otwórz Folder",
-    "logsLoading": "Ładowanie logów..."
+    "logsLoading": "Ładowanie logów...",
+    "closeLauncher": "Zachowanie Launchera",
+    "closeOnStart": "Zamknij Launcher przy starcie gry",
+    "closeOnStartDescription": "Automatycznie zamknij launcher po uruchomieniu Hytale",
+    "hwAccel": "Przyspieszenie Sprzętowe",
+    "hwAccelDescription": "Włącz przyspieszenie sprzętowe dla launchera",
+    "gameBranch": "Gałąź Gry",
+    "branchRelease": "Wydanie",
+    "branchPreRelease": "Przed-Wydaniem",
+    "branchHint": "Przełączaj między stabilnym wydaniem a eksperymentalną wersją przed-wydaniem",
+    "branchWarning": "Zmiana gałęzi spowoduje pobranie i instalację innej wersji gry",
+    "branchSwitching": "Przełączanie na {branch}...",
+    "branchSwitched": "Pomyślnie przełączono na {branch}!",
+    "installRequired": "Wymagana Instalacja",
+    "branchInstallConfirm": "Gra zostanie zainstalowana dla gałęzi {branch}. Kontynuować?"
   },
   "uuid": {
     "modalTitle": "Zarządzanie UUID",
@@ -148,10 +165,6 @@
     "notificationText": "Dołącz do naszej społeczności Discord!",
     "joinButton": "Dołącz Discord"
   },
-  "skins": {
-    "title": "Skiny",
-    "comingSoon": "Personalizacja skórek już wkrótce..."
-  },
   "common": {
     "confirm": "Potwierdź",
     "cancel": "Anuluj",
@@ -160,7 +173,8 @@
     "delete": "Usuń",
     "edit": "Edytuj",
     "loading": "Ładowanie...",
-    "apply": "Zastosuj"
+    "apply": "Zastosuj",
+    "install": "Zainstaluj"
   },
   "notifications": {
     "gameDataNotFound": "Błąd: Nie znaleziono danych gry",
@@ -195,7 +209,9 @@
     "modsDownloadFailed": "Nie udało się pobrać moda: {error}",
     "modsToggleFailed": "Nie udało się przełączyć moda: {error}",
     "modsDeleteFailed": "Nie udało się usunąć moda: {error}",
-    "modsModNotFound": "Nie znaleziono informacji o modzie"
+    "modsModNotFound": "Nie znaleziono informacji o modzie",
+    "hwAccelSaved": "Zapisano ustawienie przyspieszenia sprzętowego",
+    "hwAccelSaveFailed": "Nie udało się zapisać ustawienia przyspieszenia sprzętowego"
   },
   "confirm": {
     "defaultTitle": "Potwierdź działanie",

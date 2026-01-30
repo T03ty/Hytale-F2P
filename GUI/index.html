@@ -35,6 +35,10 @@
                     <i class="fas fa-play"></i>
                     <span class="nav-tooltip" data-i18n="nav.play">Play</span>
                 </div>
+                <div class="nav-item" data-page="featured">
+                    <i class="fas fa-server"></i>
+                    <span class="nav-tooltip">Featured Servers</span>
+                </div>
                 <div class="nav-item" data-page="mods">
                     <i class="fas fa-box"></i>
                     <span class="nav-tooltip" data-i18n="nav.mods">Mods</span>
@@ -43,10 +47,6 @@
                     <i class="fas fa-newspaper"></i>
                     <span class="nav-tooltip" data-i18n="nav.news">News</span>
                 </div>
-                <div class="nav-item" data-page="chat">
-                    <i class="fas fa-comments"></i>
-                    <span class="nav-tooltip" data-i18n="nav.chat">Players Chat</span>
-                </div>
                 <div class="nav-item" data-page="settings">
                     <i class="fas fa-cog"></i>
                     <span class="nav-tooltip" data-i18n="nav.settings">Settings</span>
@@ -54,6 +54,10 @@
                 <div class="nav-item logs-nav-item" data-page="logs" id="openLogsBtn" onclick="openLogs()">
                     <i class="fas fa-terminal"></i>
                     <span class="nav-tooltip">Logs</span>
+                </div>
+                <div class="nav-item" onclick="openDiscordExternal()">
+                    <i class="fab fa-discord"></i>
+                    <span class="nav-tooltip">Discord</span>
                 </div>
             </div>
 
@@ -112,7 +116,7 @@
                             <h1 class="install-title">
                                 HY<span class="title-accent">TALE</span>
                             </h1>
-                            <p class="install-subtitle" data-i18n="install.title">FREE TO PLAY LAUNCHER</p>
+                            <p class="install-subtitle" data-i18n="install.title">UNOFFICIAL HYTALE LAUNCHER</p>
                         </div>
 
                         <div class="install-form">
@@ -120,7 +124,7 @@
                                 <label class="form-label" data-i18n="install.playerName">Player Name</label>
                                 <input type="text" id="installPlayerName"
                                     data-i18n-placeholder="install.playerNamePlaceholder" class="form-input"
-                                    value="Player" />
+                                    value="Player" maxlength="16" />
                             </div>
 
                             <div class="form-group">
@@ -212,6 +216,38 @@
                         </div>
                     </div>
 
+                    <div id="featured-page" class="page">
+                        <div class="featured-layout">
+                            <div class="featured-left">
+                                <div class="featured-header">
+                                    <h2 class="featured-title">
+                                        <i class="fas fa-star mr-2"></i>
+                                        <span>FEATURED SERVERS</span>
+                                    </h2>
+                                </div>
+                                <div id="featuredServersList" class="featured-list">
+                                    <div class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="featured-right">
+                                <div class="featured-header">
+                                    <h2 class="featured-title">
+                                        <i class="fas fa-server mr-2"></i>
+                                        <span>HF2P SERVERS</span>
+                                    </h2>
+                                </div>
+                                <div id="myServersList" class="featured-list">
+                                    <div class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="mods-page" class="page">
                         <div class="mods-header">
                             <div class="mods-search-container">
@@ -256,50 +292,6 @@
                         <div id="allNewsGrid" class="news-grid-full"></div>
                     </div>
 
-                    <div id="chat-page" class="page">
-                        <div class="chat-container">
-                            <div class="chat-header">
-                                <h2 class="chat-title">
-                                    <i class="fas fa-comments mr-2"></i>
-                                    <span data-i18n="chat.title">PLAYERS CHAT</span>
-                                </h2>
-                                <div class="chat-header-actions">
-                                    <button id="chatColorBtn" class="chat-color-btn">
-                                        <i class="fas fa-palette"></i>
-                                        <span data-i18n="chat.pickColor">Color</span>
-                                    </button>
-                                    <div class="chat-online-badge">
-                                        <i class="fas fa-circle"></i>
-                                        <span id="chatOnlineCount">0</span> <span data-i18n="chat.online">online</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="chat-body">
-                                <div id="chatMessages" class="chat-messages">
-                                </div>
-                            </div>
-
-                            <div class="chat-footer">
-                                <div class="chat-input-container">
-                                    <textarea id="chatInput" class="chat-input"
-                                        data-i18n-placeholder="chat.inputPlaceholder" rows="1"
-                                        maxlength="500"></textarea>
-                                    <button id="chatSendBtn" class="chat-send-btn">
-                                        <i class="fas fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                                <div class="chat-footer-info">
-                                    <span class="chat-char-counter" id="chatCharCounter">0/500</span>
-                                    <span class="chat-warning-text">
-                                        <i class="fas fa-shield-alt"></i>
-                                        <span data-i18n="chat.secureChat">Secure chat - Links are censored</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div id="settings-page" class="page">
                         <div class="settings-container">
                             <div class="settings-header">
@@ -310,271 +302,273 @@
                             </div>
 
                             <div class="settings-content">
-                                <div class="settings-section">
-                                    <h3 class="settings-section-title">
-                                        <i class="fas fa-gamepad"></i>
-                                        <span data-i18n="settings.game">Game Options</span>
-                                    </h3>
-
-                                    <div class="settings-option">
-                                        <div class="settings-input-group">
-                                            <label class="settings-input-label" data-i18n="settings.playerName">Player
-                                                Name</label>
-                                            <input type="text" id="settingsPlayerName" class="settings-input"
-                                                data-i18n-placeholder="settings.playerNamePlaceholder" maxlength="16" />
-                                            <p class="settings-hint">
-                                                <i class="fas fa-user"></i>
-                                                <span data-i18n="settings.playerNameHint">This name will be used in-game
-                                                    (1-16 characters)</span>
-                                            </p>
+                                <div class="settings-column">
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fas fa-gamepad"></i>
+                                            <span data-i18n="settings.game">Game Options</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-input-group">
+                                                <label class="settings-input-label" data-i18n="settings.playerName">Player
+                                                    Name</label>
+                                                <input type="text" id="settingsPlayerName" class="settings-input"
+                                                    data-i18n-placeholder="settings.playerNamePlaceholder" maxlength="16" />
+                                                <p class="settings-hint">
+                                                    <i class="fas fa-user"></i>
+                                                    <span data-i18n="settings.playerNameHint">This name will be used in-game
+                                                        (1-16 characters)</span>
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="settings-option">
-                                        <div class="settings-button-group">
-                                            <button id="openGameLocationBtn" class="settings-action-btn"
-                                                onclick="openGameLocation()">
-                                                <i class="fas fa-folder-open"></i>
-                                                <div class="btn-content">
-                                                    <div class="btn-title" data-i18n="settings.openGameLocation">Open
-                                                        Game Location</div>
-                                                    <div class="btn-description"
-                                                        data-i18n="settings.openGameLocationDesc">Open the game
-                                                        installation folder</div>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="settings-option">
-                                        <div class="settings-button-group">
-                                            <button id="repairGameBtn" class="settings-action-btn"
-                                                onclick="repairGame()">
-                                                <i class="fas fa-tools"></i>
-                                                <div class="btn-content">
-                                                    <div class="btn-title" data-i18n="settings.repairGame">Repair Game
+    
+                                        <div class="settings-option">
+                                            <div class="settings-button-group">
+                                                <button id="openGameLocationBtn" class="settings-action-btn"
+                                                    onclick="openGameLocation()">
+                                                    <i class="fas fa-folder-open"></i>
+                                                    <div class="btn-content">
+                                                        <div class="btn-title" data-i18n="settings.openGameLocation">Open
+                                                            Game Location</div>
+                                                        <div class="btn-description"
+                                                            data-i18n="settings.openGameLocationDesc">Open the game
+                                                            installation folder</div>
                                                     </div>
-                                                    <div class="btn-description" data-i18n="settings.reinstallGame">
-                                                        Reinstall game files (preserves data)
-                                                    </div>
-                                                </div>
-                                            </button>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="settings-option">
-                                        <div class="settings-input-group">
-                                            <label class="settings-input-label" data-i18n="settings.gameBranch">Game
-                                                Branch</label>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-button-group">
+                                                <button id="repairGameBtn" class="settings-action-btn"
+                                                    onclick="repairGame()">
+                                                    <i class="fas fa-tools"></i>
+                                                    <div class="btn-content">
+                                                        <div class="btn-title" data-i18n="settings.repairGame">Repair Game
+                                                        </div>
+                                                        <div class="btn-description" data-i18n="settings.reinstallGame">
+                                                            Reinstall game files (preserves data)
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-input-group">
+                                                <label class="settings-input-label" data-i18n="settings.gameBranch">Game
+                                                    Branch</label>
+                                                <div class="segmented-control">
+                                                    <input type="radio" id="branch-release" name="gameBranch"
+                                                        value="release" checked>
+                                                    <label for="branch-release"
+                                                        data-i18n="settings.branchRelease">Release</label>
+                                                    <input type="radio" id="branch-pre-release" name="gameBranch"
+                                                        value="pre-release">
+                                                    <label for="branch-pre-release"
+                                                        data-i18n="settings.branchPreRelease">Pre-Release</label>
+                                                </div>
+                                                <p class="settings-hint">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <span data-i18n="settings.branchHint">Switch between stable release and
+                                                        experimental pre-release versions</span>
+                                                </p>
+                                                <p class="settings-hint" style="color: #f39c12;">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <span data-i18n="settings.branchWarning">Changing branch will download
+                                                        and install a different game version</span>
+                                                </p>
+                                            </div>
+                                        </div>
+    
+                                        <div class="settings-option">
+                                            <label class="settings-input-label" data-i18n="settings.gpuPreference">GPU
+                                                Preference</label>
                                             <div class="segmented-control">
-                                                <input type="radio" id="branch-release" name="gameBranch"
-                                                    value="release" checked>
-                                                <label for="branch-release"
-                                                    data-i18n="settings.branchRelease">Release</label>
-                                                <input type="radio" id="branch-pre-release" name="gameBranch"
-                                                    value="pre-release">
-                                                <label for="branch-pre-release"
-                                                    data-i18n="settings.branchPreRelease">Pre-Release</label>
+                                                <input type="radio" id="gpu-auto" name="gpuPreference" value="auto" checked>
+                                                <label for="gpu-auto" data-i18n="settings.gpuAuto">Auto</label>
+                                                <input type="radio" id="gpu-integrated" name="gpuPreference"
+                                                    value="integrated">
+                                                <label for="gpu-integrated"
+                                                    data-i18n="settings.gpuIntegrated">Integrated</label>
+                                                <input type="radio" id="gpu-dedicated" name="gpuPreference"
+                                                    value="dedicated">
+                                                <label for="gpu-dedicated"
+                                                    data-i18n="settings.gpuDedicated">Dedicated</label>
                                             </div>
                                             <p class="settings-hint">
                                                 <i class="fas fa-info-circle"></i>
-                                                <span data-i18n="settings.branchHint">Switch between stable release and
-                                                    experimental pre-release versions</span>
+                                                <span data-i18n="settings.gpuHint">Laptop-only feature; set to Integrated if on PC</span>
                                             </p>
-                                            <p class="settings-hint" style="color: #f39c12;">
-                                                <i class="fas fa-exclamation-triangle"></i>
-                                                <span data-i18n="settings.branchWarning">Changing branch will download
-                                                    and install a different game version</span>
-                                            </p>
+                                            <div id="gpu-detection-info" class="gpu-detection-info"></div>
                                         </div>
                                     </div>
 
-                                    <div class="settings-option">
-                                        <label class="settings-input-label" data-i18n="settings.gpuPreference">GPU
-                                            Preference</label>
-                                        <div class="segmented-control">
-                                            <input type="radio" id="gpu-auto" name="gpuPreference" value="auto" checked>
-                                            <label for="gpu-auto" data-i18n="settings.gpuAuto">Auto</label>
-                                            <input type="radio" id="gpu-integrated" name="gpuPreference"
-                                                value="integrated">
-                                            <label for="gpu-integrated"
-                                                data-i18n="settings.gpuIntegrated">Integrated</label>
-                                            <input type="radio" id="gpu-dedicated" name="gpuPreference"
-                                                value="dedicated">
-                                            <label for="gpu-dedicated"
-                                                data-i18n="settings.gpuDedicated">Dedicated</label>
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fas fa-coffee"></i>
+                                            <span data-i18n="settings.java">Java Runtime</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <label class="settings-checkbox">
+                                                <input type="checkbox" id="customJavaCheck" />
+                                                <span class="checkmark"></span>
+                                                <div class="checkbox-content">
+                                                    <div class="checkbox-title" data-i18n="settings.useCustomJava">Use
+                                                        Custom Java Path</div>
+                                                    <div class="checkbox-description" data-i18n="settings.javaDescription">
+                                                        Override the bundled Java runtime with
+                                                        your own installation</div>
+                                                </div>
+                                            </label>
                                         </div>
-                                        <p class="settings-hint">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span data-i18n="settings.gpuHint">Select your preferred GPU (Linux:
-                                                affects DRI_PRIME)</span>
-                                        </p>
-                                        <div id="gpu-detection-info" class="gpu-detection-info"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="settings-section">
-                                <h3 class="settings-section-title">
-                                    <i class="fas fa-fingerprint"></i>
-                                    <span data-i18n="settings.account">Player UUID Management</span>
-                                </h3>
-
-                                <div class="settings-option">
-                                    <div class="settings-input-group">
-                                        <label class="settings-input-label" data-i18n="settings.currentUUID">Current
-                                            UUID</label>
-                                        <div class="uuid-display-container">
-                                            <input type="text" id="currentUuid" class="settings-input uuid-input"
-                                                readonly data-i18n-placeholder="settings.uuidPlaceholder" />
-                                            <button id="copyUuidBtn" class="uuid-btn copy-btn" title="Copy UUID">
-                                                <i class="fas fa-copy"></i>
-                                            </button>
-                                            <button id="regenerateUuidBtn" class="uuid-btn regenerate-btn"
-                                                title="Generate New UUID">
-                                                <i class="fas fa-sync-alt"></i>
-                                            </button>
-                                        </div>
-                                        <p class="settings-hint">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span data-i18n="settings.uuidHint">Your unique player identifier for
-                                                this username</span>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="settings-option">
-                                    <div class="settings-button-group">
-                                        <button id="manageUuidsBtn" class="settings-action-btn">
-                                            <i class="fas fa-list"></i>
-                                            <div class="btn-content">
-                                                <div class="btn-title" data-i18n="settings.manageUUIDs">Manage All
-                                                    UUIDs</div>
-                                                <div class="btn-description" data-i18n="settings.manageUUIDsDesc">
-                                                    View and manage all player UUIDs</div>
-                                            </div>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="settings-section">
-                                <h3 class="settings-section-title">
-                                    <i class="fab fa-discord"></i>
-                                    <span data-i18n="settings.discord">Discord Integration</span>
-                                </h3>
-
-                                <div class="settings-option">
-                                    <label class="settings-checkbox">
-                                        <input type="checkbox" id="discordRPCCheck" checked />
-                                        <span class="checkmark"></span>
-                                        <div class="checkbox-content">
-                                            <div class="checkbox-title" data-i18n="settings.enableRPC">Enable
-                                                Discord Rich Presence</div>
-                                            <div class="checkbox-description" data-i18n="settings.discordDescription">
-                                                Show your launcher activity
-                                                on Discord
+    
+                                        <div id="customJavaOptions" class="custom-java-options" style="display: none;">
+                                            <div class="settings-input-group">
+                                                <label class="settings-input-label" data-i18n="settings.javaPath">Java
+                                                    Executable Path</label>
+                                                <div class="settings-input-with-button">
+                                                    <input type="text" id="customJavaPath" class="settings-input"
+                                                        data-i18n-placeholder="settings.javaPathPlaceholder" readonly />
+                                                    <button id="browseJavaBtn" class="settings-browse-btn">
+                                                        <i class="fas fa-folder-open"></i>
+                                                        <span data-i18n="settings.javaBrowse">Browse</span>
+                                                    </button>
+                                                </div>
+                                                <p class="settings-hint">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <span data-i18n="settings.javaHint">Select the Java installation folder
+                                                        (supports Windows, Mac, Linux)</span>
+                                                </p>
                                             </div>
                                         </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="settings-section">
-                                <h3 class="settings-section-title">
-                                    <i class="fas fa-window-close"></i>
-                                    <span data-i18n="settings.closeLauncher">Launcher Behavior</span>
-                                </h3>
-
-                                <div class="settings-option">
-                                    <label class="settings-checkbox">
-                                        <input type="checkbox" id="closeLauncherCheck" />
-                                        <span class="checkmark"></span>
-                                        <div class="checkbox-content">
-                                            <div class="checkbox-title" data-i18n="settings.closeOnStart">Close Launcher
-                                                on game start</div>
-                                            <div class="checkbox-description"
-                                                data-i18n="settings.closeOnStartDescription">
-                                                Automatically close the launcher after Hytale has launched
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div class="settings-option">
-                                    <label class="settings-checkbox">
-                                        <input type="checkbox" id="launcherHwAccelCheck" />
-                                        <span class="checkmark"></span>
-                                        <div class="checkbox-content">
-                                            <div class="checkbox-title" data-i18n="settings.hwAccel">Launcher Hardware
-                                                Acceleration</div>
-                                            <div class="checkbox-description" data-i18n="settings.hwAccelDescription">
-                                                Enable hardware acceleration for the launcher UI (Requires restart)
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-
-                            <div class="settings-section">
-                                <h3 class="settings-section-title">
-                                    <i class="fas fa-coffee"></i>
-                                    <span data-i18n="settings.java">Java Runtime</span>
-                                </h3>
-
-                                <div class="settings-option">
-                                    <label class="settings-checkbox">
-                                        <input type="checkbox" id="customJavaCheck" />
-                                        <span class="checkmark"></span>
-                                        <div class="checkbox-content">
-                                            <div class="checkbox-title" data-i18n="settings.useCustomJava">Use
-                                                Custom Java Path</div>
-                                            <div class="checkbox-description" data-i18n="settings.javaDescription">
-                                                Override the bundled Java runtime with
-                                                your own installation</div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div id="customJavaOptions" class="custom-java-options" style="display: none;">
-                                    <div class="settings-input-group">
-                                        <label class="settings-input-label" data-i18n="settings.javaPath">Java
-                                            Executable Path</label>
-                                        <div class="settings-input-with-button">
-                                            <input type="text" id="customJavaPath" class="settings-input"
-                                                data-i18n-placeholder="settings.javaPathPlaceholder" readonly />
-                                            <button id="browseJavaBtn" class="settings-browse-btn">
-                                                <i class="fas fa-folder-open"></i>
-                                                <span data-i18n="settings.javaBrowse">Browse</span>
-                                            </button>
-                                        </div>
-                                        <p class="settings-hint">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span data-i18n="settings.javaHint">Select the Java installation folder
-                                                (supports Windows, Mac, Linux)</span>
-                                        </p>
                                     </div>
                                 </div>
-                            </div>
+                                
+                                <div class="settings-column">
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fas fa-fingerprint"></i>
+                                            <span data-i18n="settings.account">Player UUID Management</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-input-group">
+                                                <label class="settings-input-label" data-i18n="settings.currentUUID">Current
+                                                    UUID</label>
+                                                <div class="uuid-display-container">
+                                                    <input type="text" id="currentUuid" class="settings-input uuid-input"
+                                                        readonly data-i18n-placeholder="settings.uuidPlaceholder" />
+                                                    <button id="copyUuidBtn" class="uuid-btn copy-btn" title="Copy UUID">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                    <button id="regenerateUuidBtn" class="uuid-btn regenerate-btn"
+                                                        title="Generate New UUID">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
+                                                <p class="settings-hint">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <span data-i18n="settings.uuidHint">Your unique player identifier for
+                                                        this username</span>
+                                                </p>
+                                            </div>
+                                        </div>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-button-group">
+                                                <button id="manageUuidsBtn" class="settings-action-btn">
+                                                    <i class="fas fa-list"></i>
+                                                    <div class="btn-content">
+                                                        <div class="btn-title" data-i18n="settings.manageUUIDs">Manage All
+                                                            UUIDs</div>
+                                                        <div class="btn-description" data-i18n="settings.manageUUIDsDesc">
+                                                            View and manage all player UUIDs</div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="settings-section">
-                                <h3 class="settings-section-title">
-                                    <i class="fas fa-language"></i>
-                                    <span data-i18n="settings.language">Language</span>
-                                </h3>
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fas fa-window-close"></i>
+                                            <span data-i18n="settings.closeLauncher">Launcher Behavior</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <label class="settings-checkbox">
+                                                <input type="checkbox" id="closeLauncherCheck" />
+                                                <span class="checkmark"></span>
+                                                <div class="checkbox-content">
+                                                    <div class="checkbox-title" data-i18n="settings.closeOnStart">Close Launcher
+                                                        on game start</div>
+                                                    <div class="checkbox-description"
+                                                        data-i18n="settings.closeOnStartDescription">
+                                                        Automatically close the launcher after Hytale has launched
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="settings-option">
+                                            <label class="settings-checkbox">
+                                                <input type="checkbox" id="launcherHwAccelCheck" />
+                                                <span class="checkmark"></span>
+                                                <div class="checkbox-content">
+                                                    <div class="checkbox-title" data-i18n="settings.hwAccel">Launcher Hardware
+                                                        Acceleration</div>
+                                                    <div class="checkbox-description" data-i18n="settings.hwAccelDescription">
+                                                        Enable hardware acceleration for the launcher UI (Requires restart)
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+    
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fas fa-language"></i>
+                                            <span data-i18n="settings.language">Language</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <div class="settings-input-group">
+                                                <label class="settings-input-label" data-i18n="settings.selectLanguage">Select
+                                                    Language</label>
+                                                <select id="languageSelect" class="settings-input">
+                                                    <!-- Options populated by i18n.js -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="settings-option">
-                                    <div class="settings-input-group">
-                                        <label class="settings-input-label" data-i18n="settings.selectLanguage">Select
-                                            Language</label>
-                                        <select id="languageSelect" class="settings-input">
-                                            <!-- Options populated by i18n.js -->
-                                        </select>
+                                    <div class="settings-section">
+                                        <h3 class="settings-section-title">
+                                            <i class="fab fa-discord"></i>
+                                            <span data-i18n="settings.discord">Discord Integration</span>
+                                        </h3>
+    
+                                        <div class="settings-option">
+                                            <label class="settings-checkbox">
+                                                <input type="checkbox" id="discordRPCCheck" checked />
+                                                <span class="checkmark"></span>
+                                                <div class="checkbox-content">
+                                                    <div class="checkbox-title" data-i18n="settings.enableRPC">Enable
+                                                        Discord Rich Presence</div>
+                                                    <div class="checkbox-description" data-i18n="settings.discordDescription">
+                                                        Show your launcher activity
+                                                        on Discord
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
+                </div>
                 </div>
 
                 <div id="logs-page" class="page">
@@ -655,41 +649,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="chatUsernameModal" class="chat-username-modal" style="display: none;">
-        <div class="chat-username-modal-content">
-            <div class="chat-username-modal-header">
-                <h2 class="chat-username-modal-title">
-                    <i class="fas fa-comments mr-2"></i>
-                    <span data-i18n="chat.joinChat">Join Chat</span>
-                </h2>
-            </div>
-            <div class="chat-username-modal-body">
-                <p class="chat-username-modal-description" data-i18n="chat.chooseUsername">
-                    Choose a username to join the Players Chat
-                </p>
-                <div class="chat-username-input-group">
-                    <label for="chatUsernameInput" class="chat-username-label"
-                        data-i18n="chat.username">Username</label>
-                    <input type="text" id="chatUsernameInput" class="chat-username-input"
-                        data-i18n-placeholder="chat.usernamePlaceholder" maxlength="20" autocomplete="off" />
-                    <span class="chat-username-hint" data-i18n="chat.usernameHint">3-20 characters, letters, numbers, -
-                        and _ only</span>
-                    <span id="chatUsernameError" class="chat-username-error"></span>
-                </div>
-            </div>
-            <div class="chat-username-modal-footer">
-                <button id="chatUsernameCancel" class="chat-username-btn-cancel">
-                    <i class="fas fa-times"></i>
-                    <span data-i18n="common.cancel">Cancel</span>
-                </button>
-                <button id="chatUsernameSubmit" class="chat-username-btn-submit">
-                    <i class="fas fa-check"></i>
-                    <span data-i18n="chat.joinButton">Join Chat</span>
-                </button>
             </div>
         </div>
     </div>
@@ -787,7 +746,6 @@
 
     <div class="version-display-bottom">
         <i class="fas fa-code-branch"></i>
-        <span id="launcherVersion">Loading...</span>
     </div>
 
     <footer class="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm px-4 py-2">
@@ -818,71 +776,47 @@
         </div>
     </footer>
 
-    <script type="module" src="js/script.js"></script> <!-- Discord Notification -->
-    <div id="discordNotification" class="discord-notification">
-        <div class="notification-content">
-            <i class="fab fa-discord"></i>
-            <span class="notification-text" data-i18n="discord.notificationText">Join our Discord community!</span>
-            <button class="notification-action"
-                onclick="window.electronAPI?.openExternal('https://discord.gg/n6HZ7NwSQd')">
-                <span data-i18n="discord.joinButton">Join Discord</span>
-            </button>
-        </div>
-        <button class="notification-close" onclick="closeDiscordNotification()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
+    <script type="module" src="js/script.js"></script>
 
-    <!-- Modal pour sélectionner la couleur du chat -->
-    <div id="chatColorModal" class="chat-color-modal" style="display: none;">
-        <div class="chat-color-modal-content">
-            <div class="chat-color-modal-header">
-                <h3 class="chat-color-modal-title">
-                    <i class="fas fa-palette"></i>
-                    <span data-i18n="chat.colorModal.title">Customize Username Color</span>
-                </h3>
-                <button class="modal-close-btn" onclick="closeChatColorModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="chat-color-modal-body">
-                <div id="solidColorSection" class="color-section">
-                    <h4 data-i18n="chat.colorModal.chooseSolid">Choose a solid color:</h4>
-                    <div class="predefined-colors">
-                        <div class="color-option" data-color="#3498db" style="background: #3498db;"></div>
-                        <div class="color-option" data-color="#e74c3c" style="background: #e74c3c;"></div>
-                        <div class="color-option" data-color="#2ecc71" style="background: #2ecc71;"></div>
-                        <div class="color-option" data-color="#f39c12" style="background: #f39c12;"></div>
-                        <div class="color-option" data-color="#9b59b6" style="background: #9b59b6;"></div>
-                        <div class="color-option" data-color="#1abc9c" style="background: #1abc9c;"></div>
-                        <div class="color-option" data-color="#e91e63" style="background: #e91e63;"></div>
-                        <div class="color-option" data-color="#ff5722" style="background: #ff5722;"></div>
-                    </div>
-                    <div class="custom-color-input">
-                        <label for="customColor" data-i18n="chat.colorModal.customColor">Custom color:</label>
-                        <input type="color" id="customColor" value="#3498db">
-                    </div>
-                </div>
-
-                <div class="color-preview">
-                    <h4 data-i18n="chat.colorModal.preview">Preview:</h4>
-                    <div id="colorPreview" class="preview-username" data-i18n="chat.colorModal.previewUsername">
-                        YourUsername</div>
+    <div id="discordPopupModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content discord-popup-modal">
+            <div class="modal-header">
+                <div class="discord-popup-header">
+                    <i class="fab fa-discord"></i>
+                    <h2 class="modal-title">Join Our Discord Community</h2>
                 </div>
             </div>
-            <div class="chat-color-modal-footer">
-                <button class="btn-secondary" onclick="closeChatColorModal()"><span
-                        data-i18n="common.cancel">Cancel</span></button>
-                <button class="btn-primary" onclick="applyChatColor()"><span data-i18n="chat.colorModal.apply">Apply
-                        Color</span></button>
+            <div class="modal-body">
+                <div class="discord-popup-body">
+                    <p class="discord-popup-text">
+                        Join our community of over <strong>5000 members</strong> and stay connected!
+                    </p>
+                    <p class="discord-popup-text">
+                        Get the latest news, updates, and announcements about the launcher.
+                    </p>
+                    <p class="discord-popup-text">
+                        Find help, report bugs, share your feedback, and connect with other players.
+                    </p>
+                   
+                    <div class="discord-popup-actions">
+                        <button class="discord-popup-btn primary" onclick="joinDiscord()">
+                            <i class="fab fa-discord"></i>
+                            Join Discord
+                        </button>
+                        <button class="discord-popup-btn secondary" onclick="closeDiscordPopup()">
+                            Maybe Later
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="js/i18n.js"></script>
+    <script src="js/featured.js"></script>
     <script type="module" src="js/settings.js"></script>
     <script type="module" src="js/update.js"></script>
-    <script src="js/updater.js"></script>
+    <!-- updater.js disabled - using update.js instead which has skip button and macOS handling -->
 </body>
 
 

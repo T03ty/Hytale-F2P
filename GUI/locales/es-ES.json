@@ -119,7 +119,7 @@
     "repairGame": "Reparar juego",
     "reinstallGame": "Reinstalar archivos del juego (conserva los datos)",
     "gpuPreference": "Preferencia de GPU",
-    "gpuHint": "Selecciona tu GPU preferida (Linux: afecta DRI_PRIME)",
+    "gpuHint": "Función exclusiva para computadora portátil; configúrela como Integrada si está en una PC",
     "gpuAuto": "Automático",
     "gpuIntegrated": "Integrada",
     "gpuDedicated": "Dedicada",
@@ -131,6 +131,8 @@
     "closeLauncher": "Comportamiento del Launcher",
     "closeOnStart": "Cerrar Launcher al iniciar el juego",
     "closeOnStartDescription": "Cierra automáticamente el launcher después de que Hytale se haya iniciado",
+    "hwAccel": "Aceleración por Hardware",
+    "hwAccelDescription": "Habilitar aceleración por hardware para el launcher",
     "gameBranch": "Rama del Juego",
     "branchRelease": "Lanzamiento",
     "branchPreRelease": "Pre-Lanzamiento",
@@ -207,7 +209,9 @@
     "modsDownloadFailed": "Error al descargar mod: {error}",
     "modsToggleFailed": "Error al alternar mod: {error}",
     "modsDeleteFailed": "Error al eliminar mod: {error}",
-    "modsModNotFound": "Información del mod no encontrada"
+    "modsModNotFound": "Información del mod no encontrada",
+    "hwAccelSaved": "Configuración de aceleración por hardware guardada",
+    "hwAccelSaveFailed": "Error al guardar la configuración de aceleración por hardware"
   },
   "confirm": {
     "defaultTitle": "Confirmar acción",

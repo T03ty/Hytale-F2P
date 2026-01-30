@@ -1,34 +1,99 @@
-# Hytale F2P Server Guide
+# 🎮 Hytale F2P Server Guide
 
 Play with friends online! This guide covers both easy in-game hosting and advanced dedicated server setup.
 
-DOWNLOAD SERVER FILES HERE: https://discord.gg/MEyWUxt77m
+### **DOWNLOAD SERVER FILES (JAR/RAR/SCRIPTS) HERE: https://discord.gg/MEyWUxt77m** 
+
+**Table of Contents**
+
+* ["Server" Term and Definition](#server-term-and-definiton)
+* [Server Directory Location](#server-directory-location)
+* [A. Online Play Feature](#a-online-play-feature)
+  * [1. Host Your Singleplayer World using In-Game Invite Code](#1-host-your-singleplayer-world-using-in-game-invite-code)
+    * [Common Issues (UPnP/NAT/STUN) on Online Play](#common-issues-upnpnatstun-on-online-play)
+  * [2. Host Your Singleplayer World using Tailscale](#2-host-your-singleplayer-world-using-tailscale)
+* [B. Local Dedicated Server](#b-local-dedicated-server)
+  * [1. Using Playit.gg (Recommended) ✅](#1-using-playitgg-recommended-)
+  * [2. Using Radmin VPN](#2-using-radmin-vpn)
+* [C. 24/7 Dedicated Server (Advanced)](#c-247-dedicated-server-advanced)
+  * [Step 1: Get the Files Ready](#step-1-get-the-files-ready)
+  * [Step 2: Place HytaleServer.jar in the Server directory](#step-2-place-hytaleserverjar-in-the-server-directory)
+  * [Step 3: Run the Server](#step-3-run-the-server)
+* [D. Tinkering Guides](#d-tinkering-guides)
+  * [1. Network Setup](#1-network-setup)
+  * [2. Configuration](#2-configuration)
+  * [3. RAM Allocation Guide](#3-ram-allocation-guide)
+  * [4. Server Commands](#4-server-commands)
+  * [5. Command Line Options](#5-command-line-options)
+  * [6. File Structure](#6-file-structure)
+  * [7. Backups](#7-backups)
+  * [8. Troubleshooting](#8-troubleshooting)
+  * [9. Docker Deployment (Advanced)](#9-docker-deployment-advanced)
+  * [10. Getting Help](#10-getting-help) 
+---
+
+### "Server" Term and Definiton
+
+"HytaleServer.jar", which called as "Server", functions as the place of authentication of the client that supposed to go to Hytale Official Authentication System but we managed our way to redirect it on our service (Thanks to Sanasol), handling approximately thousands of players worldwide to play this game for free.
+
+Kindly support us via [our Buy Me a Coffee link](https://buymeacoffee.com/hf2p) if you think our launcher took a big part of developing this Hytale community for the love of the game itself. 
+**We will always advertise, always pushing, and always asking, to every users of this launcher to purchase the original game to help the official development of Hytale**. 
+
+### Server Directory Location
+
+Here are the directory locations of Server folder if you have installed 
+- **Windows:** `%localappdata%\HytaleF2P\release\package\game\latest\Server`
+- **macOS:** `~/Library/Application Support/HytaleF2P/release/package/game/latest/Server`
+- **Linux:** `~/.hytalef2p/release/package/game/latest/Server`
+
+> [!NOTE]
+> This location only exists if the user installed the game using our launcher. The `Server` folder needed to auth the HytaleClient to play Hytale online
+> (for now; we planned to add offline mode in later version of our launcher).
+
+> [!IMPORTANT]
+> Hosting a dedicated Hytale server will not need the exact similar tree. You can put it anywhere, as long as the directory has `Assets.zip` which
+> can be acquired from our launcher via our `HytaleServer.rar` server file (which contains patched `HytaleServer.jar`, `Assets.zip`, and `run_server` scripts in `.sh & .bat`.
 
 ---
 
-## Part 1: Playing with Friends (Online Play)
+# A. Host Your Singleplayer World
+
+This feature is perfect for 1-5 players that want to just play instantly with friends.
+Terms and conditions applies.
+
+## 1. Using Online-Play Feature / In-Game Invite Code
 
 The easiest way to play with friends - no manual server setup required!
+*The game automatically handles networking using UPnP/STUN/NAT traversal.*
 
-### How It Works
-
-1. **Start the game** via F2P Launcher
-2. **Click "Online Play"** in the main menu
-3. **Share the invite code** with your friends
-4. Friends enter your invite code to join
-
-The game automatically handles networking using UPnP/STUN/NAT traversal.
-
-### Network Requirements
-
-For Online Play to work, you need:
-
+**For Online Play to work, you need:**
 - **UPnP enabled** on your router (most routers have this on by default)
 - **Public IP address** from your ISP (not behind CGNAT)
 
-### Common Issues
+> [!TIP]
+> Hoster need to make sure that the router can use UPnP: read router docs, wiki, or watch Youtube tutorials.
+>
+> If you encounter any problem, check Common Issues section below!
 
-#### "NAT Type: Carrier-Grade NAT (CGNAT)" Warning
+1. Press **Worlds** on the Main Menu.
+2. Select which world you want to play with your friend.
+3. Once you get in the world, press **ESC**/Pause the game.
+4. Press **Online Play** in the Pause Menu.
+5. Set option "Allow Other Players to Join" from OFF to **ON**. You can set Password if you want.
+6. Press **Save**, the Invite Code will appear.
+7. Press **Copy to Clipboard** and **Share the Invite Code** to your friends!
+8. Friends: Press **Servers** in the Main Menu > Press **Join via Code** > Paste the Code > Join.
+
+> [!WARNING]
+> If other players can't join the Hoster with error: `Failed to connect to any available address. The host may be offline or behind a strict firewall.`
+> 
+> **AND ALSO** the Hoster "Online Play" menu shows `Connected to STUN - NAT Type: Restricted (No UPnP)`,
+>
+> this means the Online Play is **unavailable** on the Hoster machine, and it is neccessary to use services to host your world. **We recommend Playit.gg!**
+
+
+### Common Issues (UPnP/NAT/STUN) on Online Play
+<details><summary><b>a. "NAT Type: Carrier-Grade NAT (CGNAT)" Warning</b></summary>
 
 If you see this message:
 ```
@@ -40,14 +105,13 @@ Warning: Your network configuration may prevent other players from connecting.
 **What this means:** Your ISP doesn't give you a public IP address. Multiple customers share one public IP, which blocks incoming connections.
 
 **Solutions:**
-
 1. **Contact your ISP** - Request a public/static IP address (may cost extra)
 2. **Use a VPN with port forwarding** - Services like Mullvad, PIA, or AirVPN offer this
-3. **Use Radmin VPN or Playit.gg** - Create a virtual LAN with friends (see below)
+3. **Use Playit.gg / Tailscale / Radmin VPN** - Create a virtual LAN with friends (see below)
 4. **Have a friend with public IP host instead**
+</details>
 
-#### "UPnP Failed" or "Port Mapping Failed"
-
+<details><summary><b>b. "UPnP Failed" or "Port Mapping Failed" Warning</b></summary>
 **Check your router:**
 1. Log into router admin panel (usually `192.168.1.1` or `192.168.0.1`)
 2. Find UPnP settings (often under "Advanced" or "NAT")
@@ -56,117 +120,138 @@ Warning: Your network configuration may prevent other players from connecting.
 
 **If UPnP isn't available:**
 - Manually forward **port 5520 UDP** to your computer's local IP
-- See "Port Forwarding" section below
+- See "Port Forwarding" or "Workarounds or NAT/CGNAT" sections below
+</details>
 
-#### "Strict NAT" or "Symmetric NAT"
-
+<details><summary><b>c. "Strict NAT" or "Symmetric NAT" Warning</b></summary>
 Some routers have restrictive NAT that blocks peer connections.
 
 **Try:**
 1. Enable "NAT Passthrough" or "NAT Filtering: Open" in router settings
 2. Put your device in router's DMZ (temporary test only)
-3. Use Radmin VPN as workaround
+3. Use Playit.gg / Tailscale / Radmin VPN as workaround
+</details>
 
-### Workarounds for NAT/CGNAT Issues
+## 2. Using Tailscale
+Tailscale creates mesh VPN service that streamlines connecting devices and services securely across different networks. And **works crossplatform!!**
 
-#### Option 1: playit.gg (Recommended)
+1. All members are required to download [Tailscale](https://tailscale.com/download) on your device.
+[Once installed, Tailscale starts and live inside your hidden icon section in Windows, Mac and Linux]
+2. Create a **common Tailscale** account which will shared among your friends to log in.
+3. Ask your **host to login in to thier Tailscale client first**, then the other members.
+  * Host
+    * Open your singleplayer world
+    * Go to Online Play settings
+    * Re-save your settings to generate a new share code
+  * Friends
+    * Ensure Tailscale is connected
+    * Use the new share code to connect
+    * To test your connection, ping the host's ipv4 mentioned in Tailscale
+
+---
+
+# B. Local Dedicated Server
+
+This option is perfect for any players size. From small to high.
+
+## 1. Using Playit.gg (Recommended) ✅
 
 Free tunneling service - only the host needs to install it:
 
-1. **Download [playit.gg](https://playit.gg/)** and run it - Connect your account from the terminal (do not close it when playing on the server)  
-2. **Add a tunnel** - Select "UDP", tunnel description of "Hytale Server", port count `1`, and local port `5520`
-3. **Start the tunnel** - You'll get a public address like `xx-xx.gl.at.ply.gg:5520`
-4. **Share the address** - Friends connect directly using this address
+1. Go to https://playit.gg/login and **Log In** with your existing account, **Create Account** if you don't have one
+2. Press "Add a tunnel" > Select `UDP` > Tunnel description of `Hytale Server` > Port count `1` > and Local Port `5520`
+3. Press **Start the tunnel** (or you can just run the Playit.gg.EXE if you already installed it on your machine) - You'll get a public address like `xx-xx.gl.at.ply.gg:5520`
+4. Go to https://playit.gg/download : `Installer` (Windows) or `x86-64` (Linux) or follow `Debian Install Script` (Debian-based only) 
+   * Windows: Install the `playit-windows.msi`
+   * Linux:
+     * Right-click file > Properties > Turn on 'Executable as a Program' | or `chmod +x playit-linux-amd64` on terminal
+     * Run by double-clicking the file or `./playit-linux-amd64` via terminal
+5. Open the URL/link by `Ctrl+Click` it. If unable, select the URL, then Right-Click to Copy (`Ctrl+Shift+C` for Linux) then Paste the URL into your browser to link it with your created account.
+6. **WARNING: Do not close the terminal if you are still playing or hosting the server**
+7. Once it done, download the `run_server_with_tokens` script file (`.BAT` for Windows, `.SH` for Linux) from our Discord server > channel `#open-public-server`
+8. Put the script file to the `Server` folder in `HytaleF2P` directory (`%localappdata%\HytaleF2P\release\package\game\latest\Server`)
+9. Copy the `Assets.zip` from the `%localappdata%\HytaleF2P\release\package\game\latest\` folder to the `Server\` folder. (TIP: You can use Symlink of that file to reduce disk usage!)
+10. Double-click the .BAT file to host your server, wait until it shows:
+```
+===================================================
+Hytale Server Booted! [Multiplayer, Fresh Universe]
+===================================================
+```
+11. Connect to the server by go to `Servers` in your game client, press `Add Server`, type `localhost` in the address box, use any name for your server.
+12. Send the public address in Step 3 to your friends.
 
-Works with both Online Play and dedicated servers. No software needed for players joining.
-
-#### Option 2: Radmin VPN
+## 2. Using Radmin VPN
 
 Creates a virtual LAN - all players need to install it:
 
-1. **Download [Radmin VPN](https://www.radmin-vpn.com/)** - All players install it
-2. **Create a network** - One person creates, others join with network name/password
-3. **Host via Online Play** - Use your Radmin VPN IP instead
-4. **Friends connect** - They'll see you on the virtual LAN
+1. Download [Radmin VPN](https://www.radmin-vpn.com/) - All players install it
+2. One person create a room/network, others join with network name/password
+3. Host joined the world, others will connect to it.
+4. Open Hytale Game > Servers > Add Servers > Direct Connect > Type IP Address of the Host from Radmin.
 
-Both options bypass all NAT/CGNAT issues. But for **Windows machines only!**
+These options bypass all NAT/CGNAT issues. But for **Windows machines only!**
 
-#### Option 3: Tailscale
-It creates mesh VPN service that streamlines connecting devices and services securely across different networks. And **works crossplatform!!**
-
-1. All member's are required to download [Tailscale](https://tailscale.com/download) on your device.
-[Once installed, Tailwind starts and live inside your hidden icon section in Windows, Mac and Linux]
-2. Create a **common tailscale** account which will shared among your friends to log in.
-3. Ask your **host to login in to thier tailscale client first**, then the other members.
-##### Host
-  1. Open your singleplayer world
-  2. Go to Online Play settings
-  3. Re-save your settings to generate a new share code
-##### Friends
-  1. Ensure Tailscale is connected
-2. Use the new share code to connect
-[To test your connection, ping the host's ipv4 mentioned in tailwind]
 ---
 
-## Part 2: Dedicated Server (Advanced)
+# C. 24/7 Dedicated Server (Advanced)
 
 For 24/7 servers, custom configurations, or hosting on a VPS/dedicated machine.
 
-### Quick Start
+## Step 1: Get the Files Ready
 
-#### Step 1: Get the Server JAR
+### Prequisites
 
-The server scripts will automatically download the pre-patched server JAR if it's not present.
+1. `HytaleServer.jar` (pre-patched for F2P players; dual-auth soon for Official + F2P play)
+2. `Assets.zip`
+3. `run_scripts_with_token.bat` for Windows or `run_scripts_with_token.sh` for macOS/Linux
 
-**Option A:** Let the scripts download automatically (requires `HYTALE_SERVER_URL` to be configured)
+> [!NOTE]
+> The `HytaleServer.rar` available on our Discord Server (`#open-public-server` channel; typo on the Discord, not `zip`) includes all of the prequisites.
+> Unfortunately, the JAR inside the RAR isn't updated so you'll need to download the JAR from the link on Discord.
 
-**Option B:** Manually place `HytaleServer.jar` (pre-patched for F2P) in the Server directory:
+> [!TIP]
+> You can copy `Assets.zip` generated from the launcher to be used for the dedicated server. It's located in `HytaleF2P/release/package/game/latest`. 
 
-- **Windows:** `%localappdata%\HytaleF2P\release\package\game\latest\Server`
-- **macOS:** `~/Library/Application Support/HytaleF2P/release/package/game/latest/Server`
-- **Linux:** `~/.hytalef2p/release/package/game/latest/Server`
 
-If you have a custom install path, the Server folder is inside your custom location under `HytaleF2P/release/package/game/latest/Server`.
+## Step 2: Place `HytaleServer.jar` in the `Server` directory
 
-#### Step 2: Run the Server
+* Windows
+  * `%localappdata%\HytaleF2P\release\package\game\latest\Server`
+* macOS
+  * `~/Library/Application Support/HytaleF2P/release/package/game/latest/Server`
+* Linux
+  * `~/.hytalef2p/release/package/game/latest/Server`
+* If you have a custom install path, the Server folder is inside your custom location under
+  * `HytaleF2P/release/package/game/latest/Server`.
+
+## Step 3: Run the Server
 
 **Windows:**
 ```batch
-cd scripts
 run_server.bat
 ```
 
 **macOS / Linux:**
 ```bash
-cd scripts
 ./run_server.sh
 ```
 
-The scripts will:
-1. Find your game installation automatically
-2. Download the pre-patched server JAR if needed
-3. Fetch session tokens from the auth server
-4. Start the server
-
-#### Step 3: Connect Players
-
-Share your server IP address with players. They connect via the F2P Launcher's server browser or direct connect.
-
 ---
 
-## Network Setup (Dedicated Server)
+# D. Tinkering Guides
 
-### Local Network (LAN)
+## 1. Network Setup
+
+### a. Local Network (LAN)
 
 If all players are on the same network:
 1. Find your local IP: `ipconfig` (Windows) or `ifconfig` (Mac/Linux)
 2. Share this IP with players on your network
 3. Default port is `5520`
 
-### Port Forwarding (Internet Play)
+### b. Port Forwarding (Internet Play)
 
 To allow direct internet connections:
-
 1. Forward **port 5520 (UDP)** in your router
 2. Find your public IP at [whatismyip.com](https://whatismyip.com)
 3. Share your public IP with players
@@ -179,36 +264,35 @@ netsh advfirewall firewall add rule name="Hytale Server" dir=in action=allow pro
 
 ---
 
-## Configuration
+## 2. Configuration
 
-### Environment Variables
+### a. Environment Variables
 
-Set these before running to customize your server:
+Write this in the script file `.BAT`/`.SH` or set these manually in command before running to customize your server:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `HYTALE_SERVER_URL` | (placeholder) | URL to download pre-patched server JAR |
 | `HYTALE_AUTH_DOMAIN` | `auth.sanasol.ws` | Auth server domain (4-16 chars) |
-| `HYTALE_BIND` | `0.0.0.0:5520` | Server IP and port |
-| `HYTALE_AUTH_MODE` | `authenticated` | Auth mode (see below) |
-| `HYTALE_SERVER_NAME` | `My Hytale Server` | Server display name |
-| `HYTALE_GAME_PATH` | (auto-detected) | Override game location |
+| `BIND_ADRESS` | `0.0.0.0:5520` | Server IP and port |
+| `AUTH_MODE` | `authenticated` | Auth mode (see below) |
+| `SERVER_NAME` | `My Hytale Server` | Server display name |
+| `ASSETS_PATH` | `./Assets.zip` | Assets file location |
 | `JVM_XMS` | `2G` | Minimum Java memory |
 | `JVM_XMX` | `4G` | Maximum Java memory |
 
 **Example (Windows):**
 ```batch
-set HYTALE_SERVER_NAME=My Awesome Server
+set SERVER_NAME=My Awesome Server
 set JVM_XMX=8G
 run_server.bat
 ```
 
 **Example (Linux/macOS):**
 ```bash
-HYTALE_SERVER_NAME="My Awesome Server" JVM_XMX=8G ./run_server.sh
+SERVER_NAME="My Awesome Server" JVM_XMX=8G ./run_server.sh
 ```
 
-### Authentication Modes
+### b. Authentication Modes
 
 | Mode | Description | Use Case |
 |------|-------------|----------|
@@ -218,7 +302,7 @@ HYTALE_SERVER_NAME="My Awesome Server" JVM_XMX=8G ./run_server.sh
 
 ---
 
-## RAM Allocation Guide
+## 3. RAM Allocation Guide
 
 Adjust memory based on your system:
 
@@ -242,7 +326,7 @@ JVM_XMS=4G JVM_XMX=12G ./run_server.sh
 
 ---
 
-## Server Commands
+## 4. Server Commands
 
 Once running, use these commands in the console:
 
@@ -259,9 +343,12 @@ Once running, use these commands in the console:
 | `unban <player>` | Unban a player |
 | `tp <player> <x> <y> <z>` | Teleport player |
 
+
+Use `/` slash for these commands.
+
 ---
 
-## Command Line Options
+## 5. Command Line Options
 
 Pass these when starting the server:
 
@@ -290,7 +377,7 @@ Pass these when starting the server:
 
 ---
 
-## File Structure
+## 6. File Structure
 
 ```
 <game_path>/
@@ -308,21 +395,21 @@ Pass these when starting the server:
 
 ---
 
-## Backups
+## 7. Backups
 
-### Automatic Backups
+### a. Automatic Backups
 
 ```bash
 ./run_server.sh --backup --backup-dir ./backups --backup-frequency 30
 ```
 
-### Manual Backup
+### b. Manual Backup
 
 1. Use `save` command or stop the server
 2. Copy the `universe/` folder
 3. Store in a safe location
 
-### Restore
+### c. Restore
 
 1. Stop the server
 2. Delete/rename current `universe/`
@@ -331,9 +418,9 @@ Pass these when starting the server:
 
 ---
 
-## Troubleshooting
+## 8. Troubleshooting
 
-### "Java not found" or "Java version too old"
+### a. "Java not found" or "Java version too old"
 
 **Java 21 is REQUIRED** (the server uses class file version 65.0).
 
@@ -352,30 +439,20 @@ export PATH="$JAVA_HOME/bin:$PATH"
 ```
 Add these lines to `~/.zshrc` or `~/.bash_profile` to make permanent.
 
-### "Game directory not found"
-
-- Download game via F2P Launcher first
-- Or set `HYTALE_GAME_PATH` environment variable
-- Check custom install path in launcher settings
-
-### "Assets.zip not found"
-
-Game files incomplete. Re-download via the launcher.
-
-### "Port already in use"
+### b. "Port already in use"
 
 ```bash
 ./run_server.sh --bind 0.0.0.0:5521
 ```
 
-### "Out of memory"
+### c. "Out of memory"
 
 Increase JVM_XMX:
 ```bash
 JVM_XMX=6G ./run_server.sh
 ```
 
-### Players can't connect
+### d. Players can't connect
 
 1. Server shows "Server Ready"?
 2. Using F2P Launcher (not official)?
@@ -383,7 +460,7 @@ JVM_XMX=6G ./run_server.sh
 4. Port forwarding configured (for internet)?
 5. Try `--auth-mode unauthenticated` for testing
 
-### "Authentication failed"
+### e. "Authentication failed"
 
 - Ensure players use F2P Launcher
 - Auth server may be temporarily down
@@ -391,7 +468,7 @@ JVM_XMX=6G ./run_server.sh
 
 ---
 
-## Docker Deployment (Advanced)
+## 9. Docker Deployment (Advanced)
 
 For production servers, use Docker:
 
@@ -410,40 +487,7 @@ See [Docker documentation](https://github.com/Hybrowse/hytale-server-docker) for
 
 ---
 
-## Server Settings Summary
-
-### Minimal Setup
-```bash
-./run_server.sh
-```
-
-### Custom Memory
-```bash
-JVM_XMS=2G JVM_XMX=8G ./run_server.sh
-```
-
-### Custom Port
-```bash
-HYTALE_BIND=0.0.0.0:25565 ./run_server.sh
-```
-
-### LAN Party (No Auth)
-```bash
-./run_server.sh --auth-mode unauthenticated
-```
-
-### Full Custom Setup
-```bash
-HYTALE_SERVER_NAME="Epic Server" \
-HYTALE_BIND=0.0.0.0:5520 \
-JVM_XMS=2G \
-JVM_XMX=8G \
-./run_server.sh --backup --backup-frequency 15 --allow-op
-```
-
----
-
-## Getting Help
+## 10. Getting Help
 
 - Check server console logs for errors
 - Test with `--auth-mode unauthenticated` first
@@ -452,8 +496,9 @@ JVM_XMX=8G \
 
 ---
 
-## Credits
+# Credits
 
 - Hytale F2P Project
 - [Hybrowse Docker Image](https://github.com/Hybrowse/hytale-server-docker)
 - Auth Server: sanasol.ws
+

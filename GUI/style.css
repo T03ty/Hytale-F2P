@@ -333,109 +333,6 @@ body {
     pointer-events: auto !important;
 }
 
-.discord-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(88, 101, 242, 0.3);
-    border-radius: 12px;
-    padding: 1rem;
-    max-width: 300px;
-    z-index: 10000;
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex: 1;
-}
-
-.discord-notification .fab.fa-discord {
-    color: #5865f2;
-    font-size: 1.25rem;
-}
-
-.notification-text {
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.notification-action {
-    background: #5865f2;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Space Grotesk', sans-serif;
-}
-
-.notification-action:hover {
-    background: #4752c4;
-    transform: scale(1.05);
-}
-
-.notification-close {
-    background: none;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.notification-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.notification-close i {
-    font-size: 0.75rem;
-}
-
-.discord-notification.hidden {
-    animation: slideOut 0.3s ease-in forwards;
-}
-
-@keyframes slideOut {
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
 .control-btn {
     width: 28px;
     height: 28px;
@@ -1107,6 +1004,216 @@ body {
     padding-bottom: 1rem;
 }
 
+/* Featured Servers Styles */
+.featured-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    height: calc(100vh - 180px);
+    overflow: hidden;
+}
+
+.featured-left,
+.featured-right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.featured-header {
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+
+.featured-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.featured-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-height: 0;
+}
+
+.featured-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.featured-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.featured-list::-webkit-scrollbar-thumb {
+    background: rgba(147, 51, 234, 0.5);
+    border-radius: 4px;
+}
+
+.featured-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(147, 51, 234, 0.7);
+}
+
+.featured-server-card {
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    min-height: 120px;
+    flex-shrink: 0;
+}
+
+.featured-server-card:hover {
+    transform: translateX(4px);
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 8px 40px rgba(147, 51, 234, 0.2);
+}
+
+.featured-server-banner {
+    width: 200px;
+    height: 100%;
+    min-height: 120px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    flex-shrink: 0;
+}
+
+.featured-server-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.featured-server-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.featured-server-address {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.server-address-text {
+    font-family: 'JetBrains Mono', monospace;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.copy-address-btn {
+    background: linear-gradient(135deg, #9333ea, #7c3aed);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.copy-address-btn:hover {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    transform: scale(1.05);
+}
+
+.copy-address-btn:active {
+    transform: scale(0.95);
+}
+
+.copy-address-btn.copied {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #94a3b8;
+    gap: 1rem;
+}
+
+.loading-spinner i {
+    color: #9333ea;
+}
+
+/* My server card - without banner */
+.my-server-card {
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 1.25rem;
+    flex-shrink: 0;
+}
+
+.my-server-card:hover {
+    transform: translateX(4px);
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 8px 40px rgba(147, 51, 234, 0.2);
+}
+
+.my-server-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.my-server-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.my-server-address {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
 .news-view-all:hover {
     color: white;
 }
@@ -1291,6 +1398,26 @@ body {
     max-width: 600px;
     margin: 0 auto;
     padding-top: 2rem;
+    padding-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .settings-content {
+        max-width: 1000px;
+        flex-direction: row;
+        align-items: start;
+    }
+}
+
+.settings-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
 }
 
 .setting-group {
@@ -2811,6 +2938,126 @@ body {
     border-radius: 4px;
 }
 
+.discord-popup-modal {
+    max-width: 500px;
+    width: 90%;
+}
+
+.discord-popup-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.discord-popup-header i {
+    font-size: 2.5rem;
+    color: #5865f2;
+}
+
+.discord-popup-body {
+    text-align: center;
+    padding: 0;
+}
+
+.discord-popup-text {
+    font-size: 1rem;
+    color: #d1d5db;
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.discord-popup-text strong {
+    color: #5865f2;
+    font-weight: 700;
+}
+
+.discord-popup-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 1.5rem 0;
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.discord-popup-warning i {
+    font-size: 1.1rem;
+}
+
+.discord-popup-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.discord-popup-btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.discord-popup-btn.primary {
+    background: #5865f2;
+    color: white;
+    box-shadow: 0 4px 0 0 #4752c4, 0 8px 20px rgba(88, 101, 242, 0.3);
+}
+
+.discord-popup-btn.primary:hover {
+    background: #4752c4;
+    box-shadow: 0 2px 0 0 #4752c4, 0 12px 30px rgba(88, 101, 242, 0.4);
+    transform: translateY(2px);
+}
+
+.discord-popup-btn.primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 0 #4752c4, 0 4px 15px rgba(88, 101, 242, 0.3);
+}
+
+.discord-popup-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #d1d5db;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.discord-popup-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.discord-popup-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.discord-popup-btn.primary:disabled:hover {
+    background: #5865f2;
+    transform: none;
+}
+
+.discord-popup-btn.secondary:disabled:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #d1d5db;
+}
+
 .mods-grid::-webkit-scrollbar-thumb:hover,
 .modal-body::-webkit-scrollbar-thumb:hover {
     background: rgba(147, 51, 234, 0.8);
@@ -3795,10 +4042,7 @@ body {
     font-weight: 700;
 }
 
-
-
-
-.chat-container {
+.settings-container {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 180px);
@@ -4242,6 +4486,12 @@ body {
     overflow-y: auto;
 }
 
+@media (min-width: 1024px) {
+    .settings-container {
+        max-width: 1200px;
+    }
+}
+
 .settings-header {
     margin-bottom: 1rem;
     text-align: center;
@@ -4269,6 +4519,11 @@ body {
     margin-bottom: 2rem;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+}
+
+.settings-content .settings-section,
+.settings-column .settings-section {
+    margin-bottom: 0;
 }
 
 .settings-section:hover {
@@ -5441,8 +5696,8 @@ select.settings-input option {
     font-weight: bold;
 }
 
-/* Styles pour le sélecteur de couleur dans le chat */
-.chat-header-actions {
+.settings-container {
+    padding: 2rem;
     display: flex;
     align-items: center;
     gap: 1rem;

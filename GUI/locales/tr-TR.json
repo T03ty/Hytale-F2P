@@ -119,7 +119,7 @@
     "repairGame": "Oyunu Onarı",
     "reinstallGame": "Oyun dosyalarını yeniden kur (veri korur)",
     "gpuPreference": "GPU Tercihi",
-    "gpuHint": "Tercih ettiğiniz GPU'yu seçin (Linux: DRI_PRIME'ı etkiler)",
+    "gpuHint": "Sadece dizüstü bilgisayarlarda bulunan bir özellik; PC'de kullanılıyorsa Entegre olarak ayarlayın.",
     "gpuAuto": "Otomatik",
     "gpuIntegrated": "Entegre",
     "gpuDedicated": "Ayrılmış",
@@ -131,6 +131,8 @@
     "closeLauncher": "Başlatıcı Davranışı",
     "closeOnStart": "Oyun başlatıldığında Başlatıcıyı Kapat",
     "closeOnStartDescription": "Hytale başlatıldıktan sonra başlatıcıyı otomatik olarak kapatın",
+    "hwAccel": "Donanım Hızlandırma",
+    "hwAccelDescription": "Başlatıcı için donanım hızlandırmasını etkinleştir",
     "gameBranch": "Oyun Dalı",
     "branchRelease": "Yayın",
     "branchPreRelease": "Ön-Yayın",
@@ -207,7 +209,9 @@
     "modsDownloadFailed": "Mod indirilemedi: {error}",
     "modsToggleFailed": "Mod değiştirilemedi: {error}",
     "modsDeleteFailed": "Mod silinemedi: {error}",
-    "modsModNotFound": "Mod bilgileri bulunamadı"
+    "modsModNotFound": "Mod bilgileri bulunamadı",
+    "hwAccelSaved": "Donanım hızlandırma ayarı kaydedildi",
+    "hwAccelSaveFailed": "Donanım hızlandırma ayarı kaydedilemedi"
   },
   "confirm": {
     "defaultTitle": "Eylemi onayla",

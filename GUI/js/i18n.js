@@ -4,10 +4,15 @@ const i18n = (() => {
   let translations = {};
   const availableLanguages = [
     { code: 'en', name: 'English' },
-    { code: 'es-ES', name: 'Español (España)' },
+    { code: 'de-DE', name: 'German (Germany)' },
+    { code: 'es-ES', name: 'Spanish (Spain)' },
+    { code: 'fr-FR', name: 'French (France)' },
+    { code: 'pl-PL', name: 'Polish (Poland)' },
     { code: 'pt-BR', name: 'Portuguese (Brazil)' },
+    { code: 'ru-RU', name: 'Russian (Russia)' },
+    { code: 'sv-SE', name: 'Swedish (Sweden)' },
     { code: 'tr-TR', name: 'Turkish (Turkey)' },
-    { code: 'pl-PL', name: 'Polish (Poland)' }
+    { code: 'id-ID', name: 'Indonesian (Indonesia)' }
   ];
 
   // Load single language file

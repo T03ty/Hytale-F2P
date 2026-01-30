@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const axios = require('axios');
 const { getOS } = require('../utils/platformUtils');
-const { getModsPath, getProfilesDir } = require('../core/paths');
+const { getModsPath, getProfilesDir, getHytaleSavesDir } = require('../core/paths');
 const { saveModsToConfig, loadModsFromConfig } = require('../core/config');
 const profileManager = require('./profileManager');
 
@@ -296,8 +296,9 @@ async function syncModsForCurrentProfile() {
     console.log(`[ModManager] Syncing mods for profile: ${activeProfile.name} (${activeProfile.id})`);
 
     // 1. Resolve Paths
-    // globalModsPath is the one the game uses (symlink target)
-    const globalModsPath = await getModsPath(); 
+    // centralModsPath is HytaleSaves\Mods (centralized location for active mods)
+    const hytaleSavesDir = getHytaleSavesDir();
+    const centralModsPath = path.join(hytaleSavesDir, 'Mods');
     // profileModsPath is the real storage for this profile
     const profileModsPath = getProfileModsPath(activeProfile.id);
     const profileDisabledModsPath = path.join(path.dirname(profileModsPath), 'DisabledMods');
@@ -306,96 +307,51 @@ async function syncModsForCurrentProfile() {
       fs.mkdirSync(profileDisabledModsPath, { recursive: true });
     }
 
-    // 2. Symlink / Migration Logic
-    let needsLink = false;
-    let globalStats = null;
-    
+    // 2. Copy-based Mod Sync (No symlinks - avoids permission issues)
+    // Ensure HytaleSaves\Mods directory exists
+    if (!fs.existsSync(centralModsPath)) {
+      fs.mkdirSync(centralModsPath, { recursive: true });
+      console.log(`[ModManager] Created centralized mods directory: ${centralModsPath}`);
+    }
+
+    // Check for old symlink and convert to real directory if needed (one-time migration)
     try {
-      globalStats = fs.lstatSync(globalModsPath);
+      const centralStats = fs.lstatSync(centralModsPath);
+      if (centralStats.isSymbolicLink()) {
+        console.log('[ModManager] Removing old symlink, converting to copy-based system...');
+        fs.unlinkSync(centralModsPath);
+        fs.mkdirSync(centralModsPath, { recursive: true });
+      }
     } catch (e) {
-      // Path doesn't exist
+      // Path doesn't exist, will be created above
     }
 
-    if (globalStats) {
-      if (globalStats.isSymbolicLink()) {
-        const linkTarget = fs.readlinkSync(globalModsPath);
-        // Normalize paths for comparison
-        if (path.resolve(linkTarget) !== path.resolve(profileModsPath)) {
-          console.log(`[ModManager] Updating symlink from ${linkTarget} to ${profileModsPath}`);
-          fs.unlinkSync(globalModsPath);
-          needsLink = true;
-        }
-      } else if (globalStats.isDirectory()) {
-        // MIGRATION: It's a real directory. Move contents to profile.
-        console.log('[ModManager] Migrating global mods folder to profile folder...');
-        const files = fs.readdirSync(globalModsPath);
-        for (const file of files) {
-          const src = path.join(globalModsPath, file);
-          const dest = path.join(profileModsPath, file);
-          // Only move if dest doesn't exist to avoid overwriting
-          if (!fs.existsSync(dest)) {
-             fs.renameSync(src, dest);
-          }
-        }
-        
-        // Also migrate DisabledMods if it exists globally
-        const globalDisabledPath = path.join(path.dirname(globalModsPath), 'DisabledMods');
-        if (fs.existsSync(globalDisabledPath) && fs.lstatSync(globalDisabledPath).isDirectory()) {
-             const dFiles = fs.readdirSync(globalDisabledPath);
-             for (const file of dFiles) {
-                 const src = path.join(globalDisabledPath, file);
-                 const dest = path.join(profileDisabledModsPath, file);
-                 if (!fs.existsSync(dest)) {
-                     fs.renameSync(src, dest);
-                 }
-             }
-             // We can remove global DisabledMods now, as it's not used by game
-             try { fs.rmSync(globalDisabledPath, { recursive: true, force: true }); } catch(e) {} 
-        }
-
-        // Remove the directory so we can link it
-        try {
-            let retries = 3;
-            while (retries > 0) {
-                try {
-                    fs.rmSync(globalModsPath, { recursive: true, force: true });
-                    break;
-                } catch (err) {
-                    if ((err.code === 'EPERM' || err.code === 'EBUSY') && retries > 0) {
-                        retries--;
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                    } else {
-                        throw err;
-                    }
-                }
-            }
-            needsLink = true;
-        } catch (e) {
-            console.error('Failed to remove global mods dir:', e);
-             // Throw error to stop.
-             throw new Error('Failed to migrate mods directory. Please clear ' + globalModsPath);
-        }
-      }
-    } else {
-      needsLink = true;
-    }
-
-    if (needsLink) {
-      console.log(`[ModManager] Creating symlink: ${globalModsPath} -> ${profileModsPath}`);
+    // Copy enabled mods from profile to HytaleSaves\Mods (for game to use)
+    console.log(`[ModManager] Copying enabled mods from ${profileModsPath} to ${centralModsPath}`);
+    
+    // First, clear central mods folder
+    const existingCentralMods = fs.existsSync(centralModsPath) ? fs.readdirSync(centralModsPath) : [];
+    for (const file of existingCentralMods) {
+      const filePath = path.join(centralModsPath, file);
       try {
-         const symlinkType = getOS() === 'windows' ? 'junction' : 'dir';
-         fs.symlinkSync(profileModsPath, globalModsPath, symlinkType); 
-      } catch (err) {
-        // If we can't create the symlink, try creating the directory first
-        console.error('[ModManager] Failed to create symlink. Falling back to direct folder mode.');
-        console.error(err.message);
-
-    // Fallback: create a real directory so the game still works
-    if (!fs.existsSync(globalModsPath)) {
-      fs.mkdirSync(globalModsPath, { recursive: true });
+        fs.unlinkSync(filePath);
+      } catch (e) {
+        console.warn(`Failed to remove ${file} from central mods:`, e.message);
       }
     }
-  }
+    
+    // Copy enabled mods to HytaleSaves\Mods
+    const enabledModFiles = fs.existsSync(profileModsPath) ? fs.readdirSync(profileModsPath).filter(f => f.endsWith('.jar') || f.endsWith('.zip')) : [];
+    for (const file of enabledModFiles) {
+      const src = path.join(profileModsPath, file);
+      const dest = path.join(centralModsPath, file);
+      try {
+        fs.copyFileSync(src, dest);
+        console.log(`[ModManager] Copied ${file} to HytaleSaves\\Mods`);
+      } catch (e) {
+        console.error(`Failed to copy ${file}:`, e.message);
+      }
+    }
 
     // 3. Auto-Repair (Download missing mods)
     const profileModsSnapshot = activeProfile.mods || [];
@@ -460,7 +416,7 @@ async function syncModsForCurrentProfile() {
     }
 
     // 5. Enforce Enabled/Disabled State (Move files between Profile/Mods and Profile/DisabledMods)
-    // Note: Since Global/Mods IS Profile/Mods (via symlink), moving out of Profile/Mods disables it for the game.
+    // Note: Enabled mods are copied to HytaleSaves\Mods, disabled mods stay in Profile/DisabledMods
     
     const disabledFiles = fs.existsSync(profileDisabledModsPath) ? fs.readdirSync(profileDisabledModsPath).filter(f => f.endsWith('.jar') || f.endsWith('.zip')) : [];
     const allFiles = new Set([...enabledFiles, ...disabledFiles]);

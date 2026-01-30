@@ -41,17 +41,17 @@ body:
       required: true
 
   - type: textarea
-    id: screenshots
+    id: proof
     attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
+      label: Screenshots/Recordings
+      description: If applicable, add Screenshots/Recordings to help explain your problem.
 
   - type: input
     id: version
     attributes:
       label: Version
       description: What version of the launcher are you running?
-      placeholder: "e.g. \"v2.0.11 stable/pre-release\""
+      placeholder: "e.g. \"v2.2.0 stable\""
     validations:
       required: true
 
@@ -60,7 +60,7 @@ body:
     attributes:
       label: Hardware Specification
       description: Tell us your CPU, iGPU, dGPU, VRAM, and RAM information.
-      placeholder: "CPU: Intel i9-14900K 6.0 GHz | GPU: NVIDIA RTX 4090 | VRAM: 24 GB | RAM: 32 GB"
+      placeholder: "CPU: Intel i9-14900K 6.0 GHz | GPU: NVIDIA RTX 4090 24 GB VRAM | RAM: 32 GB"
     validations:
       required: true
 
@@ -70,13 +70,11 @@ body:
       label: Operating System
       description: What operating system are you using?
       options:
-        - Windows 10
-        - Windows 11
-        - macOS (Apple Silicon)
-        - macOS (Intel)
-        - Linux Ubuntu/Debian-based
-        - Linux Fedora/RHEL-based
-        - Linux Arch-based
+        - Windows 11/10
+        - macOS (Apple Silicon, M1/M2/M3)
+        - Linux Ubuntu/Debian-based (Linux Mint, Pop!_OS, etc.)
+        - Linux Fedora/RHEL-based (Fedora, CentOS, etc.)
+        - Linux Arch-based (Steamdeck, CachyOS, etc.)
     validations:
       required: true
 

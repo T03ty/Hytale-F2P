@@ -45,8 +45,16 @@ export function setupInstallation() {
 export async function installGame() {
   if (isDownloading || (installBtn && installBtn.disabled)) return;
   
-  const playerName = (installPlayerName ? installPlayerName.value.trim() : '') || 'Player';
+  let playerName = (installPlayerName ? installPlayerName.value.trim() : '') || 'Player';
   const installPath = installPathInput ? installPathInput.value.trim() : '';
+  
+  // Limit player name to 16 characters
+  if (playerName.length > 16) {
+    playerName = playerName.substring(0, 16);
+    if (installPlayerName) {
+      installPlayerName.value = playerName;
+    }
+  }
   
   const selectedBranchRadio = document.querySelector('input[name="installBranch"]:checked');
   const selectedBranch = selectedBranchRadio ? selectedBranchRadio.value : 'release';
@@ -72,8 +80,11 @@ export async function installGame() {
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(true);
+            // Sync player name to both launcher and settings inputs
             const playerNameInput = document.getElementById('playerName');
             if (playerNameInput) playerNameInput.value = playerName;
+            const settingsPlayerName = document.getElementById('settingsPlayerName');
+            if (settingsPlayerName) settingsPlayerName.value = playerName;
             resetInstallButton();
           }, 2000);
         }
@@ -125,8 +136,11 @@ function simulateInstallation(playerName) {
           setTimeout(() => {
             window.LauncherUI.hideProgress();
             window.LauncherUI.showLauncherOrInstall(true);
+            // Sync player name to both launcher and settings inputs
             const playerNameInput = document.getElementById('playerName');
             if (playerNameInput) playerNameInput.value = playerName;
+            const settingsPlayerName = document.getElementById('settingsPlayerName');
+            if (settingsPlayerName) settingsPlayerName.value = playerName;
             resetInstallButton();
           }, 2000);
         }
@@ -188,7 +202,16 @@ export async function browseInstallPath() {
 async function savePlayerName() {
   try {
     if (window.electronAPI && window.electronAPI.saveSettings) {
-      const playerName = (installPlayerName ? installPlayerName.value.trim() : '') || 'Player';
+      let playerName = (installPlayerName ? installPlayerName.value.trim() : '') || 'Player';
+      
+      // Limit player name to 16 characters
+      if (playerName.length > 16) {
+        playerName = playerName.substring(0, 16);
+        if (installPlayerName) {
+          installPlayerName.value = playerName;
+        }
+      }
+      
       await window.electronAPI.saveSettings({ playerName });
     }
   } catch (error) {
@@ -240,12 +263,6 @@ async function loadPlayerSettings() {
 }
 
 window.installGame = installGame;
-window.browseInstallPath = browseInstallPath;
-
-document.addEventListener('DOMContentLoaded', async () => {
-  setupInstallation();
-  await checkGameStatusAndShowInterface();
-});
 window.browseInstallPath = browseInstallPath;
 
 document.addEventListener('DOMContentLoaded', async () => {

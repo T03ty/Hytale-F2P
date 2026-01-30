@@ -5,13 +5,14 @@ const { getResolvedAppDir, findClientPath, findUserDataPath, findUserDataRecursi
 const { getOS, getArch } = require('../utils/platformUtils');
 const { downloadFile, retryDownload, retryStalledDownload, MAX_AUTOMATIC_STALL_RETRIES } = require('../utils/fileManager');
 const { getLatestClientVersion, getInstalledClientVersion } = require('../services/versionManager');
+const { FORCE_CLEAN_INSTALL_VERSION, CLEAN_INSTALL_TEST_VERSION } = require('../core/testConfig');
 const { installButler } = require('./butlerManager');
 const { downloadAndReplaceHomePageUI, downloadAndReplaceLogo } = require('./uiFileManager');
 const { saveUsername, saveInstallPath, loadJavaPath, CONFIG_FILE, loadConfig, loadVersionBranch, saveVersionClient, loadVersionClient } = require('../core/config');
 const { resolveJavaPath, detectSystemJava, downloadJRE, getJavaExec, getBundledJavaPath } = require('./javaManager');
-const userDataBackup = require('../utils/userDataBackup');
+const { getUserDataPath, migrateUserDataToCentralized } = require('../utils/userDataMigration');
 
-async function downloadPWR(branch = 'release', fileName = '4.pwr', progressCallback, cacheDir = CACHE_DIR, manualRetry = false) {
+async function downloadPWR(branch = 'release', fileName = '7.pwr', progressCallback, cacheDir = CACHE_DIR, manualRetry = false) {
   const osName = getOS();
   const arch = getArch();
 
@@ -300,6 +301,16 @@ async function applyPWR(pwrFile, progressCallback, gameDir = GAME_DIR, toolsDir 
     fs.rmSync(stagingDir, { recursive: true, force: true });
   }
 
+  // Delete PWR file from cache after successful installation
+  try {
+    if (fs.existsSync(pwrFile)) {
+      fs.unlinkSync(pwrFile);
+      console.log('[Butler] PWR file deleted from cache after successful installation:', pwrFile);
+    }
+  } catch (delErr) {
+    console.warn('[Butler] Failed to delete PWR file from cache:', delErr.message);
+  }
+
   if (progressCallback) {
     progressCallback('Installation complete', null, null, null, null);
   }
@@ -308,31 +319,25 @@ async function applyPWR(pwrFile, progressCallback, gameDir = GAME_DIR, toolsDir 
 
 async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR, toolsDir = TOOLS_DIR, cacheDir = CACHE_DIR, branchOverride = null) {
   let tempUpdateDir;
-  let backupPath = null;
   const branch = branchOverride || loadVersionBranch();
   const installPath = path.dirname(path.dirname(path.dirname(path.dirname(gameDir))));
   
-  // Vérifier si on a version_client et version_branch dans config.json
   const config = loadConfig();
-  const hasVersionConfig = !!(config.version_client && config.version_branch);
-  const oldBranch = config.version_branch || 'release'; // L'ancienne branche pour le backup
-  console.log(`[UpdateGameFiles] hasVersionConfig: ${hasVersionConfig}`);
+  const oldBranch = config.version_branch || 'release';
   console.log(`[UpdateGameFiles] Switching from ${oldBranch} to ${branch}`);
   
   try {
-    if (progressCallback) {
-      progressCallback('Backing up user data...', 5, null, null, null);
-    }
-
-    // Backup UserData AVANT de télécharger/installer (critical for same-branch updates)
+    // NEW 2.2.0: Ensure UserData migration to centralized location
     try {
-      console.log(`[UpdateGameFiles] Attempting to backup UserData from old branch: ${oldBranch}`);
-      backupPath = await userDataBackup.backupUserData(installPath, oldBranch, hasVersionConfig);
-      if (backupPath) {
-        console.log(`[UpdateGameFiles] ✓ UserData backed up from ${oldBranch}: ${backupPath}`);
+      console.log('[UpdateGameFiles] Ensuring UserData migration...');
+      const migrationResult = await migrateUserDataToCentralized();
+      if (migrationResult.migrated) {
+        console.log('[UpdateGameFiles] ✓ UserData migrated to centralized location');
+      } else if (migrationResult.alreadyMigrated) {
+        console.log('[UpdateGameFiles] ✓ UserData already in centralized location');
       }
-    } catch (backupError) {
-      console.warn('[UpdateGameFiles] ✗ UserData backup failed:', backupError.message);
+    } catch (migrationError) {
+      console.warn('[UpdateGameFiles] UserData migration warning:', migrationError.message);
     }
 
     if (progressCallback) {
@@ -358,7 +363,15 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
     }
 
     await applyPWR(pwrFile, progressCallback, tempUpdateDir, toolsDir, branch, cacheDir);
-
+    // Delete PWR file from cache after successful update
+    try {
+      if (fs.existsSync(pwrFile)) {
+        fs.unlinkSync(pwrFile);
+        console.log('[UpdateGameFiles] PWR file deleted from cache after successful update:', pwrFile);
+      }
+    } catch (delErr) {
+      console.warn('[UpdateGameFiles] Failed to delete PWR file from cache:', delErr.message);
+    }
     if (progressCallback) {
       progressCallback('Replacing game files...', 80, null, null, null);
     }
@@ -390,31 +403,9 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
     const logoResult = await downloadAndReplaceLogo(gameDir, progressCallback);
     console.log('Logo@2x.png update result after update:', logoResult);
 
-    // Ensure UserData directory exists
-    const userDataDir = path.join(gameDir, 'Client', 'UserData');
-    if (!fs.existsSync(userDataDir)) {
-      console.log(`[UpdateGameFiles] Creating UserData directory at: ${userDataDir}`);
-      fs.mkdirSync(userDataDir, { recursive: true });
-    }
-
-    if (progressCallback) {
-      progressCallback('Restoring user data...', 90, null, null, null);
-    }
-
-    // Restore UserData using new system
-    if (backupPath) {
-      try {
-        console.log(`[UpdateGameFiles] Restoring UserData from ${oldBranch} to ${branch}`);
-        console.log(`[UpdateGameFiles] Source backup: ${backupPath}`);
-        await userDataBackup.restoreUserData(backupPath, installPath, branch);
-        await userDataBackup.cleanupBackup(backupPath);
-        console.log(`[UpdateGameFiles] ✓ UserData migrated successfully from ${oldBranch} to ${branch}`);
-      } catch (restoreError) {
-        console.warn('[UpdateGameFiles] ✗ UserData restore failed:', restoreError.message);
-      }
-    } else {
-      console.log('[UpdateGameFiles] No backup to restore, empty UserData folder created');
-    }
+    // NEW 2.2.0: No longer create UserData in game installation
+    // UserData is now in centralized location (getUserDataPath())
+    console.log('[UpdateGameFiles] UserData is managed in centralized location');
 
     console.log(`Game files updated successfully to version: ${newVersion}`);
     
@@ -433,15 +424,6 @@ async function updateGameFiles(newVersion, progressCallback, gameDir = GAME_DIR,
     return { success: true, updated: true, version: newVersion };
   } catch (error) {
     console.error('Error updating game files:', error);
-
-    if (backupPath) {
-      try {
-        await userDataBackup.cleanupBackup(backupPath);
-        console.log('UserData backup cleaned up after error');
-      } catch (cleanupError) {
-        console.warn('Could not clean up UserData backup:', cleanupError.message);
-      }
-    }
 
     if (tempUpdateDir && fs.existsSync(tempUpdateDir)) {
       fs.rmSync(tempUpdateDir, { recursive: true, force: true });
@@ -470,28 +452,18 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
   const customToolsDir = path.join(customAppDir, 'butler');
   const customGameDir = path.join(customAppDir, branch, 'package', 'game', 'latest');
   const customJreDir = path.join(customAppDir, branch, 'package', 'jre', 'latest');
-  const userDataDir = path.join(customGameDir, 'Client', 'UserData');
 
-  // Vérifier si on a version_client et version_branch dans config.json
-  const config = loadConfig();
-  const hasVersionConfig = !!(config.version_client && config.version_branch);
-  console.log(`[InstallGame] Configuration detected - version_client: ${config.version_client}, version_branch: ${config.version_branch}`);
-  console.log(`[InstallGame] hasVersionConfig: ${hasVersionConfig}`);
-
-  // Backup UserData AVANT l'installation si nécessaire
-  let backupPath = null;
-  if (progressCallback) {
-    progressCallback('Checking for existing UserData...', 5, null, null, null);
-  }
-
+  // NEW 2.2.0: Ensure UserData migration to centralized location
   try {
-    console.log(`[InstallGame] Attempting UserData backup (hasVersionConfig: ${hasVersionConfig})...`);
-    backupPath = await userDataBackup.backupUserData(customAppDir, branch, hasVersionConfig);
-    if (backupPath) {
-      console.log(`[InstallGame] ✓ UserData backed up to: ${backupPath}`);
+    console.log('[InstallGame] Ensuring UserData migration...');
+    const migrationResult = await migrateUserDataToCentralized();
+    if (migrationResult.migrated) {
+      console.log('[InstallGame] ✓ UserData migrated to centralized location');
+    } else if (migrationResult.alreadyMigrated) {
+      console.log('[InstallGame] ✓ UserData already in centralized location');
     }
-  } catch (backupError) {
-    console.warn('[InstallGame] ✗ UserData backup failed:', backupError.message);
+  } catch (migrationError) {
+    console.warn('[InstallGame] UserData migration warning:', migrationError.message);
   }
 
   [customAppDir, customCacheDir, customToolsDir].forEach(dir => {
@@ -499,10 +471,6 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
       fs.mkdirSync(dir, { recursive: true });
     }
   });
-
-  if (!fs.existsSync(userDataDir)) {
-    fs.mkdirSync(userDataDir, { recursive: true });
-  }
 
   saveUsername(playerName);
   if (installPathOverride) {
@@ -561,31 +529,33 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
   console.log(`Installing game files for branch: ${branch}...`);
 
   const latestVersion = await getLatestClientVersion(branch);
+  const targetVersion = FORCE_CLEAN_INSTALL_VERSION ? CLEAN_INSTALL_TEST_VERSION : latestVersion;
+  
+  if (FORCE_CLEAN_INSTALL_VERSION) {
+    console.log(`TESTING MODE: Forcing installation of ${targetVersion} instead of ${latestVersion}`);
+  }
+  
   let pwrFile;
   try {
-    pwrFile = await downloadPWR(branch, latestVersion, progressCallback, customCacheDir);
+    pwrFile = await downloadPWR(branch, targetVersion, progressCallback, customCacheDir);
     
-    // If downloadPWR returns false, it means the file doesn't exist or is invalid
-    // We should retry the download with a manual retry flag
     if (!pwrFile) {
       console.log('[Install] PWR file not found or invalid, attempting retry...');
-      pwrFile = await retryPWRDownload(branch, latestVersion, progressCallback, customCacheDir);
+      pwrFile = await retryPWRDownload(branch, targetVersion, progressCallback, customCacheDir);
     }
     
-    // Double-check we have a valid file path
     if (!pwrFile || typeof pwrFile !== 'string') {
       throw new Error(`PWR file download failed: received invalid path ${pwrFile}. Please retry download.`);
     }
     
   } catch (downloadError) {
     console.error('[Install] PWR download failed:', downloadError.message);
-    throw downloadError; // Re-throw to be handled by the main installGame error handler
+    throw downloadError;
   }
   
   await applyPWR(pwrFile, progressCallback, customGameDir, customToolsDir, branch, customCacheDir);
 
-  // Save the installed version and branch to config
-  saveVersionClient(latestVersion);
+  saveVersionClient(targetVersion);
   const { saveVersionBranch } = require('../core/config');
   saveVersionBranch(branch);
 
@@ -595,29 +565,9 @@ async function installGame(playerName = 'Player', progressCallback, javaPathOver
   const logoResult = await downloadAndReplaceLogo(customGameDir, progressCallback);
   console.log('Logo@2x.png update result after installation:', logoResult);
 
-  // Ensure UserData directory exists
-  if (!fs.existsSync(userDataDir)) {
-    console.log(`[InstallGame] Creating UserData directory at: ${userDataDir}`);
-    fs.mkdirSync(userDataDir, { recursive: true });
-  }
-
-  // Restore UserData from backup if exists
-  if (backupPath) {
-    if (progressCallback) {
-      progressCallback('Restoring UserData...', 95, null, null, null);
-    }
-
-    try {
-      console.log(`[InstallGame] Restoring UserData from: ${backupPath}`);
-      await userDataBackup.restoreUserData(backupPath, customAppDir, branch);
-      await userDataBackup.cleanupBackup(backupPath);
-      console.log('[InstallGame] ✓ UserData restored successfully');
-    } catch (restoreError) {
-      console.warn('[InstallGame] ✗ UserData restore failed:', restoreError.message);
-    }
-  } else {
-    console.log('[InstallGame] No backup to restore, empty UserData folder created');
-  }
+  // NEW 2.2.0: No longer create UserData in game installation
+  // UserData is managed in centralized location (getUserDataPath())
+  console.log('[InstallGame] UserData is managed in centralized location');
 
   if (progressCallback) {
     progressCallback('Installation complete', 100, null, null, null);
