@@ -18,8 +18,7 @@
 
 ### ⚠️ **WARNING: READ [QUICK START](#-quick-start) before Downloading & Installing the Launcher!** ⚠️
 
-#### 🛑 **PROBLEM WITH GITHUB REPO [Join the HF2P Discord](https://discord.gg/hf2pdc) TO DOWNLOAD THE LATEST VERSION** 🛑
-
+## 🛑 **PROBLEM WITH GITHUB REPO [Join the HF2P Discord](https://discord.gg/UrGzkBZwWf) TO DOWNLOAD THE LATEST VERSION** 🛑
 <p>
   👍 If you like the project, <b>feel free to support us via Buy Me a Coffee!</b> ☕<br>
   Any support is appreciated and helps keep the project going.
