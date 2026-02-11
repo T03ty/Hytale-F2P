@@ -6,15 +6,16 @@ Play with friends online! This guide covers both easy in-game hosting and advanc
 
 **Table of Contents**
 
+* [\[NEW!\] Play Online with Official Accounts 🆕](#new-play-online-with-official-accounts-)
 * ["Server" Term and Definition](#server-term-and-definiton)
 * [Server Directory Location](#server-directory-location)
-* [A. Online Play Feature](#a-online-play-feature)
-  * [1. Host Your Singleplayer World using In-Game Invite Code](#1-host-your-singleplayer-world-using-in-game-invite-code)
+* [A. Host Your Singleplayer World](#a-host-your-singleplayer-world)
+  * [1. Using Online-Play Feature In-Game Invite Code](#1-using-online-play-feature--in-game-invite-code)
     * [Common Issues (UPnP/NAT/STUN) on Online Play](#common-issues-upnpnatstun-on-online-play)
-  * [2. Host Your Singleplayer World using Tailscale](#2-host-your-singleplayer-world-using-tailscale)
+  * [2. Using Tailscale](#2-using-tailscale)
+  * [3. Using Radmin VPN](#3-using-radmin-vpn)
 * [B. Local Dedicated Server](#b-local-dedicated-server)
   * [1. Using Playit.gg (Recommended) ✅](#1-using-playitgg-recommended-)
-  * [2. Using Radmin VPN](#2-using-radmin-vpn)
 * [C. 24/7 Dedicated Server (Advanced)](#c-247-dedicated-server-advanced)
   * [Step 1: Get the Files Ready](#step-1-get-the-files-ready)
   * [Step 2: Place HytaleServer.jar in the Server directory](#step-2-place-hytaleserverjar-in-the-server-directory)
@@ -32,6 +33,69 @@ Play with friends online! This guide covers both easy in-game hosting and advanc
   * [10. Getting Help](#10-getting-help) 
 ---
 
+<div align='center'>
+ <h3>
+  <b>
+  Do you want to create Hytale Game Server with EASY SETUP, AFFORDABLE PRICE, AND 24/7 SUPPORT?
+  </b>
+ </h3>
+ <h2>
+  <b>
+  <a href="https://cloudnord.net/hytale-server-hosting">CLOUDNORD</a> is the ANSWER! HF2P Server is available!
+  </b>
+ </h2>
+ 
+</div>
+
+**CloudNord's Hytale, Minecraft, and Game Hosting** is at the core of our Server Hosting business. Join our Gaming community and experience our large choice of premium game servers, we’ve got you covered with super high-performance hardware, fantastic support options, and powerful server hosting to build and explore your worlds without limits! 
+
+**Order your Hytale, Minecraft, or other game servers today!**
+Choose Java Edition, Bedrock Edition, Cross-Play, or any of our additional supported games.
+Enjoy **20% OFF** all new game servers, **available now for a limited time!** Don’t miss out.
+
+### **CloudNord key hosting features include:**
+- Instant Server Setup ⚡
+- High Performance Game Servers 🚀
+- Game DDoS Protection 🛡️
+- Intelligent Game Backups 🧠
+- Quick Modpack Installer 🔧
+- Quick Plugin & Mod Installer 🧰
+- Full File Access 🗃️
+- 24/7 Support 📞 🏪
+- Powerful Game Control Server Panel 💪
+
+### **Check Us Out:**
+* 👉 CloudNord Website: https://cloudnord.net/hytalef2p
+* 👉 CloudNord Discord: https://discord.gg/TYxGrmUz4Y
+* 👉 CloudNord Reviews: https://www.trustpilot.com/review/cloudnord.net?page=2&stars=5
+
+--- 
+
+### [NEW!] Play Online with Official Accounts 🆕
+
+**Documentations:**
+* [Hytale-Server-Docker by Sanasol](https://github.com/sanasol/hytale-server-docker/tree/main?tab=readme-ov-file#dual-authentication)
+
+**Requirements:**
+* Using the patched HytaleServer.jar
+* Has Official Account with Purchased status on Official Hytale Website.
+* This official account holder can be the server hoster or one of the players.
+
+**Steps:**
+1. Running the patched HytaleServer.jar with either [B. Local Dedicated Server](#b-local-dedicated-server) or [C. 24/7 Dedicated Server (Advanced)](#c-247-dedicated-server-advanced) successfully.
+2. On the server's console/terminal/CMD, server admin **MUST RUN THIS EACH BOOT** to allow players with Official Hytale game license to connect on the server:
+```
+/auth logout
+/auth persistence Encrypted
+/auth login device
+```
+3. Server console will show instructions, an URL and a code; these will be revoked after 10 minutes if not authorized.
+4. The server hoster can open the URL directly to browser by holding Ctrl then Click on it, or copy and send it to the player with official account.
+5. Once it authorized, the official accounts can join server with F2P players.
+6. If you want to modify anything, look at the [Hytale-Server-Docker](https://github.com/sanasol/hytale-server-docker/) above, give the repo a STAR too.
+
+---
+
 ### "Server" Term and Definiton
 
 "HytaleServer.jar", which called as "Server", functions as the place of authentication of the client that supposed to go to Hytale Official Authentication System but we managed our way to redirect it on our service (Thanks to Sanasol), handling approximately thousands of players worldwide to play this game for free.
@@ -41,14 +105,15 @@ Kindly support us via [our Buy Me a Coffee link](https://buymeacoffee.com/hf2p) 
 
 ### Server Directory Location
 
-Here are the directory locations of Server folder if you have installed 
+Here are the directory locations of Server folder if you have installed it on default instalation location:
 - **Windows:** `%localappdata%\HytaleF2P\release\package\game\latest\Server`
 - **macOS:** `~/Library/Application Support/HytaleF2P/release/package/game/latest/Server`
 - **Linux:** `~/.hytalef2p/release/package/game/latest/Server`
 
 > [!NOTE]
-> This location only exists if the user installed the game using our launcher. The `Server` folder needed to auth the HytaleClient to play Hytale online
-> (for now; we planned to add offline mode in later version of our launcher).
+> This location only exists if the user installed the game using our launcher.
+> The `Server` folder needed to auth the HytaleClient to play Hytale in Singleplayer/Multiplayer for now.
+> (We planned to add offline mode in later version of our launcher).
 
 > [!IMPORTANT]
 > Hosting a dedicated Hytale server will not need the exact similar tree. You can put it anywhere, as long as the directory has `Assets.zip` which
@@ -64,6 +129,7 @@ Terms and conditions applies.
 ## 1. Using Online-Play Feature / In-Game Invite Code
 
 The easiest way to play with friends - no manual server setup required!
+
 *The game automatically handles networking using UPnP/STUN/NAT traversal.*
 
 **For Online Play to work, you need:**
@@ -112,6 +178,7 @@ Warning: Your network configuration may prevent other players from connecting.
 </details>
 
 <details><summary><b>b. "UPnP Failed" or "Port Mapping Failed" Warning</b></summary>
+ 
 **Check your router:**
 1. Log into router admin panel (usually `192.168.1.1` or `192.168.0.1`)
 2. Find UPnP settings (often under "Advanced" or "NAT")
@@ -123,7 +190,8 @@ Warning: Your network configuration may prevent other players from connecting.
 - See "Port Forwarding" or "Workarounds or NAT/CGNAT" sections below
 </details>
 
-<details><summary><b>c. "Strict NAT" or "Symmetric NAT" Warning</b></summary>
+<details><summary><b>c. "Connected via STUN", "Strict NAT" or "Symmetric NAT" Warning</b></summary>
+
 Some routers have restrictive NAT that blocks peer connections.
 
 **Try:**
@@ -133,6 +201,7 @@ Some routers have restrictive NAT that blocks peer connections.
 </details>
 
 ## 2. Using Tailscale
+
 Tailscale creates mesh VPN service that streamlines connecting devices and services securely across different networks. And **works crossplatform!!**
 
 1. All members are required to download [Tailscale](https://tailscale.com/download) on your device.
@@ -147,6 +216,17 @@ Tailscale creates mesh VPN service that streamlines connecting devices and servi
     * Ensure Tailscale is connected
     * Use the new share code to connect
     * To test your connection, ping the host's ipv4 mentioned in Tailscale
+
+## 3. Using Radmin VPN
+
+Creates a virtual LAN - all players need to install it:
+
+1. Download [Radmin VPN](https://www.radmin-vpn.com/) - All players install it
+2. One person create a room/network, others join with network name/password
+3. Host joined the world, others will connect to it.
+4. Open Hytale Game > Servers > Add Servers > Direct Connect > Type IP Address of the Host from Radmin.
+
+These options bypass all NAT/CGNAT issues. But for **Windows machines only!**
 
 ---
 
@@ -166,12 +246,13 @@ Free tunneling service - only the host needs to install it:
    * Linux:
      * Right-click file > Properties > Turn on 'Executable as a Program' | or `chmod +x playit-linux-amd64` on terminal
      * Run by double-clicking the file or `./playit-linux-amd64` via terminal
-5. Open the URL/link by `Ctrl+Click` it. If unable, select the URL, then Right-Click to Copy (`Ctrl+Shift+C` for Linux) then Paste the URL into your browser to link it with your created account.
-6. **WARNING: Do not close the terminal if you are still playing or hosting the server**
-7. Once it done, download the `run_server_with_tokens` script file (`.BAT` for Windows, `.SH` for Linux) from our Discord server > channel `#open-public-server`
-8. Put the script file to the `Server` folder in `HytaleF2P` directory (`%localappdata%\HytaleF2P\release\package\game\latest\Server`)
-9. Copy the `Assets.zip` from the `%localappdata%\HytaleF2P\release\package\game\latest\` folder to the `Server\` folder. (TIP: You can use Symlink of that file to reduce disk usage!)
-10. Double-click the .BAT file to host your server, wait until it shows:
+5. Open the URL/link by `Ctrl+Click` it. If unable, select the URL, then Right-Click to Copy (`Ctrl+Shift+C` for Linux) then Paste the URL into your browser to link it with your created account. 
+6. Once it done, download the `run_server_with_tokens (1)` script file (`.BAT` for Windows, `.SH` for Linux) from our Discord server > channel `#open-public-server`
+7. Put the script file to the `Server` folder in `HytaleF2P` directory (`%localappdata%\HytaleF2P\release\package\game\latest\Server`)
+8. Rename the script file to `run_server_with_tokens` to make it easier if you run it with Terminal, then do Method A or B.
+9. If you put it in `Server` folder in `HytaleF2P` launcher, change `ASSETS_PATH="${ASSETS_PATH:-./Assets.zip}"` inside the script to be `ASSETS_PATH="${ASSETS_PATH:-../Assets.zip}"`. NOTICE THE `./` and `../` DIFFERENCE.
+10. Copy the `Assets.zip` from the `%localappdata%\HytaleF2P\release\package\game\latest\` folder to the `Server\` folder. (TIP: You can use Symlink of that file to reduce disk usage!)
+11. Double-click the .BAT file to host your server, wait until it shows:
 ```
 ===================================================
 Hytale Server Booted! [Multiplayer, Fresh Universe]
@@ -180,16 +261,12 @@ Hytale Server Booted! [Multiplayer, Fresh Universe]
 11. Connect to the server by go to `Servers` in your game client, press `Add Server`, type `localhost` in the address box, use any name for your server.
 12. Send the public address in Step 3 to your friends.
 
-## 2. Using Radmin VPN
+> [!CAUTION]
+> Do not close the Playit.gg Terminal OR HytaleServer Terminal if you are still playing or hosting the server.
 
-Creates a virtual LAN - all players need to install it:
+## 2. Using Tailscale [DRAFT]
 
-1. Download [Radmin VPN](https://www.radmin-vpn.com/) - All players install it
-2. One person create a room/network, others join with network name/password
-3. Host joined the world, others will connect to it.
-4. Open Hytale Game > Servers > Add Servers > Direct Connect > Type IP Address of the Host from Radmin.
-
-These options bypass all NAT/CGNAT issues. But for **Windows machines only!**
+Tailscale
 
 ---
 
@@ -228,12 +305,12 @@ For 24/7 servers, custom configurations, or hosting on a VPS/dedicated machine.
 
 **Windows:**
 ```batch
-run_server.bat
+run_server_with_token.bat
 ```
 
 **macOS / Linux:**
 ```bash
-./run_server.sh
+./run_server_with_token.sh
 ```
 
 ---
@@ -501,5 +578,8 @@ See [Docker documentation](https://github.com/Hybrowse/hytale-server-docker) for
 - Hytale F2P Project
 - [Hybrowse Docker Image](https://github.com/Hybrowse/hytale-server-docker)
 - Auth Server: sanasol.ws
+
+
+
 
 

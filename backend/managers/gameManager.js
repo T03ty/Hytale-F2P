@@ -64,7 +64,7 @@ async function safeRemoveDirectory(dirPath, maxRetries = 3) {
   }
 }
 
-async function downloadPWR(branch = 'release', fileName = '7.pwr', progressCallback, cacheDir = CACHE_DIR, manualRetry = false) {
+async function downloadPWR(branch = 'release', fileName = 'v8', progressCallback, cacheDir = CACHE_DIR, manualRetry = false) {
   const osName = getOS();
   const arch = getArch();
 
@@ -72,8 +72,23 @@ async function downloadPWR(branch = 'release', fileName = '7.pwr', progressCallb
     throw new Error('Hytale x86_64 Intel Mac Support has not been released yet. Please check back later.');
   }
 
-  const url = `https://game-patches.hytale.com/patches/${osName}/${arch}/${branch}/0/${fileName}`;
-  const dest = path.join(cacheDir, `${branch}_${fileName}`);
+  const { getPWRUrlFromNewAPI } = require('../services/versionManager');
+  
+  let url;
+  let isUsingNewAPI = false;
+  
+  try {
+    console.log(`[DownloadPWR] Fetching URL from new API for branch: ${branch}, version: ${fileName}`);
+    url = await getPWRUrlFromNewAPI(branch, fileName);
+    isUsingNewAPI = true;
+    console.log(`[DownloadPWR] Using new API URL: ${url}`);
+  } catch (error) {
+    console.error(`[DownloadPWR] Failed to get URL from new API: ${error.message}`);
+    console.log(`[DownloadPWR] Falling back to old URL format`);
+    url = `https://game-patches.hytale.com/patches/${osName}/${arch}/${branch}/0/${fileName}.pwr`;
+  }
+  
+  const dest = path.join(cacheDir, `${branch}_${fileName}.pwr`);
 
   // Check if file exists and validate it
   if (fs.existsSync(dest) && !manualRetry) {
@@ -93,7 +108,7 @@ async function downloadPWR(branch = 'release', fileName = '7.pwr', progressCallb
     }
   }
 
-  console.log('Fetching PWR patch file:', url);
+  console.log(`Fetching PWR patch file from ${isUsingNewAPI ? 'NEW API' : 'old API'}:`, url);
   
   try {
     if (manualRetry) {

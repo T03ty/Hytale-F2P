@@ -1,6 +1,6 @@
 {
   "name": "hytale-f2p-launcher",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A modern, cross-platform launcher for Hytale with automatic updates and multi-client support",
   "homepage": "https://github.com/amiayweb/Hytale-F2P",
   "main": "main.js",
@@ -104,7 +104,12 @@
       ],
       "icon": "build/icon.icns",
       "artifactName": "${name}_${version}_${arch}.${ext}",
-      "category": "public.app-category.games"
+      "category": "public.app-category.games",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": true
     },
     "nsis": {
       "oneClick": false,

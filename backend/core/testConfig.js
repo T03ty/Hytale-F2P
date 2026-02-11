@@ -1,5 +1,5 @@
 const FORCE_CLEAN_INSTALL_VERSION = false;
-const CLEAN_INSTALL_TEST_VERSION = '4.pwr';
+const CLEAN_INSTALL_TEST_VERSION = 'v4';
 
 module.exports = {
   FORCE_CLEAN_INSTALL_VERSION,

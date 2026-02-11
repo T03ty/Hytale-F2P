@@ -7,6 +7,10 @@ const ORIGINAL_DOMAIN = 'hytale.com';
 const MIN_DOMAIN_LENGTH = 4;
 const MAX_DOMAIN_LENGTH = 16;
 
+// DualAuth ByteBuddy Agent (runtime class transformation, no JAR modification)
+const DUALAUTH_AGENT_URL = 'https://github.com/sanasol/hytale-auth-server/releases/latest/download/dualauth-agent.jar';
+const DUALAUTH_AGENT_FILENAME = 'dualauth-agent.jar';
+
 function getTargetDomain() {
   if (process.env.HYTALE_AUTH_DOMAIN) {
     return process.env.HYTALE_AUTH_DOMAIN;
@@ -23,7 +27,7 @@ const DEFAULT_NEW_DOMAIN = 'auth.sanasol.ws';
 
 /**
  * Patches HytaleClient binary to replace hytale.com with custom domain
- * Server patching is done via pre-patched JAR download from CDN
+ * Server auth is handled by DualAuth ByteBuddy Agent (-javaagent: flag)
  *
  * Supports domains from 4 to 16 characters:
  * - All F2P traffic routes to single endpoint: https://{domain} (no subdomains)
@@ -494,211 +498,95 @@ class ClientPatcher {
   }
 
   /**
-   * Check if server JAR contains DualAuth classes (was patched)
+   * Get the path to the DualAuth Agent JAR in a directory
    */
-  serverJarContainsDualAuth(serverPath) {
-    try {
-      const data = fs.readFileSync(serverPath);
-      // Check for DualAuthContext class signature in JAR
-      const signature = Buffer.from('DualAuthContext', 'utf8');
-      return data.includes(signature);
-    } catch (e) {
-      return false;
-    }
+  getAgentPath(dir) {
+    return path.join(dir, DUALAUTH_AGENT_FILENAME);
   }
 
   /**
-   * Validate downloaded file is not corrupt/partial
-   * Server JAR should be at least 50MB
+   * Download DualAuth ByteBuddy Agent (replaces old pre-patched JAR approach)
+   * The agent provides runtime class transformation via -javaagent: flag
+   * No server JAR modification needed - original JAR stays pristine
    */
-  validateServerJarSize(serverPath) {
-    try {
-      const stats = fs.statSync(serverPath);
-      const minSize = 50 * 1024 * 1024; // 50MB minimum
-      if (stats.size < minSize) {
-        console.error(`  Downloaded JAR too small: ${(stats.size / 1024 / 1024).toFixed(2)} MB (expected >50MB)`);
-        return false;
-      }
-      console.log(`  Downloaded size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+  async ensureAgentAvailable(serverDir, progressCallback) {
+    const agentPath = this.getAgentPath(serverDir);
 
-  /**
-   * Patch server JAR by downloading pre-patched version from CDN
-   */
-  async patchServer(serverPath, progressCallback, branch = 'release') {
-    const newDomain = this.getNewDomain();
+    console.log('=== DualAuth Agent (ByteBuddy) ===');
+    console.log(`Target: ${agentPath}`);
 
-    console.log('=== Server Patcher (Pre-patched Download) ===');
-    console.log(`Target: ${serverPath}`);
-    console.log(`Branch: ${branch}`);
-    console.log(`Domain: ${newDomain}`);
-
-    if (!fs.existsSync(serverPath)) {
-      const error = `Server JAR not found: ${serverPath}`;
-      console.error(error);
-      return { success: false, error };
-    }
-
-    // Check if already patched
-    const patchFlagFile = serverPath + '.dualauth_patched';
-    let needsRestore = false;
-
-    if (fs.existsSync(patchFlagFile)) {
+    // Check if agent already exists and is valid
+    if (fs.existsSync(agentPath)) {
       try {
-        const flagData = JSON.parse(fs.readFileSync(patchFlagFile, 'utf8'));
-        if (flagData.domain === newDomain && flagData.branch === branch) {
-          // Verify JAR actually contains DualAuth classes (game may have auto-updated)
-          if (this.serverJarContainsDualAuth(serverPath)) {
-            console.log(`Server already patched for ${newDomain} (${branch}), skipping`);
-            if (progressCallback) progressCallback('Server already patched', 100);
-            return { success: true, alreadyPatched: true };
-          } else {
-            console.log('  Flag exists but JAR not patched (was auto-updated?), will re-download...');
-            // Delete stale flag file
-            try { fs.unlinkSync(patchFlagFile); } catch (e) { /* ignore */ }
-          }
-        } else {
-          console.log(`Server patched for "${flagData.domain}" (${flagData.branch}), need to change to "${newDomain}" (${branch})`);
-          needsRestore = true;
+        const stats = fs.statSync(agentPath);
+        if (stats.size > 1024) {
+          console.log(`DualAuth Agent present (${(stats.size / 1024).toFixed(0)} KB)`);
+          if (progressCallback) progressCallback('DualAuth Agent ready', 100);
+          return { success: true, agentPath, alreadyExists: true };
         }
+        // File exists but too small - corrupt, re-download
+        console.log('Agent file appears corrupt, re-downloading...');
+        fs.unlinkSync(agentPath);
       } catch (e) {
-        // Flag file corrupt, re-patch
-        console.log('  Flag file corrupt, will re-download');
-        try { fs.unlinkSync(patchFlagFile); } catch (e) { /* ignore */ }
+        console.warn('Could not check agent file:', e.message);
       }
     }
 
-    // Restore backup if patched for different domain
-    if (needsRestore) {
-      const backupPath = serverPath + '.original';
-      if (fs.existsSync(backupPath)) {
-        if (progressCallback) progressCallback('Restoring original for domain change...', 5);
-        console.log('Restoring original JAR from backup for re-patching...');
-        fs.copyFileSync(backupPath, serverPath);
-        if (fs.existsSync(patchFlagFile)) {
-          fs.unlinkSync(patchFlagFile);
-        }
-      } else {
-        console.warn('  No backup found to restore - will download fresh patched JAR');
-      }
-    }
-
-    // Create backup
-    if (progressCallback) progressCallback('Creating backup...', 10);
-    console.log('Creating backup...');
-    const backupResult = this.backupClient(serverPath);
-    if (!backupResult) {
-      console.warn('  Could not create backup - proceeding without backup');
-    }
-
-    // Only support standard domain (auth.sanasol.ws) via pre-patched download
-    if (newDomain !== 'auth.sanasol.ws' && newDomain !== 'sanasol.ws') {
-      console.error(`Domain "${newDomain}" requires DualAuthPatcher - only auth.sanasol.ws is supported via pre-patched download`);
-      return { success: false, error: `Unsupported domain: ${newDomain}. Only auth.sanasol.ws is supported.` };
-    }
-
-    // Download pre-patched JAR
-    if (progressCallback) progressCallback('Downloading patched server JAR...', 30);
-    console.log('Downloading pre-patched HytaleServer.jar...');
+    // Download agent from GitHub releases
+    if (progressCallback) progressCallback('Downloading DualAuth Agent...', 20);
+    console.log(`Downloading from: ${DUALAUTH_AGENT_URL}`);
 
     try {
-      let url;
-      if (branch === 'pre-release') {
-        url = 'https://patcher.authbp.xyz/download/patched_prerelease';
-        console.log('  Using pre-release patched server from:', url);
-      } else {
-        url = 'https://patcher.authbp.xyz/download/patched_release';
-        console.log('  Using release patched server from:', url);
+      // Ensure server directory exists
+      if (!fs.existsSync(serverDir)) {
+        fs.mkdirSync(serverDir, { recursive: true });
       }
 
-      const file = fs.createWriteStream(serverPath);
-      let totalSize = 0;
-      let downloaded = 0;
+      const tmpPath = agentPath + '.tmp';
+      const file = fs.createWriteStream(tmpPath);
 
-      const stream = await smartDownloadStream(url, (chunk, downloadedBytes, total) => {
-        downloaded = downloadedBytes;
-        totalSize = total;
-        if (progressCallback && totalSize) {
-          const percent = 30 + Math.floor((downloaded / totalSize) * 60);
-          progressCallback(`Downloading... ${(downloaded / 1024 / 1024).toFixed(2)} MB`, percent);
+      const stream = await smartDownloadStream(DUALAUTH_AGENT_URL, (chunk, downloadedBytes, total) => {
+        if (progressCallback && total) {
+          const percent = 20 + Math.floor((downloadedBytes / total) * 70);
+          progressCallback(`Downloading agent... ${(downloadedBytes / 1024).toFixed(0)} KB`, percent);
         }
       });
 
       stream.pipe(file);
 
       await new Promise((resolve, reject) => {
-        file.on('finish', () => {
-          file.close();
-          resolve();
-        });
+        file.on('finish', () => { file.close(); resolve(); });
         file.on('error', reject);
         stream.on('error', reject);
       });
 
-      console.log('  Download successful');
-
-      // Verify downloaded JAR size and contents
-      if (progressCallback) progressCallback('Verifying downloaded JAR...', 95);
-
-      if (!this.validateServerJarSize(serverPath)) {
-        console.error('Downloaded JAR appears corrupt or incomplete');
-
-        // Restore backup on verification failure
-        const backupPath = serverPath + '.original';
-        if (fs.existsSync(backupPath)) {
-          fs.copyFileSync(backupPath, serverPath);
-          console.log('Restored backup after verification failure');
-        }
-
-        return { success: false, error: 'Downloaded JAR verification failed - file too small (corrupt/partial download)' };
+      // Verify download
+      const stats = fs.statSync(tmpPath);
+      if (stats.size < 1024) {
+        fs.unlinkSync(tmpPath);
+        const error = 'Downloaded agent too small (corrupt or failed download)';
+        console.error(error);
+        return { success: false, error };
       }
 
-      if (!this.serverJarContainsDualAuth(serverPath)) {
-        console.error('Downloaded JAR does not contain DualAuth classes - invalid or corrupt download');
-
-        // Restore backup on verification failure
-        const backupPath = serverPath + '.original';
-        if (fs.existsSync(backupPath)) {
-          fs.copyFileSync(backupPath, serverPath);
-          console.log('Restored backup after verification failure');
-        }
-
-        return { success: false, error: 'Downloaded JAR verification failed - missing DualAuth classes' };
+      // Atomic move
+      if (fs.existsSync(agentPath)) {
+        fs.unlinkSync(agentPath);
       }
-      console.log('  Verification successful - DualAuth classes present');
+      fs.renameSync(tmpPath, agentPath);
 
-      // Mark as patched
-      const sourceUrl = branch === 'pre-release' 
-        ? 'https://patcher.authbp.xyz/download/patched_prerelease'
-        : 'https://patcher.authbp.xyz/download/patched_release';
-      
-      fs.writeFileSync(patchFlagFile, JSON.stringify({
-        domain: newDomain,
-        branch: branch,
-        patchedAt: new Date().toISOString(),
-        patcher: 'PrePatchedDownload',
-        source: sourceUrl
-      }));
-
-      if (progressCallback) progressCallback('Server patching complete', 100);
-      console.log('=== Server Patching Complete ===');
-      return { success: true, patchCount: 1 };
+      console.log(`DualAuth Agent downloaded (${(stats.size / 1024).toFixed(0)} KB)`);
+      if (progressCallback) progressCallback('DualAuth Agent ready', 100);
+      return { success: true, agentPath };
 
     } catch (downloadError) {
-      console.error(`Failed to download patched JAR: ${downloadError.message}`);
-
-      // Restore backup on failure
-      const backupPath = serverPath + '.original';
-      if (fs.existsSync(backupPath)) {
-        fs.copyFileSync(backupPath, serverPath);
-        console.log('Restored backup after download failure');
+      console.error(`Failed to download DualAuth Agent: ${downloadError.message}`);
+      // Clean up temp file
+      const tmpPath = agentPath + '.tmp';
+      if (fs.existsSync(tmpPath)) {
+        try { fs.unlinkSync(tmpPath); } catch (e) { /* ignore */ }
       }
-
-      return { success: false, error: `Failed to download patched server: ${downloadError.message}` };
+      return { success: false, error: downloadError.message };
     }
   }
 
@@ -743,12 +631,12 @@ class ClientPatcher {
   }
 
   /**
-   * Ensure both client and server are patched before launching
+   * Ensure client is patched and DualAuth Agent is available before launching
    */
   async ensureClientPatched(gameDir, progressCallback, javaPath = null, branch = 'release') {
     const results = {
       client: null,
-      server: null,
+      agent: null,
       success: true
     };
 
@@ -765,22 +653,23 @@ class ClientPatcher {
       results.client = { success: false, error: 'Client binary not found' };
     }
 
-    const serverPath = this.findServerPath(gameDir);
-    if (serverPath) {
-      if (progressCallback) progressCallback('Patching server JAR...', 50);
-      results.server = await this.patchServer(serverPath, (msg, pct) => {
+    // Download DualAuth ByteBuddy Agent (runtime patching, no JAR modification)
+    const serverDir = path.join(gameDir, 'Server');
+    if (fs.existsSync(serverDir)) {
+      if (progressCallback) progressCallback('Checking DualAuth Agent...', 50);
+      results.agent = await this.ensureAgentAvailable(serverDir, (msg, pct) => {
         if (progressCallback) {
-          progressCallback(`Server: ${msg}`, pct ? 50 + pct / 2 : null);
+          progressCallback(`Agent: ${msg}`, pct ? 50 + pct / 2 : null);
         }
-      }, branch);
+      });
     } else {
-      console.warn('Could not find HytaleServer.jar');
-      results.server = { success: false, error: 'Server JAR not found' };
+      console.warn('Server directory not found, skipping agent download');
+      results.agent = { success: true, skipped: true };
     }
 
-    results.success = (results.client && results.client.success) || (results.server && results.server.success);
-    results.alreadyPatched = (results.client && results.client.alreadyPatched) && (results.server && results.server.alreadyPatched);
-    results.patchCount = (results.client ? results.client.patchCount || 0 : 0) + (results.server ? results.server.patchCount || 0 : 0);
+    results.success = (results.client && results.client.success) || (results.agent && results.agent.success);
+    results.alreadyPatched = (results.client && results.client.alreadyPatched) && (results.agent && results.agent.alreadyExists);
+    results.patchCount = results.client ? results.client.patchCount || 0 : 0;
 
     if (progressCallback) progressCallback('Patching complete', 100);
 

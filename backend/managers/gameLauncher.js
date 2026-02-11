@@ -252,8 +252,8 @@ async function launchGame(playerNameOverride = null, progressCallback, javaPathO
         if (patchResult.client) {
           console.log(`  Client: ${patchResult.client.patchCount || 0} occurrences`);
         }
-        if (patchResult.server) {
-          console.log(`  Server: ${patchResult.server.patchCount || 0} occurrences`);
+        if (patchResult.agent) {
+          console.log(`  Agent: ${patchResult.agent.alreadyExists ? 'already present' : patchResult.agent.success ? 'downloaded' : 'failed'}`);
         }
       } else {
         console.warn('Game patching failed:', patchResult.error);
@@ -406,6 +406,17 @@ exec "$REAL_JAVA" "\${ARGS[@]}"
         console.warn(`Linux: Could not replace libzstd.so: ${libzstdError.message}`);
       }
     }
+  }
+
+  // DualAuth Agent: Set JAVA_TOOL_OPTIONS so java picks up -javaagent: flag
+  // This enables runtime auth patching without modifying the server JAR
+  const agentJar = path.join(gameLatest, 'Server', 'dualauth-agent.jar');
+  if (fs.existsSync(agentJar)) {
+    const agentFlag = `-javaagent:${agentJar}`;
+    env.JAVA_TOOL_OPTIONS = env.JAVA_TOOL_OPTIONS
+      ? `${env.JAVA_TOOL_OPTIONS} ${agentFlag}`
+      : agentFlag;
+    console.log('DualAuth Agent: enabled via JAVA_TOOL_OPTIONS');
   }
 
   try {
