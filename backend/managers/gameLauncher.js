@@ -412,7 +412,7 @@ exec "$REAL_JAVA" "\${ARGS[@]}"
   // This enables runtime auth patching without modifying the server JAR
   const agentJar = path.join(gameLatest, 'Server', 'dualauth-agent.jar');
   if (fs.existsSync(agentJar)) {
-    const agentFlag = `-javaagent:${agentJar}`;
+    const agentFlag = `-javaagent:"${agentJar}"`;
     env.JAVA_TOOL_OPTIONS = env.JAVA_TOOL_OPTIONS
       ? `${env.JAVA_TOOL_OPTIONS} ${agentFlag}`
       : agentFlag;
